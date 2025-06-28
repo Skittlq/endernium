@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Endernium.MODID);
 
+    @SuppressWarnings("unused")
     public static final Supplier<CreativeModeTab> ENDERNIUM_TAB = CREATIVE_MODE_TAB.register("endernium_tab",
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.ENDERNIUM_INGOT.get()))
                     .title(Component.translatable("creativetab.endernium"))
