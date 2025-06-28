@@ -1,0 +1,13 @@
+{
+  "itemGroup.endernium": "Example Mod Tab",
+  "block.endernium.example_block": "Example Block",
+  "item.endernium.example_item": "Example Item",
+
+  "endernium.configuration.title": "Endernium Configs",
+  "endernium.configuration.section.endernium.common.toml": "Endernium Configs",
+  "endernium.configuration.section.endernium.common.toml.title": "Endernium Configs",
+  "endernium.configuration.items": "Item List",
+  "endernium.configuration.logDirtBlock": "Log Dirt Block",
+  "endernium.configuration.magicNumberIntroduction": "Magic Number Text",
+  "endernium.configuration.magicNumber": "Magic Number"
+}
