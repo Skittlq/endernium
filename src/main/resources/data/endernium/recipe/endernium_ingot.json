@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "endernium:endernium_block"
+  ],
+  "result": {
+    "count": 9,
+    "id": "endernium:endernium_ingot"
+  }
+}

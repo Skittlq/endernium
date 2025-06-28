@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "endernium:block/endernium_block"
+    }
+  }
+}

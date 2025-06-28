@@ -1,7 +1,11 @@
 {
-  "itemGroup.endernium": "Example Mod Tab",
-  "block.endernium.example_block": "Example Block",
-  "item.endernium.example_item": "Example Item",
+  "creativetab.endernium": "Endernium",
+
+  "item.endernium.endernium_dust": "Endernium Dust",
+  "item.endernium.endernium_shard": "Endernium Shard",
+  "item.endernium.endernium_ingot": "Endernium Ingot",
+  "block.endernium.endernium_block": "Block of Endernium",
+  "block.endernium.endernium_ore": "Endernium Ore",
 
   "endernium.configuration.title": "Endernium Configs",
   "endernium.configuration.section.endernium.common.toml": "Endernium Configs",
