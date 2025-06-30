@@ -21,7 +21,7 @@ public class ModBlocks {
                     .strength(4f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
 
     public static final DeferredBlock<Block> ENDERNIUM_ORE = registerBlock("endernium_ore",
-            (properties) -> new DropExperienceBlock(UniformInt.of(2, 4), properties.strength(3f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
+            (properties) -> new DropExperienceBlock(UniformInt.of(2, 4), properties.requiresCorrectToolForDrops().strength(30.0F, 1200.0F).sound(SoundType.AMETHYST)));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
         DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function);

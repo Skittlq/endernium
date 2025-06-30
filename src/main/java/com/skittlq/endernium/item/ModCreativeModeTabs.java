@@ -24,6 +24,11 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ENDERNIUM_DUST.get());
                         output.accept(ModBlocks.ENDERNIUM_BLOCK.get());
                         output.accept(ModBlocks.ENDERNIUM_ORE.get());
+                        output.accept(ModItems.ENDERNIUM_AXE.get());
+                        output.accept(ModItems.ENDERNIUM_HOE.get());
+                        output.accept(ModItems.ENDERNIUM_PICKAXE.get());
+                        output.accept(ModItems.ENDERNIUM_SHOVEL.get());
+                        output.accept(ModItems.ENDERNIUM_SWORD.get());
                     }
                 ).build());
 

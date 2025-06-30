@@ -7,6 +7,16 @@
   "block.endernium.endernium_block": "Block of Endernium",
   "block.endernium.endernium_ore": "Endernium Ore",
 
+  "item.endernium.endernium_pickaxe": "Endernium Pickaxe",
+  "item.endernium.endernium_axe": "Endernium Axe",
+  "item.endernium.endernium_shovel": "Endernium Shovel",
+  "item.endernium.endernium_hoe": "Endernium Hoe",
+  "item.endernium.endernium_sword": "Endernium Sword",
+  "item.endernium.endernium_helmet": "Endernium Helmet",
+  "item.endernium.endernium_chestplate": "Endernium Chestplate",
+  "item.endernium.endernium_leggings": "Endernium Leggings",
+  "item.endernium.endernium_boots": "Endernium Boots",
+
   "endernium.configuration.title": "Endernium Configs",
   "endernium.configuration.section.endernium.common.toml": "Endernium Configs",
   "endernium.configuration.section.endernium.common.toml.title": "Endernium Configs",

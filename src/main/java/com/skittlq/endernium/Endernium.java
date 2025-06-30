@@ -3,6 +3,7 @@ package com.skittlq.endernium;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.util.ModTags;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
