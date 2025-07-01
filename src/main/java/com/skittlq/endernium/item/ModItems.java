@@ -2,10 +2,7 @@ package com.skittlq.endernium.item;
 
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.tools.EnderniumSword;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -17,6 +14,8 @@ public class ModItems {
     public static final DeferredItem<Item> ENDERNIUM_DUST = ITEMS.registerSimpleItem("endernium_dust", new Item.Properties());
     public static final DeferredItem<Item> ENDERNIUM_SHARD = ITEMS.registerSimpleItem("endernium_shard", new Item.Properties());
     public static final DeferredItem<Item> ENDERNIUM_INGOT = ITEMS.registerSimpleItem("endernium_ingot", new Item.Properties());
+    public static final DeferredItem<Item> ENDERNIUM_UPGRADE_SMITHING_TEMPLATE = ITEMS.registerItem("endernium_upgrade_smithing_template",
+            SmithingTemplateItem::createNetheriteUpgradeTemplate);
 
     public static final DeferredItem<Item> ENDERNIUM_SWORD = ITEMS.registerItem("endernium_sword",
             (properties) -> new EnderniumSword(properties.sword(ModToolTiers.ENDERNIUM, 3.0F, -2.4F).fireResistant()));

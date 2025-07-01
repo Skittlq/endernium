@@ -29,6 +29,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ENDERNIUM_PICKAXE.get());
                         output.accept(ModItems.ENDERNIUM_SHOVEL.get());
                         output.accept(ModItems.ENDERNIUM_SWORD.get());
+                        output.accept(ModItems.ENDERNIUM_UPGRADE_SMITHING_TEMPLATE.get());
                     }
                 ).build());
 
