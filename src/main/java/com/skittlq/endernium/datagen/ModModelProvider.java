@@ -3,6 +3,7 @@ package com.skittlq.endernium.datagen;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.item.armor.ModArmorMaterial;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
@@ -32,6 +33,10 @@ public class ModModelProvider extends ModelProvider {
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_BLOCK.get());
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_ORE.get());
 
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "endernium"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "endernium"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "endernium"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "endernium"), false);
     }
 
 }

@@ -10,6 +10,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import static com.skittlq.endernium.item.armor.ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL;
+
 
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Endernium.MODID);
@@ -31,6 +33,19 @@ public class ModItems {
             (properties) -> new AxeItem(ModToolTiers.ENDERNIUM, 5.0F, -3.0F, properties.fireResistant()));
     public static final DeferredItem<HoeItem> ENDERNIUM_HOE = ITEMS.registerItem("endernium_hoe",
             (properties) -> new HoeItem(ModToolTiers.ENDERNIUM, -4.0F, 0.0F, properties.fireResistant()));
+
+    public static final DeferredItem<Item> ENDERNIUM_HELMET = ITEMS.registerItem("endernium_helmet",
+    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.HELMET))
+            );
+    public static final DeferredItem<Item> ENDERNIUM_CHESTPLATE = ITEMS.registerItem("endernium_chestplate",
+    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.CHESTPLATE))
+            );
+    public static final DeferredItem<Item> ENDERNIUM_LEGGINGS = ITEMS.registerItem("endernium_leggings",
+    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.LEGGINGS))
+            );
+    public static final DeferredItem<Item> ENDERNIUM_BOOTS = ITEMS.registerItem("endernium_boots",
+    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.BOOTS))
+            );
 
 
     public static void register(IEventBus eventBus) {

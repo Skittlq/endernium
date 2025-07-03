@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "endernium:item/endernium_helmet",
+    "layer1": "endernium:endernium_copper"
+  }
+}
