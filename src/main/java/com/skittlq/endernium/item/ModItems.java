@@ -1,6 +1,10 @@
 package com.skittlq.endernium.item;
 
 import com.skittlq.endernium.Endernium;
+import com.skittlq.endernium.item.armor.EnderniumBoots;
+import com.skittlq.endernium.item.armor.EnderniumChestplate;
+import com.skittlq.endernium.item.armor.EnderniumHelmet;
+import com.skittlq.endernium.item.armor.EnderniumLeggings;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.*;
@@ -35,16 +39,16 @@ public class ModItems {
             (properties) -> new HoeItem(ModToolTiers.ENDERNIUM, -4.0F, 0.0F, properties.fireResistant()));
 
     public static final DeferredItem<Item> ENDERNIUM_HELMET = ITEMS.registerItem("endernium_helmet",
-    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.HELMET))
+            EnderniumHelmet::new
             );
     public static final DeferredItem<Item> ENDERNIUM_CHESTPLATE = ITEMS.registerItem("endernium_chestplate",
-    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.CHESTPLATE))
+            EnderniumChestplate::new
             );
     public static final DeferredItem<Item> ENDERNIUM_LEGGINGS = ITEMS.registerItem("endernium_leggings",
-    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.LEGGINGS))
+            EnderniumLeggings::new
             );
     public static final DeferredItem<Item> ENDERNIUM_BOOTS = ITEMS.registerItem("endernium_boots",
-    props -> new Item(props.humanoidArmor(ENDERNIUM_ARMOR_MATERIAL, ArmorType.BOOTS))
+            EnderniumBoots::new
             );
 
 
