@@ -39,9 +39,9 @@ public class EnderniumSword extends Item {
                         1000, 0.0, 0.0, 0.0, 10.0);
 
                 int circles = 3;
-                double baseRadius = 3.0;
-                double radiusStep = 2.0;
-                int baseCount = 8;
+                double baseRadius = 2.5;
+                double radiusStep = 1.5;
+                int baseCount = 10;
 
                 for (int r = 0; r < circles; r++) {
                     double radius = baseRadius + (r * radiusStep);

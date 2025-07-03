@@ -3,6 +3,7 @@ package com.skittlq.endernium;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.util.ModTags;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -78,6 +79,7 @@ public class Endernium {
         ModCreativeModeTabs.register(modEventBus); // Register the creative mode tabs to the mod event bus
         ModItems.register(modEventBus); // Register the items in ModItems to the mod event bus
         ModBlocks.register(modEventBus); // Register the blocks in ModItems to the mod event bus
+        ModLootModifiers.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);

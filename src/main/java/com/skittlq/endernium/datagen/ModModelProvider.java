@@ -8,6 +8,7 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 
 public class ModModelProvider extends ModelProvider {
     public ModModelProvider(PackOutput output) {
@@ -26,11 +27,6 @@ public class ModModelProvider extends ModelProvider {
         itemModels.generateFlatItem(ModItems.ENDERNIUM_SHOVEL.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_SWORD.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_HOE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-
-//        itemModels.generateTrimmableItem(ModItems.BISMUTH_HELMET.get(), ModArmorMaterials.BISMUTH, ResourceLocation.fromNamespaceAndPath(TutorialMod.MOD_ID, "bismuth"), false);
-//        itemModels.generateTrimmableItem(ModItems.BISMUTH_CHESTPLATE.get(), ModArmorMaterials.BISMUTH, ResourceLocation.fromNamespaceAndPath(TutorialMod.MOD_ID, "bismuth"), false);
-//        itemModels.generateTrimmableItem(ModItems.BISMUTH_LEGGINGS.get(), ModArmorMaterials.BISMUTH, ResourceLocation.fromNamespaceAndPath(TutorialMod.MOD_ID, "bismuth"), false);
-//        itemModels.generateTrimmableItem(ModItems.BISMUTH_BOOTS.get(), ModArmorMaterials.BISMUTH, ResourceLocation.fromNamespaceAndPath(TutorialMod.MOD_ID, "bismuth"),  false);
 
         /* BLOCKS */
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_BLOCK.get());
