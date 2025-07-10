@@ -1,8 +1,8 @@
 package com.skittlq.endernium.item.armor;
 
+import com.skittlq.endernium.Config;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +23,7 @@ public class EnderniumHelmet extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
-        if(entity instanceof Player player && hasFullSuitOfArmorOn(player)) {
+        if(entity instanceof Player player && hasFullSuitOfArmorOn(player) && (Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean())) {
             evaluateArmorEffects(player, stack, level, entity);
         }
     }
@@ -33,14 +33,14 @@ public class EnderniumHelmet extends Item {
 
         if(hasPlayerCorrectArmorOn(mapArmorMaterial, player)) {
             long currentTime = player.level().getGameTime();
-            long lastMsgTime = player.getPersistentData().getLong("EnderniumArmorCooldown").orElse(0L);
+            long abilityLastUsed = player.getPersistentData().getLong("EnderniumArmorCooldown").orElse(0L);
 
             float health = player.getHealth();
             float maxHealth = player.getMaxHealth();
 
             int maxParticles = 20;
 
-            if (health < maxHealth) {
+            if ((health < maxHealth) && (currentTime - abilityLastUsed > 20 * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong())) {
                 float healthFraction = health / maxHealth;
                 int particleCount = Math.round((1.0F - healthFraction) * maxParticles);
 
@@ -55,7 +55,7 @@ public class EnderniumHelmet extends Item {
                 }
             }
 
-            if (player.getHealth() < 4.0F && (currentTime - lastMsgTime > 20 * 120)) {
+            if (player.getHealth() < Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() && (currentTime - abilityLastUsed > 20 * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong())) {
                 // Push all mobs of monster class away
                 double radius = 8.0D;
                 var hostiles = level.getEntitiesOfClass(
