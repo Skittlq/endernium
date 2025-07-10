@@ -19,10 +19,9 @@
   "item.endernium.endernium_boots": "Endernium Boots",
 
   "endernium.configuration.title": "Endernium Configs",
-  "endernium.configuration.section.endernium.common.toml": "Endernium Configs",
-  "endernium.configuration.section.endernium.common.toml.title": "Endernium Configs",
-  "endernium.configuration.items": "Item List",
-  "endernium.configuration.logDirtBlock": "Log Dirt Block",
-  "endernium.configuration.magicNumberIntroduction": "Magic Number Text",
-  "endernium.configuration.magicNumber": "Magic Number"
+  "endernium.configuration.section.endernium.server.toml": "Endernium Configs",
+  "endernium.configuration.section.endernium.server.toml.title": "Endernium Configs",
+  "endernium.configuration.enderniumArmorAbility": "Enable Endernium Armor Ability",
+  "endernium.configuration.enderniumArmorAbilityThreshold": "Endernium Armor Ability Trigger Threshold",
+  "endernium.configuration.enderniumArmorAbilityCooldown": "Endernium Armor Ability Cooldown Length"
 }

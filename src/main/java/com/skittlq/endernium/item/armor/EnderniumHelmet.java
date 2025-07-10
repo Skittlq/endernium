@@ -1,8 +1,10 @@
 package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.Config;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -24,23 +26,49 @@ public class EnderniumHelmet extends Item {
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         if(entity instanceof Player player && hasFullSuitOfArmorOn(player) && (Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean())) {
-            evaluateArmorEffects(player, stack, level, entity);
+            evaluateArmorEffects(player, level);
         }
     }
 
-    private void evaluateArmorEffects(Player player, ItemStack stack, ServerLevel level, Entity entity) {
+    private void evaluateArmorEffects(Player player, ServerLevel level) {
         ArmorMaterial mapArmorMaterial = ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL;
 
-        if(hasPlayerCorrectArmorOn(mapArmorMaterial, player)) {
+        if (player.isSpectator()) return;
+
+        if (hasPlayerCorrectArmorOn(mapArmorMaterial, player)) {
             long currentTime = player.level().getGameTime();
             long abilityLastUsed = player.getPersistentData().getLong("EnderniumArmorCooldown").orElse(0L);
+
+            long cooldownTicks = 20 * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong();
+            long elapsedTicks = currentTime - abilityLastUsed;
+            float cooldownFraction = Math.min(elapsedTicks / (float) cooldownTicks, 1.0f);
+
+            if (elapsedTicks < cooldownTicks) {
+                int totalBars = 20;
+                int filledBars = Math.round(cooldownFraction * totalBars);
+
+                StringBuilder bar = new StringBuilder();
+                bar.append(ChatFormatting.DARK_PURPLE).append("[");
+                for (int i = 0; i < totalBars; i++) {
+                    if (i < filledBars) {
+                        bar.append(ChatFormatting.LIGHT_PURPLE).append("|");
+                    } else {
+                        bar.append(ChatFormatting.GRAY).append("|");
+                    }
+                }
+                bar.append(ChatFormatting.DARK_PURPLE).append("] ");
+                int percent = Math.round(cooldownFraction * 100f);
+                bar.append(ChatFormatting.GRAY).append(percent).append("%");
+
+                player.displayClientMessage(Component.literal(bar.toString()), true);
+            }
 
             float health = player.getHealth();
             float maxHealth = player.getMaxHealth();
 
             int maxParticles = 20;
 
-            if ((health < maxHealth) && (currentTime - abilityLastUsed > 20 * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong())) {
+            if ((health < maxHealth) && (elapsedTicks < cooldownTicks)) {
                 float healthFraction = health / maxHealth;
                 int particleCount = Math.round((1.0F - healthFraction) * maxParticles);
 
@@ -55,7 +83,8 @@ public class EnderniumHelmet extends Item {
                 }
             }
 
-            if (player.getHealth() < Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() && (currentTime - abilityLastUsed > 20 * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong())) {
+            if (player.getHealth() < Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt()
+                    && (elapsedTicks > cooldownTicks)) {
                 // Push all mobs of monster class away
                 double radius = 8.0D;
                 var hostiles = level.getEntitiesOfClass(
@@ -93,7 +122,6 @@ public class EnderniumHelmet extends Item {
                         2000, 0.0, 0.0, 0.0, 20.0);
 
             }
-
         }
     }
 
