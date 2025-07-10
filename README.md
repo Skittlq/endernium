@@ -1,25 +1,34 @@
+![Endernium Logo Large](https://cdn.modrinth.com/data/cached_images/d394deffdb9f39908c4f1e6e63f20450037ba963.png)
+# Endernium
 
-Installation information
-=======
+Endernium is an advanced material, surpassing Netherite in both strength and rarity, found exclusively within The End.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## Obtaining Endernium
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+**Upgrade Process:**  
+- Acquire an **Endernium Upgrade Smithing Template** from End City Chests.  
+- Mine **Endernium Ore** across the End islands. When broken, Endernium Ore drops **Endernium Dust**.
+- Combine four Endernium Dust to craft an **Endernium Shard**.
+- Surround a Netherite Ingot with Endernium Shards to create an **Endernium Ingot**.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+## Upgradable Items
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+Using Endernium Ingots and the appropriate Smithing Template, you may upgrade the following Netherite equipment to Endernium:
+- Sword
+- Shovel
+- Pickaxe
+- Axe
+- Hoe
+- All Armor pieces
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+## Special Abilities
+
+Each Endernium tool and the full armor set comes with a unique special ability. These enhancements offer more than simple protection or power—each brings a distinct advantage to your gameplay. Such as the armor set which grants the wearer a last minute defense against death which pushes monsters in a radius away from you.
+
+## Credits
+
+*Textures designed by [Alizarin](https://x.com/AliCrimzon).*
+
+## Issues & Bug Reports
+
+Should you encounter any bugs, issues, or require assistance, please submit a report via the [GitHub Issues page](https://github.com/Skittlq/endernium-neoforge/issues). Feedback and suggestions are always appreciated.

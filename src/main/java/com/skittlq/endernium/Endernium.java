@@ -4,11 +4,6 @@ import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.loot.ModLootModifiers;
-import com.skittlq.endernium.util.ModTags;
-import net.minecraft.client.Minecraft;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
