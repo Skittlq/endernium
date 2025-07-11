@@ -1,0 +1,4 @@
+// 1.20.1	2025-07-11T23:11:46.8751039	Registries
+a258318173aa25693862422440c7ffc908620481 data/endernium/forge/biome_modifier/add_endernium_ore.json
+76281445c55cd32f99c6d6004efe72624cccd93f data/endernium/worldgen/configured_feature/endernium_ore.json
+d3f86c30308f83866b640892dec179d71d1b7579 data/endernium/worldgen/placed_feature/endernium_ore_placed.json

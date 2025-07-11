@@ -1,0 +1,127 @@
+package com.skittlq.endernium;
+
+import com.mojang.logging.LogUtils;
+import com.skittlq.endernium.block.ModBlocks;
+import com.skittlq.endernium.item.ModCreativeModeTabs;
+import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.loot.ModLootModifiers;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.slf4j.Logger;
+
+// The value here should match an entry in the META-INF/neoforge.mods.toml file
+@Mod(Endernium.MODID)
+public class Endernium {
+    // Define mod id in a common place for everything to reference
+    public static final String MODID = "endernium";
+    // Directly reference a slf4j logger
+    private static final Logger LOGGER = LogUtils.getLogger();
+//    // Create a Deferred Register to hold Blocks which will all be registered under the "endernium" namespace
+//    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
+//    // Create a Deferred Register to hold Items which will all be registered under the "endernium" namespace
+//    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+//    // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "endernium" namespace
+//    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+//
+//    // Creates a new Block with the id "endernium:example_block", combining the namespace and path
+//    public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
+//    // Creates a new BlockItem with the id "endernium:example_block", combining the namespace and path
+//    public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
+//
+//    // Creates a new food item with the id "endernium:example_id", nutrition 1 and saturation 2
+//    public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder()
+//            .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
+//
+//    // Creates a creative tab with the id "endernium:example_tab" for the example item, that is placed after the combat tab
+//    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
+//            .title(Component.translatable("itemGroup.endernium")) //The language key for the title of your CreativeModeTab
+//            .withTabsBefore(CreativeModeTabs.COMBAT)
+//            .icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
+//            .displayItems((parameters, output) -> {
+//                output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
+//            }).build());
+
+    // The constructor for the mod class is the first code that is run when your mod is loaded.
+    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+    public Endernium(FMLJavaModLoadingContext context) {
+        IEventBus modEventBus = context.getModEventBus();
+
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
+
+//        // Register the Deferred Register to the mod event bus so blocks get registered
+//        BLOCKS.register(modEventBus);
+//        // Register the Deferred Register to the mod event bus so items get registered
+//        ITEMS.register(modEventBus);
+//        // Register the Deferred Register to the mod event bus so tabs get registered
+//        CREATIVE_MODE_TABS.register(modEventBus);
+
+        // Register ourselves for server and other game events we are interested in.
+        // Note that this is necessary if and only if we want *this* class (Endernium) to respond directly to events.
+        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
+        MinecraftForge.EVENT_BUS.register(this);
+
+        ModCreativeModeTabs.register(modEventBus); // Register the creative mode tabs to the mod event bus
+        ModItems.register(modEventBus); // Register the items in ModItems to the mod event bus
+        ModBlocks.register(modEventBus); // Register the blocks in ModItems to the mod event bus
+        ModLootModifiers.register(modEventBus);
+
+        // Register the item to a creative tab
+        modEventBus.addListener(this::addCreative);
+
+        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        // Some common setup code
+        LOGGER.info("sigma endernium armor");
+
+//        if (Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean()) {
+//            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
+//        }
+//
+////        LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
+////
+////        Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
+    }
+
+    // Add the example block item to the building blocks tab
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.ENDERNIUM_DUST);
+            event.accept(ModItems.ENDERNIUM_SHARD);
+            event.accept(ModItems.ENDERNIUM_INGOT);
+        } else if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(ModBlocks.ENDERNIUM_BLOCK);
+            event.accept(ModBlocks.ENDERNIUM_ORE);
+        }
+    }
+
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event) {
+        // Do something when the server starts
+        LOGGER.info("HELLO from server starting");
+    }
+
+    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+//        @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+//        public static class ClientModEvents {
+//            @SubscribeEvent
+//            public static void onClientSetup(FMLClientSetupEvent event) {
+//                // Some client setup code
+//                LOGGER.info("HELLO FROM CLIENT SETUP");
+//                LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+//            }
+//        }
+}

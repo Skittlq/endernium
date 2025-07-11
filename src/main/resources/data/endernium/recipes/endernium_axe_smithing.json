@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "endernium:endernium_ingot"
+  },
+  "base": {
+    "item": "minecraft:netherite_axe"
+  },
+  "result": {
+    "item": "endernium:endernium_axe"
+  },
+  "template": {
+    "item": "endernium:endernium_upgrade_smithing_template"
+  }
+}
