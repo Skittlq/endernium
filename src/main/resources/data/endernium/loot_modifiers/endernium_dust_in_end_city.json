@@ -10,15 +10,6 @@
         "condition": "minecraft:random_chance"
     }
   ],
-  "item": "endernium:endernium_dust",
-  "functions": [
-        {
-        "function": "minecraft:set_count",
-        "count": {
-            "min": 1,
-            "max": 4
-        }
-      }
-  ]
+  "item": "endernium:endernium_dust"
 }
 
