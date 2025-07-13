@@ -16,7 +16,7 @@ import java.util.EnumMap;
 import java.util.function.Supplier;
 
 public enum ModArmorMaterial implements ArmorMaterial {
-    ENDERNIUM("endernium", 40, new int[]{4, 9, 7, 4}, 20, SoundEvents.ARMOR_EQUIP_GENERIC, 4.0F, 0.2F, () -> Ingredient.of(ModTags.Items.INGOTS_ENDERNIUM));
+    ENDERNIUM("endernium", 40, new int[]{4, 9, 7, 4}, 20, SoundEvents.ARMOR_EQUIP_DIAMOND, 4.0F, 0.2F, () -> Ingredient.of(ModTags.Items.INGOTS_ENDERNIUM));
 
     private static final int[] BASE_DURABILITY = { 11, 16, 15, 13 };
     private final String name;

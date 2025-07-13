@@ -3,11 +3,15 @@ package com.skittlq.endernium.item;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.armor.*;
 import com.skittlq.endernium.item.tools.EnderniumSword;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.List;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Endernium.MODID);
@@ -18,8 +22,30 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ENDERNIUM_INGOT = ITEMS.register("endernium_ingot",
             () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> ENDERNIUM_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("endernium_upgrade_smithing_template",
-            SmithingTemplateItem::createNetheriteUpgradeTemplate);
+    public static SmithingTemplateItem createEnderniumUpgradeTemplate() {
+        return new SmithingTemplateItem(
+                Component.translatable("upgrade.minecraft.endernium_upgrade.applies_to"),
+                Component.translatable("upgrade.minecraft.endernium_upgrade.ingredients"),
+                Component.translatable("upgrade.minecraft.endernium_upgrade.upgrade"), // your custom upgrade description
+                Component.translatable("upgrade.minecraft.endernium_upgrade.base_slot_description"),
+                Component.translatable("upgrade.minecraft.endernium_upgrade.additions_slot_description"),
+                List.of(
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_armor_slot_helmet"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_armor_slot_chestplate"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_armor_slot_leggings"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_armor_slot_boots"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_slot_sword"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_slot_axe"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_slot_shovel"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_slot_pickaxe"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_slot_hoe")
+                ),
+                List.of(ResourceLocation.fromNamespaceAndPath("minecraft", "item/empty_slot_ingot"))
+        );
+    }
+
+    public static final RegistryObject<Item> ENDERNIUM_UPGRADE_SMITHING_TEMPLATE =
+            ITEMS.register("endernium_upgrade_smithing_template", ModItems::createEnderniumUpgradeTemplate);
 
     public static final RegistryObject<Item> ENDERNIUM_SWORD = ITEMS.register("endernium_sword",
             () -> new EnderniumSword(ModToolTiers.ENDERNIUM, 3, -2.4F, new Item.Properties().fireResistant()));
