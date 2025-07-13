@@ -21,7 +21,7 @@ public class ModArmorMaterial {
                 map.put(ArmorType.HELMET, 4);
             }),
             20,
-            SoundEvents.ARMOR_EQUIP_GENERIC,
+            SoundEvents.ARMOR_EQUIP_DIAMOND,
             4.0F,
             0.2F,
             ModTags.Items.INGOTS_ENDERNIUM,

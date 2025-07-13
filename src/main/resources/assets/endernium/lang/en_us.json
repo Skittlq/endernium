@@ -4,7 +4,7 @@
   "item.endernium.endernium_dust": "Endernium Dust",
   "item.endernium.endernium_shard": "Endernium Shard",
   "item.endernium.endernium_ingot": "Endernium Ingot",
-  "item.endernium.endernium_upgrade_smithing_template": "Endernium Upgrade",
+  "item.endernium.endernium_upgrade_smithing_template": "§eEndernium Upgrade",
   "block.endernium.endernium_block": "Block of Endernium",
   "block.endernium.endernium_ore": "Endernium Ore",
 
@@ -17,6 +17,12 @@
   "item.endernium.endernium_chestplate": "Endernium Chestplate",
   "item.endernium.endernium_leggings": "Endernium Leggings",
   "item.endernium.endernium_boots": "Endernium Boots",
+
+  "upgrade.minecraft.endernium_upgrade.applies_to": "§9Netherite Equipment",
+  "upgrade.minecraft.endernium_upgrade.ingredients": "§9Endernium Ingot",
+  "upgrade.minecraft.endernium_upgrade.base_slot_description": "Add netherite armor, weapon, or tool",
+  "upgrade.minecraft.endernium_upgrade.additions_slot_description": "Add Endernium Ingot",
+
 
   "endernium.configuration.title": "Endernium Configs",
   "endernium.configuration.section.endernium.server.toml": "Endernium Configs",
