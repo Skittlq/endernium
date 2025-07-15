@@ -21,7 +21,7 @@ public class ModItems {
     public static final RegistryObject<Item> ENDERNIUM_SHARD = ITEMS.register("endernium_shard",
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ENDERNIUM_INGOT = ITEMS.register("endernium_ingot",
-            () -> new Item(new Item.Properties()));
+            () -> new Item(new Item.Properties().fireResistant()));
     public static SmithingTemplateItem createEnderniumUpgradeTemplate() {
         return new SmithingTemplateItem(
                 Component.translatable("upgrade.minecraft.endernium_upgrade.applies_to"),
