@@ -26,7 +26,7 @@ public class ModItems {
 
     public static final DeferredItem<Item> ENDERNIUM_DUST = ITEMS.registerSimpleItem("endernium_dust", new Item.Properties());
     public static final DeferredItem<Item> ENDERNIUM_SHARD = ITEMS.registerSimpleItem("endernium_shard", new Item.Properties());
-    public static final DeferredItem<Item> ENDERNIUM_INGOT = ITEMS.registerSimpleItem("endernium_ingot", new Item.Properties());
+    public static final DeferredItem<Item> ENDERNIUM_INGOT = ITEMS.registerSimpleItem("endernium_ingot", new Item.Properties().fireResistant());
     public static SmithingTemplateItem createEnderniumUpgradeTemplate(Item.Properties properties) {
         return new SmithingTemplateItem(
                 Component.translatable("upgrade.minecraft.endernium_upgrade.applies_to"),

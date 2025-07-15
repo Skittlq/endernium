@@ -1,0 +1,8 @@
+// 1.21.7	2025-07-16T02:39:25.156037	Tags for minecraft:item mod id endernium
+652920b639e04600afc877af281f65f4234921c8 data/endernium/tags/item/endernium_repairable.json
+b79f786096a90cf5b6a49731fc6dc2fc2255203d data/minecraft/tags/item/axes.json
+0ee0af32ad82cfde9368c98433847a6125c0ce67 data/minecraft/tags/item/hoes.json
+e1b8a938191b4b18df2f1cbd03e7c2d0965c54ee data/minecraft/tags/item/pickaxes.json
+ed4ce2997cd11c40951cb00e19acedc30b9ffd00 data/minecraft/tags/item/shovels.json
+058d30a58066b18b0b4df37c069eb3911643f9c7 data/minecraft/tags/item/swords.json
+c18e71add470b1526cc67987b7a8fc3f752441f2 data/minecraft/tags/item/trimmable_armor.json
