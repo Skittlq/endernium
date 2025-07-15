@@ -15,6 +15,11 @@ public class ModParticles {
 
     public static final Supplier<SimpleParticleType> ENDERNIUM_SWEEP =
             PARTICLE_TYPES.register("endernium_sweep", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> ENDERNIUM_BIT =
+            PARTICLE_TYPES.register("endernium_bit", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> REVERSE_ENDERNIUM_BIT =
+            PARTICLE_TYPES.register("reverse_endernium_bit", () -> new SimpleParticleType(true));
+
 
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);

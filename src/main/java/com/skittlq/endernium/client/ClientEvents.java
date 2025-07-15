@@ -89,7 +89,7 @@ public class ClientEvents {
                 double pz = bb.minZ + mob.level().random.nextDouble() * (bb.maxZ - bb.minZ);
 
                 player.level().addParticle(
-                        net.minecraft.core.particles.ParticleTypes.REVERSE_PORTAL,
+                        ModParticles.REVERSE_ENDERNIUM_BIT.get(),
                         px, py, pz,
                         0, 0, 0
                 );

@@ -3,7 +3,6 @@ package com.skittlq.endernium.item.tools;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +17,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -100,6 +98,7 @@ public class EnderniumSword extends Item {
         }
     }
 
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
@@ -162,7 +161,7 @@ public class EnderniumSword extends Item {
                         }
                 ))
                 .toList();
-        int ticksBetweenHits = 3;
+        int ticksBetweenHits = 4;
 
         List<Integer> taskIds = new ArrayList<>();
         AtomicInteger mobsHit = new AtomicInteger(0);
