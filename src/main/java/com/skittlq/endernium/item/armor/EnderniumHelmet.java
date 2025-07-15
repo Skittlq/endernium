@@ -1,6 +1,7 @@
 package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.Config;
+import com.skittlq.endernium.particles.ModParticles;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -71,7 +72,7 @@ public class EnderniumHelmet extends ArmorItem {
 
                 if (particleCount > 0) {
                     level.sendParticles(
-                            ParticleTypes.PORTAL,
+                            ModParticles.ENDERNIUM_BIT.get(),
                             player.getX(), player.getY() + 1.0, player.getZ(),
                             particleCount,
                             0, 0, 0,
@@ -113,7 +114,7 @@ public class EnderniumHelmet extends ArmorItem {
 
                 level.playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.DRAGON_FIREBALL_EXPLODE, player.getSoundSource(), 1.0F, 1.0F);
-                level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+                level.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT.get(),
                         player.getX(), player.getY() + 1.0, player.getZ(),
                         2000, 0.0, 0.0, 0.0, 20.0);
 

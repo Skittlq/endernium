@@ -7,7 +7,9 @@ import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
+import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
+import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
@@ -90,6 +92,8 @@ public class Endernium {
             @SubscribeEvent
             public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
                 event.registerSpriteSet(ModParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);
+                event.registerSpriteSet(ModParticles.ENDERNIUM_BIT.get(), EnderniumBit.Provider::new);
+                event.registerSpriteSet(ModParticles.REVERSE_ENDERNIUM_BIT.get(), ReverseEnderniumBit.Provider::new);
             }
 
 

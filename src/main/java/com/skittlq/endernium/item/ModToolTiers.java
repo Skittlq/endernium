@@ -19,6 +19,6 @@ public class ModToolTiers {
     public static final Tier ENDERNIUM = TierSortingRegistry.registerTier(
             new ForgeTier(5, 3058, 12F, 5F, 20,
                     ModTags.Blocks.NEEDS_ENDERNIUM_TOOL, () -> Ingredient.of(ModItems.ENDERNIUM_INGOT.get())),
-            new ResourceLocation(Endernium.MODID, "endernium"), List.of(Tiers.NETHERITE), List.of());
+            ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "endernium"), List.of(Tiers.NETHERITE), List.of());
 
 }

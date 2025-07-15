@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class CameraLerpPayload {
-    public static final ResourceLocation ID = new ResourceLocation(Endernium.MODID, "camera_lerp");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "camera_lerp");
 
     public final float targetYaw;
     public final float targetPitch;

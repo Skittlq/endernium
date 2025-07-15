@@ -163,7 +163,7 @@ public class EnderniumSword extends SwordItem {
                         }
                 ))
                 .toList();
-        int ticksBetweenHits = 3;
+        int ticksBetweenHits = 4;
 
         List<Integer> taskIds = new ArrayList<>();
         AtomicInteger mobsHit = new AtomicInteger(0);

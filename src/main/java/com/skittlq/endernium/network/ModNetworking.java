@@ -9,7 +9,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public class ModNetworking {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(Endernium.MODID, "main"),
+            ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
