@@ -1,7 +1,16 @@
-// 1.21.7	2025-07-16T02:39:25.156037	Tags for minecraft:item mod id endernium
+// 1.21.6	2025-07-16T21:16:02.9698499	Tags for minecraft:item mod id endernium
 652920b639e04600afc877af281f65f4234921c8 data/endernium/tags/item/endernium_repairable.json
 b79f786096a90cf5b6a49731fc6dc2fc2255203d data/minecraft/tags/item/axes.json
+72d78a02de9316fad49f3b10705e9f5bb86b079d data/minecraft/tags/item/chest_armor.json
+c18e71add470b1526cc67987b7a8fc3f752441f2 data/minecraft/tags/item/enchantable/armor.json
+72d78a02de9316fad49f3b10705e9f5bb86b079d data/minecraft/tags/item/enchantable/chest_armor.json
+ca2c774c50a3929dea34e00f82ef63f7f41098d5 data/minecraft/tags/item/enchantable/foot_armor.json
+225611f8df8f154c4c58e1306f05ff45ffb0820b data/minecraft/tags/item/enchantable/head_armor.json
+462ca0b2bb0c52eac97638bc56522d04ae46b160 data/minecraft/tags/item/enchantable/leg_armor.json
+ca2c774c50a3929dea34e00f82ef63f7f41098d5 data/minecraft/tags/item/foot_armor.json
+225611f8df8f154c4c58e1306f05ff45ffb0820b data/minecraft/tags/item/head_armor.json
 0ee0af32ad82cfde9368c98433847a6125c0ce67 data/minecraft/tags/item/hoes.json
+462ca0b2bb0c52eac97638bc56522d04ae46b160 data/minecraft/tags/item/leg_armor.json
 e1b8a938191b4b18df2f1cbd03e7c2d0965c54ee data/minecraft/tags/item/pickaxes.json
 ed4ce2997cd11c40951cb00e19acedc30b9ffd00 data/minecraft/tags/item/shovels.json
 058d30a58066b18b0b4df37c069eb3911643f9c7 data/minecraft/tags/item/swords.json

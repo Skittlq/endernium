@@ -33,6 +33,28 @@ public class ModItemTagProvider extends ItemTagsProvider {
         tag(ItemTags.HOES)
                 .add(ModItems.ENDERNIUM_HOE.get());
 
+        tag(ItemTags.ARMOR_ENCHANTABLE)
+                .add(ModItems.ENDERNIUM_HELMET.get())
+                .add(ModItems.ENDERNIUM_CHESTPLATE.get())
+                .add(ModItems.ENDERNIUM_LEGGINGS.get())
+                .add(ModItems.ENDERNIUM_BOOTS.get());
+        tag(ItemTags.HEAD_ARMOR)
+                .add(ModItems.ENDERNIUM_HELMET.get());
+        tag(ItemTags.CHEST_ARMOR)
+                .add(ModItems.ENDERNIUM_CHESTPLATE.get());
+        tag(ItemTags.LEG_ARMOR)
+                .add(ModItems.ENDERNIUM_LEGGINGS.get());
+        tag(ItemTags.FOOT_ARMOR)
+                .add(ModItems.ENDERNIUM_BOOTS.get());
+        tag(ItemTags.HEAD_ARMOR_ENCHANTABLE)
+                .add(ModItems.ENDERNIUM_HELMET.get());
+        tag(ItemTags.CHEST_ARMOR_ENCHANTABLE)
+                .add(ModItems.ENDERNIUM_CHESTPLATE.get());
+        tag(ItemTags.LEG_ARMOR_ENCHANTABLE)
+                .add(ModItems.ENDERNIUM_LEGGINGS.get());
+        tag(ItemTags.FOOT_ARMOR_ENCHANTABLE)
+                .add(ModItems.ENDERNIUM_BOOTS.get());
+
         this.tag(ItemTags.TRIMMABLE_ARMOR)
                 .add(ModItems.ENDERNIUM_HELMET.get())
                 .add(ModItems.ENDERNIUM_CHESTPLATE.get())
