@@ -2,7 +2,7 @@ package com.skittlq.endernium.item;
 
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.armor.*;
-import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
@@ -50,13 +50,13 @@ public class ModItems {
     public static final RegistryObject<Item> ENDERNIUM_SWORD = ITEMS.register("endernium_sword",
             () -> new EnderniumSword(ModToolTiers.ENDERNIUM, 3, -2.4F, new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> ENDERNIUM_PICKAXE = ITEMS.register("endernium_pickaxe",
-            () -> new PickaxeItem(ModToolTiers.ENDERNIUM, 1, -2.8F, new Item.Properties().fireResistant()));
+            () -> new EnderniumPickaxe(ModToolTiers.ENDERNIUM, 1, -2.8F, new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> ENDERNIUM_SHOVEL = ITEMS.register("endernium_shovel",
-            () -> new ShovelItem(ModToolTiers.ENDERNIUM, 1.5F, -3.0F, new Item.Properties().fireResistant()));
+            () -> new EnderniumShovel(ModToolTiers.ENDERNIUM, 1.5F, -3.0F, new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> ENDERNIUM_AXE = ITEMS.register("endernium_axe",
-            () -> new AxeItem(ModToolTiers.ENDERNIUM, 5.0F, -3.0F, new Item.Properties().fireResistant()));
+            () -> new EnderniumAxe(ModToolTiers.ENDERNIUM, 5.0F, -3.0F, new Item.Properties().fireResistant()));
     public static final RegistryObject<Item> ENDERNIUM_HOE = ITEMS.register("endernium_hoe",
-            () -> new HoeItem(ModToolTiers.ENDERNIUM, -4, 0.0F, new Item.Properties().fireResistant()));
+            () -> new EnderniumHoe(ModToolTiers.ENDERNIUM, -4, 0.0F, new Item.Properties().fireResistant()));
 
     public static final RegistryObject<Item> ENDERNIUM_HELMET = ITEMS.register("endernium_helmet",
             () -> new EnderniumHelmet(ModArmorMaterial.ENDERNIUM, ArmorItem.Type.HELMET, new Item.Properties()));
