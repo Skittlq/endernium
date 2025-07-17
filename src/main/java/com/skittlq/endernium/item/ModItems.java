@@ -5,7 +5,7 @@ import com.skittlq.endernium.item.armor.EnderniumBoots;
 import com.skittlq.endernium.item.armor.EnderniumChestplate;
 import com.skittlq.endernium.item.armor.EnderniumHelmet;
 import com.skittlq.endernium.item.armor.EnderniumLeggings;
-import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -59,13 +59,13 @@ public class ModItems {
     public static final DeferredItem<Item> ENDERNIUM_SWORD = ITEMS.registerItem("endernium_sword",
             (properties) -> new EnderniumSword(properties.sword(ModToolTiers.ENDERNIUM, 3.0F, -2.4F).fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_PICKAXE = ITEMS.registerItem("endernium_pickaxe",
-            (properties) -> new Item(properties.pickaxe(ModToolTiers.ENDERNIUM, 1.0F, -2.8F).fireResistant()));
-    public static final DeferredItem<ShovelItem> ENDERNIUM_SHOVEL = ITEMS.registerItem("endernium_shovel",
-            (properties) -> new ShovelItem(ModToolTiers.ENDERNIUM, 1.5F, -3.0F, properties.fireResistant()));
-    public static final DeferredItem<AxeItem> ENDERNIUM_AXE = ITEMS.registerItem("endernium_axe",
-            (properties) -> new AxeItem(ModToolTiers.ENDERNIUM, 5.0F, -3.0F, properties.fireResistant()));
-    public static final DeferredItem<HoeItem> ENDERNIUM_HOE = ITEMS.registerItem("endernium_hoe",
-            (properties) -> new HoeItem(ModToolTiers.ENDERNIUM, -4.0F, 0.0F, properties.fireResistant()));
+            (properties) -> new EnderniumPickaxe(properties.pickaxe(ModToolTiers.ENDERNIUM, 1.0F, -2.8F).fireResistant()));
+    public static final DeferredItem<Item> ENDERNIUM_SHOVEL = ITEMS.registerItem("endernium_shovel",
+            (properties) -> new EnderniumShovel(properties.shovel(ModToolTiers.ENDERNIUM, 1.5F, -3.0F).fireResistant()));
+    public static final DeferredItem<Item> ENDERNIUM_AXE = ITEMS.registerItem("endernium_axe",
+            (properties) -> new EnderniumAxe( properties.axe(ModToolTiers.ENDERNIUM, 5.0F, -3.0F).fireResistant()));
+    public static final DeferredItem<Item> ENDERNIUM_HOE = ITEMS.registerItem("endernium_hoe",
+            (properties) -> new EnderniumHoe(properties.hoe(ModToolTiers.ENDERNIUM, -4.0F, 0.0F).fireResistant()));
 
     public static final DeferredItem<Item> ENDERNIUM_HELMET = ITEMS.registerItem("endernium_helmet",
             EnderniumHelmet::new
