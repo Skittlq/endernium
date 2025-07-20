@@ -1,15 +1,14 @@
 package com.skittlq.endernium.util;
 
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.bus.api.SubscribeEvent;
 
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 @EventBusSubscriber
 public class EnderniumTickScheduler {
@@ -34,17 +33,17 @@ public class EnderniumTickScheduler {
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
-        Iterator<ScheduledTask> it = TASKS.iterator();
-        while (it.hasNext()) {
-            ScheduledTask task = it.next();
+        ScheduledTask[] tasksSnapshot = TASKS.toArray(new ScheduledTask[0]);
+        for (ScheduledTask task : tasksSnapshot) {
             task.ticksLeft--;
             if (task.ticksLeft <= 0) {
                 try { task.action.run(); } catch (Exception e) { e.printStackTrace(); }
-                it.remove();
+                TASKS.remove(task);
                 TASK_MAP.remove(task.id);
             }
         }
     }
+
 
     private static class ScheduledTask {
         final int id;

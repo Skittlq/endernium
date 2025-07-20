@@ -6,19 +6,15 @@ import com.skittlq.endernium.item.armor.EnderniumChestplate;
 import com.skittlq.endernium.item.armor.EnderniumHelmet;
 import com.skittlq.endernium.item.armor.EnderniumLeggings;
 import com.skittlq.endernium.item.tools.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.BundleContents;
-import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SmithingTemplateItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
-
-import static com.skittlq.endernium.item.armor.ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL;
 
 
 public class ModItems {
@@ -63,9 +59,9 @@ public class ModItems {
     public static final DeferredItem<Item> ENDERNIUM_SHOVEL = ITEMS.registerItem("endernium_shovel",
             (properties) -> new EnderniumShovel(properties.shovel(ModToolTiers.ENDERNIUM, 1.5F, -3.0F).fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_AXE = ITEMS.registerItem("endernium_axe",
-            (properties) -> new EnderniumAxe( properties.axe(ModToolTiers.ENDERNIUM, 5.0F, -3.0F).fireResistant()));
+            (properties) -> new EnderniumAxe(properties.fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_HOE = ITEMS.registerItem("endernium_hoe",
-            (properties) -> new EnderniumHoe(properties.hoe(ModToolTiers.ENDERNIUM, -4.0F, 0.0F).fireResistant()));
+            (properties) -> new EnderniumHoe(properties.fireResistant()));
 
     public static final DeferredItem<Item> ENDERNIUM_HELMET = ITEMS.registerItem("endernium_helmet",
             EnderniumHelmet::new
