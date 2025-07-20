@@ -3,20 +3,43 @@ package com.skittlq.endernium.item.armor;
 import com.skittlq.endernium.Config;
 import com.skittlq.endernium.particles.ModParticles;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class EnderniumHelmet extends ArmorItem {
+    private static final Set<EntityType<?>> EXTRA_AFFECTED_MOBS = new HashSet<>(Set.of(
+            EntityType.PHANTOM,
+            EntityType.SHULKER,
+            EntityType.VEX,
+            EntityType.ENDER_DRAGON,
+            EntityType.WITHER,
+            EntityType.WARDEN,
+            EntityType.ELDER_GUARDIAN,
+            EntityType.GHAST,
+            EntityType.PIGLIN,
+            EntityType.PIGLIN_BRUTE,
+            EntityType.SLIME,
+            EntityType.MAGMA_CUBE
+    ));
+
     public EnderniumHelmet(ArmorMaterial pMaterial, Type pType, Properties pProperties) {
         super(pMaterial, pType, pProperties);
     }
@@ -84,10 +107,10 @@ public class EnderniumHelmet extends ArmorItem {
             if (player.getHealth() < Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.get()
                     && (elapsedTicks > cooldownTicks)) {
                 double radius = 8.0D;
-                var hostiles = level.getEntitiesOfClass(
-                        net.minecraft.world.entity.Mob.class,
+                List<Mob> hostiles = level.getEntitiesOfClass(
+                        Mob.class,
                         player.getBoundingBox().inflate(radius),
-                        mob -> mob.isAlive() && mob instanceof net.minecraft.world.entity.monster.Monster
+                        mob -> mob.isAlive() && (mob instanceof Monster || EXTRA_AFFECTED_MOBS.contains(mob.getType()))
                 );
 
                 for (var mob : hostiles) {
@@ -143,5 +166,17 @@ public class EnderniumHelmet extends ArmorItem {
         ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
 
         return !boots.isEmpty() && !leggings.isEmpty() && !chestplate.isEmpty() && !helmet.isEmpty();
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
+        components.add(Component.literal("§5Ender Repulsion Ability"));
+        components.add(Component.literal("§5Triggers when your health is below " +
+                Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.get() + " HP and you have the full armor set equipped."));
+        components.add(Component.literal("§5Cooldown: " +
+                Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.get() + " seconds."));
+        components.add(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
+
+        super.appendHoverText(stack, level, components, tooltipFlag);
     }
 }

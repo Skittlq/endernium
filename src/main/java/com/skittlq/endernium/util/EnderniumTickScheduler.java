@@ -5,12 +5,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 @Mod.EventBusSubscriber
 public class EnderniumTickScheduler {
@@ -35,14 +34,12 @@ public class EnderniumTickScheduler {
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        Iterator<ScheduledTask> it = TASKS.iterator();
-        while (it.hasNext()) {
-            ScheduledTask task = it.next();
+        ScheduledTask[] tasksSnapshot = TASKS.toArray(new ScheduledTask[0]);
+        for (ScheduledTask task : tasksSnapshot) {
             task.ticksLeft--;
             if (task.ticksLeft <= 0) {
                 try { task.action.run(); } catch (Exception e) { e.printStackTrace(); }
-                it.remove();
+                TASKS.remove(task);
                 TASK_MAP.remove(task.id);
             }
         }
