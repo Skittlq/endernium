@@ -23,6 +23,17 @@
   "upgrade.minecraft.endernium_upgrade.base_slot_description": "Add netherite armor, weapon, or tool",
   "upgrade.minecraft.endernium_upgrade.additions_slot_description": "Add Endernium Ingot",
 
+  "advancements.endernium.obtain_hoe.title": "Farming cannot be THAT serious...",
+  "advancements.endernium.obtain_hoe.desc": "Obtain an Endernium Hoe.",
+
+  "advancements.endernium.full_armor.title": "Cover Me with Endernium",
+  "advancements.endernium.full_armor.desc": "Have a full set of Endernium armor in the inventory.",
+
+  "advancements.endernium.get_ingot.title": "'get endre ahciv' -Nova",
+  "advancements.endernium.get_ingot.desc": "Obtain an Endernium Ingot.",
+
+  "advancements.endernium.sword_ability.title": "Dimensional Massacre",
+  "advancements.endernium.sword_ability.desc": "Kill 15 mobs at once with the Endernium Sword's special ability.",
 
   "endernium.configuration.title": "Endernium Configs",
   "endernium.configuration.section.endernium.server.toml": "Endernium Configs",

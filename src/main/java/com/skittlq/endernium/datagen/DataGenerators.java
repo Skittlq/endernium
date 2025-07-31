@@ -4,10 +4,12 @@ import com.skittlq.endernium.Endernium;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.advancements.AdvancementProvider;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = Endernium.MODID)
@@ -21,6 +23,11 @@ public class DataGenerators {
         generator.addProvider(true, new ModItemTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModModelProvider(packOutput));
         generator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
+        generator.addProvider(true, new AdvancementProvider(
+                packOutput,
+                lookupProvider,
+                List.of(new ModAdvancementProvider()) // add your generator here
+        ));
 
     }
 
@@ -33,6 +40,12 @@ public class DataGenerators {
         generator.addProvider(true, new ModModelProvider(packOutput));
         generator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModItemTagProvider(packOutput, lookupProvider));
+        generator.addProvider(true, new AdvancementProvider(
+                packOutput,
+                lookupProvider,
+                List.of(new ModAdvancementProvider()) // add your generator here
+        ));
+
 
     }
 }

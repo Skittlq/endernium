@@ -1,5 +1,6 @@
 package com.skittlq.endernium.item.tools;
 
+import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
@@ -256,12 +257,19 @@ public class EnderniumSword extends Item {
             int perMobCooldown = 100;
             int cooldown = baseCooldown + perMobCooldown * mobsHit.get();
             player.getCooldowns().addCooldown(player.getItemInHand(hand), cooldown);
-//            player.getCooldowns().addCooldown(player.getItemInHand(hand), 1);
+
+            // >>> FIRE THE ADVANCEMENT TRIGGER HERE <<<
+            if (player instanceof ServerPlayer serverPlayer) {
+                int hitCount = mobsHit.get();
+                if (hitCount >= 15) {
+                    EnderniumSwordSweepTrigger.INSTANCE.trigger(serverPlayer, hitCount);
+                }
+            }
 
             activeTasks.remove(uuid);
             mobsHitMap.remove(uuid);
-
         }, totalDuration);
+
         taskIds.add(endTaskId);
 
         return InteractionResult.SUCCESS;
