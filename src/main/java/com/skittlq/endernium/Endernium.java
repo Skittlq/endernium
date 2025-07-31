@@ -1,6 +1,7 @@
 package com.skittlq.endernium;
 
 import com.mojang.logging.LogUtils;
+import com.skittlq.endernium.advancement.ModCriteriaTriggers;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
@@ -53,6 +54,7 @@ public class Endernium {
         ModBlocks.register(modEventBus); // Register the blocks in ModItems to the mod event bus
         ModLootModifiers.register(modEventBus);
         ModParticles.register(modEventBus);
+        ModCriteriaTriggers.register();
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);

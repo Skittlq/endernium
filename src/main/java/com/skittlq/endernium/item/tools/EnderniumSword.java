@@ -29,6 +29,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
+import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -264,6 +265,14 @@ public class EnderniumSword extends SwordItem {
             int cooldown = baseCooldown + perMobCooldown * mobsHit.get();
             player.getCooldowns().addCooldown(player.getItemInHand(hand).getItem(), cooldown);
 //            player.getCooldowns().addCooldown(player.getItemInHand(hand), 1);
+
+            // >>> FIRE THE ADVANCEMENT TRIGGER HERE <<<
+            if (player instanceof ServerPlayer serverPlayer) {
+                int hitCount = mobsHit.get();
+                if (hitCount >= 15) {
+                    EnderniumSwordSweepTrigger.INSTANCE.trigger(serverPlayer, hitCount);
+                }
+            }
 
             activeTasks.remove(uuid);
             mobsHitMap.remove(uuid);

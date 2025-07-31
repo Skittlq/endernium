@@ -1,0 +1,33 @@
+{
+  "parent": "endernium:get_ingot",
+  "criteria": {
+    "kill_15_with_ability": {
+      "conditions": {
+        "count": 15
+      },
+      "trigger": "endernium:sword_sweep"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.endernium.sword_ability.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "endernium:endernium_sword",
+      "nbt": "{Damage:0}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.endernium.sword_ability.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_15_with_ability"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

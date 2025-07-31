@@ -8,6 +8,9 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraft.data.advancements.AdvancementProvider;
+import java.util.List;
+
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,13 +21,11 @@ public class DataGenerators {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper efh = event.getExistingFileHelper();
-
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         if (event.includeClient()) {
             generator.addProvider(true, new ModItemModelProvider(packOutput, efh));
             generator.addProvider(true, new ModBlockStateProvider(packOutput, efh));
-            // Any other client providers here.
         }
 
         if (event.includeServer()) {
@@ -33,6 +34,10 @@ public class DataGenerators {
                     new ModBlockTagGenerator(packOutput, lookupProvider, efh));
             generator.addProvider(event.includeServer(),
                     new ModItemTagProvider(packOutput, lookupProvider, CompletableFuture.completedFuture(null)));
+            generator.addProvider(
+                    true,
+                    new AdvancementProvider(packOutput, lookupProvider, List.of(new ModAdvancementProvider()))
+            );
 
         }
     }
