@@ -23,7 +23,32 @@ Using Endernium Ingots and the appropriate Smithing Template, you may upgrade th
 
 ## Special Abilities
 
-Each Endernium tool and the full armor set comes with a unique special ability. These enhancements offer more than simple protection or power—each brings a distinct advantage to your gameplay. Such as the armor set which grants the wearer a last minute defense against death which pushes monsters in a radius away from you.
+Each Endernium tool and the full armor set comes with a unique special ability. These enhancements offer more than simple protection or power—each brings a distinct advantage to your gameplay.
+
+* **Endernium Armor Set**
+
+  * Grants a unique "last-minute defense" ability when wearing the full set of armor.
+  * When health drops below 4, nearby monsters are launched away.
+  * You are granted a short regeneration buff to get you back up.
+  * Offers a final chance to survive dangerous encounters.
+  * 2 minute cooldown.
+
+* **Endernium Sword**
+
+  * Features a *Teleportation Barrage* attack.
+  * Right Click to automatically teleport to each hostile mob in front of you and slice them.
+  * Deals **triple damage** to each mob hit.
+  * Base cooldown: **10 seconds**.
+  * Additional **5 seconds** cooldown per mob hit.
+
+* **Endernium Tools**
+
+  * All tools have **Vein Mining** ability:
+
+    * Toggle with **Sneak + Right Click**.
+    * Mine up to **64 connected blocks of the same type** at once.
+    * Cancel vein mining mid-operation with **Right Click**.
+  * Blocks broken with Endernium tools are **teleported directly to your inventory** (unless full).
 
 ## Credits
 
