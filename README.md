@@ -1,6 +1,4 @@
-![Endernium Logo Large](https://cdn.modrinth.com/data/cached_images/d394deffdb9f39908c4f1e6e63f20450037ba963.png)
-# Endernium
-
+![Endernium Logo Large](https://github.com/Skittlq/endernium/blob/master/brand/endernium-titlecard.png?raw=true)
 Endernium is an advanced material, surpassing Netherite in both strength and rarity, found exclusively within The End.
 
 ## Obtaining Endernium
