@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "endernium:endernium_ingot",
+  "base": "minecraft:netherite_shovel",
+  "result": {
+    "id": "endernium:endernium_shovel"
+  },
+  "template": "endernium:endernium_upgrade_smithing_template"
+}

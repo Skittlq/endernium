@@ -1,0 +1,34 @@
+{
+  "parent": "endernium:get_ingot",
+  "criteria": {
+    "obtain_hoe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "endernium:endernium_hoe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.endernium.obtain_hoe.desc"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "endernium:endernium_hoe"
+    },
+    "title": {
+      "translate": "advancements.endernium.obtain_hoe.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_hoe"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

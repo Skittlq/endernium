@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "U": "endernium:endernium_upgrade_smithing_template",
+    "N": "minecraft:netherite_ingot",
+    "E": "minecraft:end_stone"
+  },
+  "pattern": [
+    "EUE",
+    "ENE",
+    "EEE"
+  ],
+  "result": {
+    "count": 2,
+    "id": "endernium:endernium_upgrade_smithing_template"
+  }
+}

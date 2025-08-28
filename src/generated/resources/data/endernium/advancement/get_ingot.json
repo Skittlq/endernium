@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:end/kill_dragon",
+  "criteria": {
+    "get_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "endernium:endernium_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.endernium.get_ingot.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "endernium:endernium_ingot"
+    },
+    "title": {
+      "translate": "advancements.endernium.get_ingot.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_ingot"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

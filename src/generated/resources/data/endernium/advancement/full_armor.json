@@ -1,0 +1,73 @@
+{
+  "parent": "endernium:get_ingot",
+  "criteria": {
+    "has_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "endernium:endernium_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "endernium:endernium_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "endernium:endernium_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "endernium:endernium_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.endernium.full_armor.desc"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "endernium:endernium_chestplate"
+    },
+    "title": {
+      "translate": "advancements.endernium.full_armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_helmet"
+    ],
+    [
+      "has_chestplate"
+    ],
+    [
+      "has_leggings"
+    ],
+    [
+      "has_boots"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
