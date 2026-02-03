@@ -1,7 +1,7 @@
 package com.skittlq.endernium.util;
 
 import com.skittlq.endernium.Endernium;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -14,7 +14,7 @@ public class ModTags {
         public static final TagKey<Block> INCORRECT_FOR_ENDERNIUM_TOOL = createTag("incorrect_for_endernium_tool");
 
         private static TagKey<Block> createTag(String name) {
-            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(Endernium.MODID, name));
+            return BlockTags.create(Identifier.fromNamespaceAndPath(Endernium.MODID, name));
         }
     }
 
@@ -24,7 +24,7 @@ public class ModTags {
         public static final TagKey<Item> INGOTS_ENDERNIUM = createTag("ingots/endernium");
 
         private static TagKey<Item> createTag(String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(Endernium.MODID, name));
+            return ItemTags.create(Identifier.fromNamespaceAndPath(Endernium.MODID, name));
         }
     }
 }

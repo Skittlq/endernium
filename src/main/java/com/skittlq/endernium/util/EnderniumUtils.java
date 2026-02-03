@@ -26,12 +26,14 @@ public class EnderniumUtils {
 
     public static void handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
         Player player = entity instanceof Player ? (Player) entity : null;
-        if (!level.isClientSide && player != null && !player.isCreative()) {
+        if (!level.isClientSide() && player != null && !player.isCreative()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             LootParams.Builder builder = new LootParams.Builder(((ServerPlayer) player).level())
                     .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                     .withParameter(LootContextParams.TOOL, stack)
-                    .withParameter(LootContextParams.BLOCK_STATE, state);
+                    .withParameter(LootContextParams.BLOCK_STATE, state)
+                    .withOptionalParameter(LootContextParams.THIS_ENTITY, entity)
+                    .withLuck(player.getLuck());
 
             if (level instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT.get(),
@@ -121,7 +123,7 @@ public class EnderniumUtils {
             if (stack.isCorrectToolForDrops(state)) {
                 handleBlockMine(stack, level, state, pos, player);
 
-                if (!level.isClientSide && isCropBlock(state)) {
+                if (!level.isClientSide() && isCropBlock(state)) {
                     net.minecraft.world.item.Item seedItem = getSeedForCrop(state);
                     int slot = findSeedSlot(player, seedItem);
                     System.out.println("[EnderniumUtils] Scheduling replant for crop at " + pos + " (seed: " + (seedItem != null ? seedItem.toString() : "null") + ", slot: " + slot + ")");

@@ -1,9 +1,9 @@
 package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.util.ModTags;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
@@ -25,7 +25,7 @@ public class ModArmorMaterial {
             4.0F,
             0.2F,
             ModTags.Items.INGOTS_ENDERNIUM,
-            ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath("endernium", "endernium"))
+            ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath("endernium", "endernium"))
     );
 
 }

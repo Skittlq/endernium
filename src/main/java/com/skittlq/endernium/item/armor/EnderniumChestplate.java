@@ -1,5 +1,6 @@
 package com.skittlq.endernium.item.armor;
 
+import com.mojang.logging.LogUtils;
 import com.skittlq.endernium.Config;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -20,12 +21,17 @@ public class EnderniumChestplate extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        tooltipAdder.accept(Component.literal("§5Ender Repulsion Ability"));
-        tooltipAdder.accept(Component.literal("§5Triggers when your health is below " +
-                Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() + " HP and you have the full armor set equipped."));
-        tooltipAdder.accept(Component.literal("§5Cooldown: " +
-                Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong() + " seconds."));
-        tooltipAdder.accept(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
+        var player = EnderniumArmorUtil.getTooltipPlayer(context);
+        LogUtils.getLogger().info("Appending tooltip for Endernium Chestplate. Player present: " + (player != null));
+        if (player != null && EnderniumArmorUtil.hasFullEnderniumSet(player)) {
+            tooltipAdder.accept(Component.literal("§5Ender Repulsion Ability"));
+            tooltipAdder.accept(Component.literal("§5Triggers when your health is below " +
+                    Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() + " HP and you have the full armor set equipped."));
+            tooltipAdder.accept(Component.literal("§5Cooldown: " +
+                    Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong() + " seconds."));
+            tooltipAdder.accept(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
+            tooltipAdder.accept(Component.literal(""));
+        }
 
         super.appendHoverText(stack, context, display, tooltipAdder, flag);
     }

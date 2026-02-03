@@ -1,6 +1,7 @@
 package com.skittlq.endernium.datagen;
 
 import com.skittlq.endernium.Endernium;
+import com.skittlq.endernium.trim.ModTrimMaterials;
 import com.skittlq.endernium.worldgen.ModBiomeModifiers;
 import com.skittlq.endernium.worldgen.ModConfiguredFeatures;
 import com.skittlq.endernium.worldgen.ModPlacedFeatures;
@@ -18,7 +19,8 @@ public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap)
             .add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap)
-            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap);
+            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap)
+            .add(Registries.TRIM_MATERIAL, ModTrimMaterials::bootstrap);
 
     public ModDatapackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Set.of(Endernium.MODID));

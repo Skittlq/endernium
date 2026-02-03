@@ -58,7 +58,7 @@ public class EnderniumSword extends Item {
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
-        if (!level.isClientSide) return;
+        if (!level.isClientSide()) return;
         if (!(entity instanceof Player player)) return;
         if (!player.getMainHandItem().is(this) && !player.getOffhandItem().is(this)) {
         }
@@ -107,7 +107,7 @@ public class EnderniumSword extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         UUID uuid = player.getUUID();
 
@@ -284,9 +284,10 @@ public class EnderniumSword extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        tooltipAdder.accept(Component.literal("§5Right-click to activate special ability."));
-        tooltipAdder.accept(Component.literal("§5Cooldown: 10 seconds + 5 seconds per mob hit."));
+        tooltipAdder.accept(Component.literal("§5Right-click to activate ability."));
+        tooltipAdder.accept(Component.literal("§5Cooldown: 10 seconds + 5 seconds per mob attacked."));
         tooltipAdder.accept(Component.literal("§7Works best against a group of enemies."));
+        tooltipAdder.accept(Component.literal(""));
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

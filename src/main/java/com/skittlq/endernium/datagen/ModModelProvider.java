@@ -9,7 +9,7 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ModModelProvider extends ModelProvider {
     public ModModelProvider(PackOutput output) {
@@ -33,10 +33,10 @@ public class ModModelProvider extends ModelProvider {
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_BLOCK.get());
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_ORE.get());
 
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath("minecraft", "trims/items/helmet_trim"), false);
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath("minecraft", "trims/items/chestplate_trim"), false);
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath("minecraft", "trims/items/leggings_trim"), false);
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), ResourceLocation.fromNamespaceAndPath("minecraft", "trims/items/boots_trim"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/helmet_trim"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/chestplate_trim"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/leggings_trim"), false);
+        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/boots_trim"), false);
     }
 
 }

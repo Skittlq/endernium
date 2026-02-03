@@ -3,16 +3,16 @@ package com.skittlq.endernium.advancement;
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.ContextAwarePredicate;
+import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Optional;
 
 public class EnderniumSwordSweepTrigger extends SimpleCriterionTrigger<EnderniumSwordSweepTrigger.Instance> {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("endernium", "sword_sweep");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath("endernium", "sword_sweep");
     public static final EnderniumSwordSweepTrigger INSTANCE = new EnderniumSwordSweepTrigger();
 
     private EnderniumSwordSweepTrigger() {}

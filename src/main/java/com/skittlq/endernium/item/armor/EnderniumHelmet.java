@@ -145,7 +145,7 @@ public class EnderniumHelmet extends Item {
                         SoundEvents.DRAGON_FIREBALL_EXPLODE, player.getSoundSource(), 1.0F, 1.0F);
                 level.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT.get(),
                         player.getX(), player.getY() + 1.0, player.getZ(),
-                        2000, 0.0, 0.0, 0.0, 20.0);
+                        2000, 0.0, 0.0, 0.0, 1.0);
 
             }
         }
@@ -175,12 +175,16 @@ public class EnderniumHelmet extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        tooltipAdder.accept(Component.literal("§5Ender Repulsion Ability"));
-        tooltipAdder.accept(Component.literal("§5Triggers when your health is below " +
-                Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() + " HP and you have the full armor set equipped."));
-        tooltipAdder.accept(Component.literal("§5Cooldown: " +
-                Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong() + " seconds."));
-        tooltipAdder.accept(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
+        var player = EnderniumArmorUtil.getTooltipPlayer(context);
+        if (player != null && EnderniumArmorUtil.hasFullEnderniumSet(player)) {
+            tooltipAdder.accept(Component.literal("§5Ender Repulsion Ability"));
+            tooltipAdder.accept(Component.literal("§5Triggers when your health is below " +
+                    Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() + " HP and you have the full armor set equipped."));
+            tooltipAdder.accept(Component.literal("§5Cooldown: " +
+                    Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong() + " seconds."));
+            tooltipAdder.accept(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
+            tooltipAdder.accept(Component.literal(""));
+        }
 
         super.appendHoverText(stack, context, display, tooltipAdder, flag);
     }

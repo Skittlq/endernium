@@ -1,58 +1,80 @@
 package com.skittlq.endernium.particles.custom;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import org.joml.Quaternionf;
+import org.jspecify.annotations.Nullable;
 
-public class EnderniumBit extends TextureSheetParticle {
-    private final double xStart, yStart, zStart;
-    private final double burstXd, burstYd, burstZd;
-    private final Entity targetEntity; // The player or other entity to follow
-    private final int burstTicks;
+public class EnderniumBit extends SingleQuadParticle {
+    public double xStart;
+    public double yStart;
+    public double zStart;
+    public double burstXd, burstYd, burstZd;
+    public final Entity targetEntity; // may be null
+    public final int burstTicks;
+    public final SpriteSet sprites;
 
-    public EnderniumBit(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, Player player) {
-        super(level, x, y, z);
+    public EnderniumBit(
+            ClientLevel level,
+            double x, double y, double z,
+            double xSpeed, double ySpeed, double zSpeed,
+            Entity target,
+            SpriteSet sprites
+    ) {
+        // SingleQuadParticle needs an initial TextureAtlasSprite up-front.
+        super(level, x, y, z, xSpeed, ySpeed, zSpeed, sprites.first());
+
+        this.sprites = sprites;
+
         this.xStart = x;
         this.yStart = y;
         this.zStart = z;
+
         this.burstXd = xSpeed;
         this.burstYd = ySpeed;
         this.burstZd = zSpeed;
-        this.targetEntity = player;
-        this.lifetime = (int)(Math.random() * 10.0) + 40;
-        this.burstTicks = (int) (this.lifetime * 0.1); // 30% of lifetime bursting outward
+
+        this.targetEntity = target;
+
+        this.lifetime = (int) (Math.random() * 10.0) + 40;
+        this.burstTicks = (int) (this.lifetime * 0.1); // 10% burst phase
 
         this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F);
-        float f = this.random.nextFloat() * 0.6F + 0.4F;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.xd = xSpeed;
-        this.yd = ySpeed;
-        this.zd = zSpeed;
-        this.rCol = 1f;
-        this.gCol = 1f;
-        this.bCol = 1f;
-        this.lifetime = (int)(Math.random() * 10.0) + 40;
 
+        // Colour (white) + fullbright-ish light value below.
+        this.rCol = 1.0F;
+        this.gCol = 1.0F;
+        this.bCol = 1.0F;
+        this.alpha = 1.0F;
+
+        // Optional: particles usually ignore physics unless you want collisions.
+        this.hasPhysics = false;
+
+        // Ensure sprite UVs are correct from frame 0.
+        this.setSpriteFromAge(this.sprites);
     }
 
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    @Override
+    protected Layer getLayer() {
+        // Replacement for PARTICLE_SHEET_TRANSLUCENT
+        return Layer.TRANSLUCENT;
     }
 
-    public void move(double x, double y, double z) {
-        this.setBoundingBox(this.getBoundingBox().move(x, y, z));
-        this.setLocationFromBoundingbox();
+    @Override
+    public int getLightColor(float partialTick) {
+        // Same as your original: bright.
+        return 0xF000F0;
     }
 
+    @Override
     public float getQuadSize(float scaleFactor) {
-        float f = ((float)this.age + scaleFactor) / (float)this.lifetime;
+        float f = ((float) this.age + scaleFactor) / (float) this.lifetime;
         f = 1.0F - f;
         f *= f;
         f = 1.0F - f;
@@ -60,75 +82,82 @@ public class EnderniumBit extends TextureSheetParticle {
     }
 
     @Override
-    protected void renderRotatedQuad(VertexConsumer buffer, Camera camera, Quaternionf quaternion, float partialTicks) {
-        float roll = (this.age + partialTicks) * 0.2f;
-        quaternion.rotateZ(roll);
-        super.renderRotatedQuad(buffer, camera, quaternion, partialTicks);
-    }
-
-    @Override
-    public int getLightColor(float partialTick) {
-        return 0xF000F0;
-    }
-
-
-    @Override
     public void tick() {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
+
+        // Drive rotation here (instead of renderRotatedQuad override)
+        this.oRoll = this.roll;
+        this.roll += 0.2F;
 
         if (this.age++ >= this.lifetime) {
             this.remove();
             return;
         }
 
-        if (this.targetEntity != null) {
+        // Update sprite for animated spritesheets
+        this.setSpriteFromAge(this.sprites);
+
+        Entity target = this.targetEntity;
+        if (target != null && !target.isRemoved()) {
             if (this.age < this.burstTicks) {
-                // Phase 1: burst outwards
-                this.x = xStart + burstXd * this.age;
-                this.y = yStart + burstYd * this.age;
-                this.z = zStart + burstZd * this.age;
+                // Phase 1: burst outward
+                this.x = this.xStart + this.burstXd * this.age;
+                this.y = this.yStart + this.burstYd * this.age;
+                this.z = this.zStart + this.burstZd * this.age;
             } else {
-                // Phase 2: home in, always reaching player at expiry
-                double burstEndX = xStart + burstXd * burstTicks;
-                double burstEndY = yStart + burstYd * burstTicks;
-                double burstEndZ = zStart + burstZd * burstTicks;
+                // Phase 2: home in, reaching target at expiry
+                double burstEndX = this.xStart + this.burstXd * this.burstTicks;
+                double burstEndY = this.yStart + this.burstYd * this.burstTicks;
+                double burstEndZ = this.zStart + this.burstZd * this.burstTicks;
 
-                double targetX = targetEntity.getX();
-                double targetY = targetEntity.getY() + targetEntity.getBbHeight() * 0.6;
-                double targetZ = targetEntity.getZ();
+                double targetX = target.getX();
+                double targetY = target.getY() + target.getBbHeight() * 0.6;
+                double targetZ = target.getZ();
 
-                float lerpT = (float)(this.age - burstTicks) / (float)(this.lifetime - burstTicks);
-                lerpT = Math.min(lerpT, 1.0f); // Clamp just in case
+                float lerpT = (float) (this.age - this.burstTicks) / (float) (this.lifetime - this.burstTicks);
+                if (lerpT > 1.0F) lerpT = 1.0F;
 
                 this.x = burstEndX + (targetX - burstEndX) * lerpT;
                 this.y = burstEndY + (targetY - burstEndY) * lerpT;
                 this.z = burstEndZ + (targetZ - burstEndZ) * lerpT;
             }
+
             this.setPos(this.x, this.y, this.z);
         } else {
-            // No player—just float along as usual
-            this.x += burstXd;
-            this.y += burstYd;
-            this.z += burstZd;
+            // No target (or it vanished) — drift normally
+            this.x += this.burstXd;
+            this.y += this.burstYd;
+            this.z += this.burstZd;
             this.setPos(this.x, this.y, this.z);
         }
     }
-    public static class Provider implements ParticleProvider<SimpleParticleType> {
-        private final SpriteSet sprite;
 
-        public Provider(SpriteSet sprite) {
-            this.sprite = sprite;
+    public static class Provider implements ParticleProvider<SimpleParticleType> {
+        private final SpriteSet sprites;
+
+        public Provider(SpriteSet sprites) {
+            this.sprites = sprites;
         }
 
-        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            Player player = level.getNearestPlayer(x, y, z, 32, null); // 32 blocks radius, no filter
-            EnderniumBit bit = new EnderniumBit(level, x, y, z, xSpeed, ySpeed, zSpeed, player);
-            bit.pickSprite(this.sprite);
-            return bit;
+        @Override
+        public @Nullable Particle createParticle(
+                SimpleParticleType type,
+                ClientLevel level,
+                double x, double y, double z,
+                double xSpeed, double ySpeed, double zSpeed,
+                RandomSource random
+        ) {
+            Player player = level.getNearestPlayer(x, y, z, 32.0, false);
+            return new EnderniumBit(
+                    level,
+                    x, y, z,
+                    xSpeed, ySpeed, zSpeed,
+                    player,
+                    this.sprites
+            );
         }
 
     }
-
 }

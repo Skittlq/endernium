@@ -60,5 +60,8 @@ public class ModItemTagProvider extends ItemTagsProvider {
                 .add(ModItems.ENDERNIUM_CHESTPLATE.get())
                 .add(ModItems.ENDERNIUM_LEGGINGS.get())
                 .add(ModItems.ENDERNIUM_BOOTS.get());
+
+        tag(ItemTags.TRIM_MATERIALS)
+                .add(ModItems.ENDERNIUM_INGOT.get());
     }
 }

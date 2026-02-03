@@ -5,11 +5,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record CameraLerpPayload(float targetYaw, float targetPitch, int durationTicks) implements CustomPacketPayload {
 
-    public static final Type<CameraLerpPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Endernium.MODID, "camera_lerp"));
+    public static final Type<CameraLerpPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Endernium.MODID, "camera_lerp"));
 
     public static final StreamCodec<FriendlyByteBuf, CameraLerpPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, CameraLerpPayload::targetYaw,

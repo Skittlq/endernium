@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoeItem;
@@ -20,11 +21,15 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 public class EnderniumHoe extends HoeItem {
     public static final String VEIN_MINING_KEY = "VeinMiningEnabled";
+    public static final String VEIN_MINING_NOTIFIED_KEY = "VeinMiningNotified";
     public static final int MAX_BLOCKS = 64;
 
     public EnderniumHoe(Properties properties) {
@@ -38,6 +43,7 @@ public class EnderniumHoe extends HoeItem {
 
     public static void setVeinMiningEnabled(ItemStack stack, boolean enabled) {
         CompoundTag tag = getOrCreateCustomDataTag(stack);
+        tag.remove(VEIN_MINING_NOTIFIED_KEY);
         tag.putByte(VEIN_MINING_KEY, (byte) (enabled ? 1 : 0));
         stack.set(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
     }
@@ -55,7 +61,7 @@ public class EnderniumHoe extends HoeItem {
             boolean enabled = !isVeinMiningEnabled(stack);
             setVeinMiningEnabled(stack, enabled);
 
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 player.displayClientMessage(
                         Component.literal("Vein Mining: " + (enabled ? "Enabled" : "Disabled"))
                                 .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY),
@@ -71,7 +77,7 @@ public class EnderniumHoe extends HoeItem {
         // If not shift, cancel all vein mining operations
         cancelVeinMining(stack);
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             player.displayClientMessage(
                     Component.literal("Cancelled all vein mining operations")
                             .withStyle(ChatFormatting.GRAY),
@@ -120,5 +126,33 @@ public class EnderniumHoe extends HoeItem {
         tooltipAdder.accept(Component.literal("§7Works on blocks that the tool can mine."));
 
         super.appendHoverText(stack, context, display, tooltipAdder, flag);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
+
+        if (level.isClientSide() || !(entity instanceof Player player)) return;
+
+        boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
+        CompoundTag tag = getOrCreateCustomDataTag(stack);
+        boolean notified = tag.getBooleanOr(VEIN_MINING_NOTIFIED_KEY, false);
+
+        if (!inHand || !isVeinMiningEnabled(stack)) {
+            if (notified) {
+                tag.remove(VEIN_MINING_NOTIFIED_KEY);
+                stack.set(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
+            }
+            return;
+        }
+
+        if (!notified) {
+            player.displayClientMessage(
+                    Component.literal("Vein Mining is Enabled").withStyle(ChatFormatting.LIGHT_PURPLE),
+                    true
+            );
+            tag.putByte(VEIN_MINING_NOTIFIED_KEY, (byte) 1);
+            stack.set(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
+        }
     }
 }

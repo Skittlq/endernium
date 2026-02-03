@@ -28,7 +28,7 @@ public class DataGenerators {
                 lookupProvider,
                 List.of(new ModAdvancementProvider()) // add your generator here
         ));
-
+        // Trim materials now handled inside ModDatapackProvider (single Registries provider)
     }
 
     @SubscribeEvent
@@ -45,7 +45,5 @@ public class DataGenerators {
                 lookupProvider,
                 List.of(new ModAdvancementProvider()) // add your generator here
         ));
-
-
     }
 }
