@@ -2,7 +2,6 @@ package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.Config;
 import com.skittlq.endernium.particles.ModParticles;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -66,27 +65,6 @@ public class EnderniumHelmet extends Item {
 
             long cooldownTicks = 20 * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong();
             long elapsedTicks = currentTime - abilityLastUsed;
-            float cooldownFraction = Math.min(elapsedTicks / (float) cooldownTicks, 1.0f);
-
-            if (elapsedTicks < cooldownTicks) {
-                int totalBars = 20;
-                int filledBars = Math.round(cooldownFraction * totalBars);
-
-                StringBuilder bar = new StringBuilder();
-                bar.append(ChatFormatting.DARK_PURPLE).append("[");
-                for (int i = 0; i < totalBars; i++) {
-                    if (i < filledBars) {
-                        bar.append(ChatFormatting.LIGHT_PURPLE).append("|");
-                    } else {
-                        bar.append(ChatFormatting.GRAY).append("|");
-                    }
-                }
-                bar.append(ChatFormatting.DARK_PURPLE).append("] ");
-                int percent = Math.round(cooldownFraction * 100f);
-                bar.append(ChatFormatting.GRAY).append(percent).append("%");
-
-                player.sendOverlayMessage(Component.literal(bar.toString()));
-            }
 
             float health = player.getHealth();
             float maxHealth = player.getMaxHealth();
@@ -140,6 +118,8 @@ public class EnderniumHelmet extends Item {
                 ));
 
                 player.getPersistentData().putLong("EnderniumArmorCooldown", currentTime);
+                int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
+                player.getCooldowns().addCooldown(player.getItemBySlot(EquipmentSlot.CHEST), cooldownTicksInt);
 
                 level.playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.DRAGON_FIREBALL_EXPLODE, player.getSoundSource(), 1.0F, 1.0F);

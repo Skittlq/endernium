@@ -1,13 +1,21 @@
 package com.skittlq.endernium.client;
 
+import com.skittlq.endernium.Config;
+import com.skittlq.endernium.Endernium;
+import com.skittlq.endernium.item.ModItems;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.particles.ModParticles;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +28,11 @@ import java.util.HashSet;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class ClientEvents {
+    private static final Identifier ARMOR_COOLDOWN_ICON = Identifier.fromNamespaceAndPath(
+            Endernium.MODID,
+            "textures/item/endernium_chestplate.png"
+    );
+    private static final int ARMOR_ICON_SIZE = 16;
     private static final Set<EntityType<?>> EXTRA_HOSTILES = new HashSet<>(Set.of(
             EntityType.PHANTOM,
             EntityType.SHULKER,
@@ -95,6 +108,68 @@ public class ClientEvents {
                 );
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onRenderGui(RenderGuiEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null || !Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean()) return;
+
+        ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
+        if (!isWearingFullEnderniumSet(player) || !chestStack.is(ModItems.ENDERNIUM_CHESTPLATE.get())) return;
+
+        float cooldownRemaining = player.getCooldowns().getCooldownPercent(chestStack, 0.0F);
+        if (cooldownRemaining <= 0.0F) return;
+
+        float cooldownProgress = 1.0F - cooldownRemaining;
+        int screenWidth = event.getGuiGraphics().guiWidth();
+        int screenHeight = event.getGuiGraphics().guiHeight();
+
+        int hotbarLeft = screenWidth / 2 - 91;
+        int hotbarTop = screenHeight - 22;
+        int x = hotbarLeft - ARMOR_ICON_SIZE - 4;
+        int y = hotbarTop + (22 - ARMOR_ICON_SIZE) / 2;
+
+        var gui = event.getGuiGraphics();
+        gui.blit(
+                RenderPipelines.GUI_TEXTURED,
+                ARMOR_COOLDOWN_ICON,
+                x,
+                y,
+                0,
+                0,
+                ARMOR_ICON_SIZE,
+                ARMOR_ICON_SIZE,
+                ARMOR_ICON_SIZE,
+                ARMOR_ICON_SIZE,
+                ARGB.white(0.5F)
+        );
+
+        int fillHeight = Math.max(0, Math.min(ARMOR_ICON_SIZE, Math.round(cooldownProgress * ARMOR_ICON_SIZE)));
+        if (fillHeight > 0) {
+            int sourceY = ARMOR_ICON_SIZE - fillHeight;
+            gui.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    ARMOR_COOLDOWN_ICON,
+                    x,
+                    y + sourceY,
+                    0,
+                    sourceY,
+                    ARMOR_ICON_SIZE,
+                    fillHeight,
+                    ARMOR_ICON_SIZE,
+                    ARMOR_ICON_SIZE,
+                    -1
+            );
+        }
+    }
+
+    private static boolean isWearingFullEnderniumSet(Player player) {
+        return player.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.ENDERNIUM_HELMET.get())
+                && player.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.ENDERNIUM_CHESTPLATE.get())
+                && player.getItemBySlot(EquipmentSlot.LEGS).is(ModItems.ENDERNIUM_LEGGINGS.get())
+                && player.getItemBySlot(EquipmentSlot.FEET).is(ModItems.ENDERNIUM_BOOTS.get());
     }
 
 }
