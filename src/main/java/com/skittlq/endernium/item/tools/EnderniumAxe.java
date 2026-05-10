@@ -73,13 +73,16 @@ public class EnderniumAxe extends AxeItem {
         }
 
         // If not shift, cancel all vein mining operations
+        boolean hadActiveOperation = EnderniumUtils.hasActiveVeinMiningOperation(stack);
         EnderniumUtils.cancelVeinMining(stack);
 
         if (!level.isClientSide()) {
-            player.sendOverlayMessage(
-                    Component.literal("Cancelled all vein mining operations")
-                            .withStyle(ChatFormatting.GRAY)
-            );
+            if (hadActiveOperation) {
+                player.sendOverlayMessage(
+                        Component.literal("Cancelled all vein mining operations")
+                                .withStyle(ChatFormatting.GRAY)
+                );
+            }
             level.playSound(null, player.blockPosition(),
                     SoundEvents.ENCHANTMENT_TABLE_USE,
                     SoundSource.PLAYERS, 0.25f, 1.0f);

@@ -159,6 +159,11 @@ public class EnderniumUtils {
         stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
     }
 
+    public static boolean hasActiveVeinMiningOperation(ItemStack stack) {
+        CompoundTag tag = getOrCreateCustomDataTag(stack);
+        return tag.contains(VEIN_MINING_SESSION_ID_KEY);
+    }
+
     public static CompoundTag getOrCreateCustomDataTag(ItemStack stack) {
         var data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
         return data != null ? data.copyTag() : new CompoundTag();
