@@ -143,7 +143,7 @@ public class ClientEvents {
                 ARMOR_ICON_SIZE,
                 ARMOR_ICON_SIZE,
                 ARMOR_ICON_SIZE,
-                ARGB.white(0.5F)
+                ARGB.white(0.15F)
         );
 
         int fillHeight = Math.max(0, Math.min(ARMOR_ICON_SIZE, Math.round(cooldownProgress * ARMOR_ICON_SIZE)));
