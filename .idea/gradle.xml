@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/fabric" />
+        <option name="modules">
+          <set>
+            <option value="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric" />
+          </set>
+        </option>
+        <option name="resolveExternalAnnotations" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/neoforge" />
+        <option name="gradleJvm" value="temurin-25" />
+        <option name="modules">
+          <set>
+            <option value="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge" />
+          </set>
+        </option>
+        <option name="resolveExternalAnnotations" value="true" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.main.iml" filepath="$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.test.iml" filepath="$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/endernium.iml" filepath="$PROJECT_DIR$/.idea/endernium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1794898701/neoforge.iml" filepath="$PROJECT_DIR$/.idea/modules/1794898701/neoforge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1794898701/neoforge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1794898701/neoforge.main.iml" />
+    </modules>
+  </component>
+</project>
