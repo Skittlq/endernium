@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/generated/resources/data/endernium/tags/block/incorrect_for_endernium_tool.json">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/generated/resources/data/endernium/tags/block/incorrect_for_endernium_tool.json" />
+              <option name="updatedContent" value="{&#10;  &quot;replace&quot;: false,&#10;  &quot;values&quot;: []&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/generated/resources/data/endernium/tags/block/needs_endernium_tool.json">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/generated/resources/data/endernium/tags/block/needs_endernium_tool.json" />
+              <option name="updatedContent" value="{&#10;  &quot;replace&quot;: false,&#10;  &quot;values&quot;: []&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

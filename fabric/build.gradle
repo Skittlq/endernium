@@ -6,16 +6,30 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+sourceSets {
+	main {
+		resources {
+			srcDir "src/generated/resources"
+			exclude ".cache/**"
+		}
+	}
+}
+
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+		content {
+			includeGroup "maven.modrinth"
+		}
+	}
 }
 
 fabricApi {
 	configureDataGeneration {
+		outputDirectory = file("src/generated/resources")
+		addToResources = false
+		createSourceSet = false
 		client = true
 	}
 }
@@ -28,10 +42,14 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "maven.modrinth:cloth-config:${project.cloth_config_version}"
+	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+	runtimeOnly "maven.modrinth:modmenu:${project.modmenu_version}"
 	
 }
 
 processResources {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	def version = project.version
 	inputs.property "version", version
 
@@ -42,6 +60,10 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 25
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 java {

@@ -3,20 +3,25 @@
 	"id": "endernium",
 	"version": "${version}",
 	"name": "Endernium",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Adds Endernium, an endgame material beyond Netherite, with powerful tools, armor, and supporting content.",
 	"authors": [
-		"Me!"
+		"Skittlq"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/skittlq/endernium"
 	},
-	"license": "CC0-1.0",
+	"license": "All Rights Reserved",
 	"icon": "assets/endernium/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"com.skittlq.endernium.Endernium"
+		],
+		"client": [
+			"com.skittlq.endernium.EnderniumClient"
+		],
+		"modmenu": [
+			"com.skittlq.endernium.client.EnderniumModMenuIntegration"
 		],
 		"fabric-datagen": [
 			"com.skittlq.endernium.EnderniumDataGenerator"
@@ -29,6 +34,10 @@
 		"fabricloader": ">=0.19.2",
 		"minecraft": "~26.1.2",
 		"java": ">=25",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"cloth-config": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }

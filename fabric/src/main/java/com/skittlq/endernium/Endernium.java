@@ -1,5 +1,16 @@
 package com.skittlq.endernium;
 
+import com.skittlq.endernium.advancement.ModCriteriaTriggers;
+import com.skittlq.endernium.block.ModBlocks;
+import com.skittlq.endernium.config.EnderniumConfigManager;
+import com.skittlq.endernium.item.ModCreativeModeTabs;
+import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
+import com.skittlq.endernium.loot.ModLootModifiers;
+import com.skittlq.endernium.network.ModNetworking;
+import com.skittlq.endernium.particles.ModParticles;
+import com.skittlq.endernium.util.EnderniumTickScheduler;
+import com.skittlq.endernium.worldgen.ModWorldgen;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -8,17 +19,20 @@ import org.slf4j.LoggerFactory;
 public class Endernium implements ModInitializer {
 	public static final String MOD_ID = "endernium";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-
-		LOGGER.info("Hello Fabric world!");
+		EnderniumConfigManager.load();
+		ModCreativeModeTabs.registerModCreativeModeTabs();
+		ModBlocks.register();
+        ModItems.register();
+		ModParticles.register();
+		ModNetworking.register();
+		ModCriteriaTriggers.register();
+		ModWorldgen.register();
+		ModLootModifiers.register();
+		EnderniumTickScheduler.register();
+		EnderniumArmorAbilityHandler.register();
 	}
 }
