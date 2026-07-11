@@ -28,6 +28,7 @@ public class ModModelProvider extends ModelProvider {
         itemModels.generateFlatItem(ModItems.ENDERNIUM_SHOVEL.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_SWORD.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_HOE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        itemModels.generateSpear(ModItems.ENDERNIUM_SPEAR.get());
 
         /* BLOCKS */
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_BLOCK.get());
@@ -37,6 +38,8 @@ public class ModModelProvider extends ModelProvider {
         itemModels.generateTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/chestplate_trim"), false);
         itemModels.generateTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/leggings_trim"), false);
         itemModels.generateTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL.assetId(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/boots_trim"), false);
+        itemModels.generateFlatItem(ModItems.ENDERNIUM_HORSE_ARMOR.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(ModItems.ENDERNIUM_NAUTILUS_ARMOR.get(), ModelTemplates.FLAT_ITEM);
     }
 
 }

@@ -3,7 +3,7 @@ package com.skittlq.endernium.datagen;
 import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
 import com.skittlq.endernium.item.ModItems;
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
+import net.minecraft.advancements.triggers.InventoryChangeTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.advancements.*;
 import net.minecraft.network.chat.Component;

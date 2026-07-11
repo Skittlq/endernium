@@ -4,7 +4,7 @@
       "type": "minecraft:paletted_permutations",
       "palette_key": "minecraft:trims/color_palettes/trim_palette",
       "permutations": {
-        "rainbow": "endernium:trims/color_palettes/endernium"
+        "endernium": "endernium:trims/color_palettes/endernium"
       },
       "textures": [
         "minecraft:trims/entity/humanoid/sentry",

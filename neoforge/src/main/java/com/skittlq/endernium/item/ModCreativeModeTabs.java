@@ -28,11 +28,14 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ENDERNIUM_PICKAXE.get());
                         output.accept(ModItems.ENDERNIUM_SHOVEL.get());
                         output.accept(ModItems.ENDERNIUM_SWORD.get());
+                        output.accept(ModItems.ENDERNIUM_SPEAR.get());
                         output.accept(ModItems.ENDERNIUM_UPGRADE_SMITHING_TEMPLATE.get());
                         output.accept(ModItems.ENDERNIUM_HELMET.get());
                         output.accept(ModItems.ENDERNIUM_CHESTPLATE.get());
                         output.accept(ModItems.ENDERNIUM_LEGGINGS.get());
                         output.accept(ModItems.ENDERNIUM_BOOTS.get());
+                        output.accept(ModItems.ENDERNIUM_HORSE_ARMOR.get());
+                        output.accept(ModItems.ENDERNIUM_NAUTILUS_ARMOR.get());
                     }
                 ).build());
 

@@ -19,6 +19,7 @@ public class ModArmorMaterial {
                 map.put(ArmorType.LEGGINGS, 7);
                 map.put(ArmorType.CHESTPLATE, 9);
                 map.put(ArmorType.HELMET, 4);
+                map.put(ArmorType.BODY, 20);
             }),
             20,
             SoundEvents.ARMOR_EQUIP_DIAMOND,

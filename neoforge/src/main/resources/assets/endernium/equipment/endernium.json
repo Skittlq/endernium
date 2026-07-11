@@ -1,11 +1,21 @@
 {
   "layers": {
+    "horse_body": [
+      {
+        "texture": "endernium:endernium"
+      }
+    ],
     "humanoid": [
       {
         "texture": "endernium:endernium"
       }
     ],
     "humanoid_leggings": [
+      {
+        "texture": "endernium:endernium"
+      }
+    ],
+    "nautilus_body": [
       {
         "texture": "endernium:endernium"
       }

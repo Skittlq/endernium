@@ -40,12 +40,13 @@ public class EnderniumBit extends SingleQuadParticle {
         this.burstYd = ySpeed;
         this.burstZd = zSpeed;
 
+
         this.targetEntity = target;
 
         this.lifetime = (int) (Math.random() * 10.0) + 40;
         this.burstTicks = (int) (this.lifetime * 0.1); // 10% burst phase
 
-        this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F);
+        this.quadSize = 0.0175F * (this.random.nextFloat() * 0.2F + 0.5F);
 
         // Colour (white) + fullbright-ish light value below.
         this.rCol = 1.0F;

@@ -2,12 +2,13 @@ package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.Config;
 import com.skittlq.endernium.particles.ModParticles;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
@@ -28,19 +29,19 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class EnderniumHelmet extends Item {
-    private static final Set<EntityType<?>> EXTRA_AFFECTED_MOBS = new HashSet<>(Set.of(
-            EntityType.PHANTOM,
-            EntityType.SHULKER,
-            EntityType.VEX,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN,
-            EntityType.GHAST,
-            EntityType.PIGLIN,
-            EntityType.PIGLIN_BRUTE,
-            EntityType.SLIME,
-            EntityType.MAGMA_CUBE
+    private static final Set<Identifier> EXTRA_AFFECTED_MOBS = new HashSet<>(Set.of(
+            Identifier.withDefaultNamespace("phantom"),
+            Identifier.withDefaultNamespace("shulker"),
+            Identifier.withDefaultNamespace("vex"),
+            Identifier.withDefaultNamespace("ender_dragon"),
+            Identifier.withDefaultNamespace("wither"),
+            Identifier.withDefaultNamespace("warden"),
+            Identifier.withDefaultNamespace("elder_guardian"),
+            Identifier.withDefaultNamespace("ghast"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("piglin_brute"),
+            Identifier.withDefaultNamespace("slime"),
+            Identifier.withDefaultNamespace("magma_cube")
     ));
 
     public EnderniumHelmet(Properties properties) {
@@ -94,7 +95,7 @@ public class EnderniumHelmet extends Item {
                 List<Mob> hostiles = level.getEntitiesOfClass(
                         Mob.class,
                         player.getBoundingBox().inflate(radius),
-                        mob -> mob.isAlive() && (mob instanceof Monster || EXTRA_AFFECTED_MOBS.contains(mob.getType()))
+                        mob -> mob.isAlive() && (mob instanceof Monster || EXTRA_AFFECTED_MOBS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType())))
                 );
 
                 for (var mob : hostiles) {

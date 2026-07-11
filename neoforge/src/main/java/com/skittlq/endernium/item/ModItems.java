@@ -5,6 +5,7 @@ import com.skittlq.endernium.item.armor.EnderniumBoots;
 import com.skittlq.endernium.item.armor.EnderniumChestplate;
 import com.skittlq.endernium.item.armor.EnderniumHelmet;
 import com.skittlq.endernium.item.armor.EnderniumLeggings;
+import com.skittlq.endernium.item.armor.ModArmorMaterial;
 import com.skittlq.endernium.item.tools.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -34,7 +35,10 @@ public class ModItems {
                         Identifier.withDefaultNamespace("container/slot/chestplate"),
                         Identifier.withDefaultNamespace("container/slot/leggings"),
                         Identifier.withDefaultNamespace("container/slot/boots"),
+                        Identifier.withDefaultNamespace("container/slot/horse_armor"),
+                        Identifier.withDefaultNamespace("container/slot/nautilus_armor"),
                         Identifier.withDefaultNamespace("container/slot/sword"),
+                        Identifier.withDefaultNamespace("container/slot/spear"),
                         Identifier.withDefaultNamespace("container/slot/axe"),
                         Identifier.withDefaultNamespace("container/slot/shovel"),
                         Identifier.withDefaultNamespace("container/slot/pickaxe"),
@@ -54,6 +58,8 @@ public class ModItems {
 //            (properties) -> new Item(properties.stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
     public static final DeferredItem<Item> ENDERNIUM_SWORD = ITEMS.registerItem("endernium_sword",
             (properties) -> new EnderniumSword(properties.sword(ModToolTiers.ENDERNIUM, 3.0F, -2.4F).fireResistant()));
+    public static final DeferredItem<Item> ENDERNIUM_SPEAR = ITEMS.registerItem("endernium_spear",
+            (properties) -> new Item(properties.spear(ModToolTiers.ENDERNIUM, 1.15F, 1.2F, 0.4F, 2.5F, 9.0F, 5.5F, 5.1F, 8.75F, 4.6F).fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_PICKAXE = ITEMS.registerItem("endernium_pickaxe",
             (properties) -> new EnderniumPickaxe(properties.pickaxe(ModToolTiers.ENDERNIUM, 1.0F, -2.8F).fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_SHOVEL = ITEMS.registerItem("endernium_shovel",
@@ -75,6 +81,10 @@ public class ModItems {
     public static final DeferredItem<Item> ENDERNIUM_BOOTS = ITEMS.registerItem("endernium_boots",
             EnderniumBoots::new
             );
+    public static final DeferredItem<Item> ENDERNIUM_HORSE_ARMOR = ITEMS.registerItem("endernium_horse_armor",
+            (properties) -> new Item(properties.horseArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()));
+    public static final DeferredItem<Item> ENDERNIUM_NAUTILUS_ARMOR = ITEMS.registerItem("endernium_nautilus_armor",
+            (properties) -> new Item(properties.nautilusArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()));
 
 
     public static void register(IEventBus eventBus) {

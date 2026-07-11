@@ -6,8 +6,10 @@ import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -35,19 +37,19 @@ public class EnderniumSword extends Item {
     private static final Map<UUID, List<Integer>> activeTasks = new HashMap<>();
     private static final Map<UUID, AtomicInteger> mobsHitMap = new HashMap<>();
 
-    private static final Set<EntityType<?>> EXTRA_HOSTILES = new HashSet<>(Set.of(
-            EntityType.PHANTOM,
-            EntityType.SHULKER,
-            EntityType.VEX,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN,
-            EntityType.GHAST,
-            EntityType.PIGLIN,
-            EntityType.PIGLIN_BRUTE,
-            EntityType.SLIME,
-            EntityType.MAGMA_CUBE
+    private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
+            Identifier.withDefaultNamespace("phantom"),
+            Identifier.withDefaultNamespace("shulker"),
+            Identifier.withDefaultNamespace("vex"),
+            Identifier.withDefaultNamespace("ender_dragon"),
+            Identifier.withDefaultNamespace("wither"),
+            Identifier.withDefaultNamespace("warden"),
+            Identifier.withDefaultNamespace("elder_guardian"),
+            Identifier.withDefaultNamespace("ghast"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("piglin_brute"),
+            Identifier.withDefaultNamespace("slime"),
+            Identifier.withDefaultNamespace("magma_cube")
     ));
 
     public EnderniumSword(Properties properties) {
@@ -79,7 +81,7 @@ public class EnderniumSword extends Item {
                         playerPos.x + range, playerPos.y + 2, playerPos.z + range
                 ),
                 mob -> {
-                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(mob.getType())) {
+                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
                         return false;
                     }
                     Vec3 toMob = mob.position().add(0, mob.getBbHeight() / 2, 0).subtract(playerPos);
@@ -144,7 +146,7 @@ public class EnderniumSword extends Item {
                         playerPos.x + range, playerPos.y + 2, playerPos.z + range
                 ),
                 mob -> {
-                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(mob.getType())) {
+                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
                         return false;
                     }
                     Vec3 toMob = mob.position().add(0, mob.getBbHeight() / 2, 0).subtract(playerPos);

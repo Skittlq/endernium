@@ -13,10 +13,13 @@
   "item.endernium.endernium_shovel": "§dEndernium Shovel",
   "item.endernium.endernium_hoe": "§dEndernium Hoe",
   "item.endernium.endernium_sword": "§dEndernium Sword",
+  "item.endernium.endernium_spear": "§dEndernium Spear",
   "item.endernium.endernium_helmet": "§dEndernium Helmet",
   "item.endernium.endernium_chestplate": "§dEndernium Chestplate",
   "item.endernium.endernium_leggings": "§dEndernium Leggings",
   "item.endernium.endernium_boots": "§dEndernium Boots",
+  "item.endernium.endernium_horse_armor": "§dEndernium Horse Armor",
+  "item.endernium.endernium_nautilus_armor": "§dEndernium Nautilus Armor",
 
   "upgrade.minecraft.endernium_upgrade.applies_to": "§9Netherite Equipment",
   "upgrade.minecraft.endernium_upgrade.ingredients": "§9Endernium Ingot",

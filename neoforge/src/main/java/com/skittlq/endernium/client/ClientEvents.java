@@ -3,6 +3,7 @@ package com.skittlq.endernium.client;
 import com.skittlq.endernium.Config;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.ModItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
@@ -19,7 +20,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import java.util.List;
@@ -33,19 +33,19 @@ public class ClientEvents {
             "textures/item/endernium_chestplate.png"
     );
     private static final int ARMOR_ICON_SIZE = 16;
-    private static final Set<EntityType<?>> EXTRA_HOSTILES = new HashSet<>(Set.of(
-            EntityType.PHANTOM,
-            EntityType.SHULKER,
-            EntityType.VEX,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN,
-            EntityType.GHAST,
-            EntityType.PIGLIN,
-            EntityType.PIGLIN_BRUTE,
-            EntityType.SLIME,
-            EntityType.MAGMA_CUBE
+    private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
+            Identifier.withDefaultNamespace("phantom"),
+            Identifier.withDefaultNamespace("shulker"),
+            Identifier.withDefaultNamespace("vex"),
+            Identifier.withDefaultNamespace("ender_dragon"),
+            Identifier.withDefaultNamespace("wither"),
+            Identifier.withDefaultNamespace("warden"),
+            Identifier.withDefaultNamespace("elder_guardian"),
+            Identifier.withDefaultNamespace("ghast"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("piglin_brute"),
+            Identifier.withDefaultNamespace("slime"),
+            Identifier.withDefaultNamespace("magma_cube")
     ));
 
     @SubscribeEvent
@@ -81,7 +81,7 @@ public class ClientEvents {
                         playerPos.x + range, playerPos.y + 2, playerPos.z + range
                 ),
                 mob -> {
-                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(mob.getType())) {
+                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
                         return false;
                     }
                     Vec3 toMob = mob.position().add(0, mob.getBbHeight() / 2, 0).subtract(playerPos);
