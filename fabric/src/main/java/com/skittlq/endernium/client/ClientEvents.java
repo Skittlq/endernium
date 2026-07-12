@@ -8,12 +8,12 @@ import com.skittlq.endernium.particles.ModParticles;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
@@ -33,19 +33,19 @@ public final class ClientEvents {
     );
     private static final Identifier ARMOR_COOLDOWN_HUD = Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "armor_cooldown_hud");
     private static final int ARMOR_ICON_SIZE = 16;
-    private static final Set<EntityType<?>> EXTRA_HOSTILES = new HashSet<>(Set.of(
-            EntityType.PHANTOM,
-            EntityType.SHULKER,
-            EntityType.VEX,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN,
-            EntityType.GHAST,
-            EntityType.PIGLIN,
-            EntityType.PIGLIN_BRUTE,
-            EntityType.SLIME,
-            EntityType.MAGMA_CUBE
+        private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
+            Identifier.withDefaultNamespace("phantom"),
+            Identifier.withDefaultNamespace("shulker"),
+            Identifier.withDefaultNamespace("vex"),
+            Identifier.withDefaultNamespace("ender_dragon"),
+            Identifier.withDefaultNamespace("wither"),
+            Identifier.withDefaultNamespace("warden"),
+            Identifier.withDefaultNamespace("elder_guardian"),
+            Identifier.withDefaultNamespace("ghast"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("piglin_brute"),
+            Identifier.withDefaultNamespace("slime"),
+            Identifier.withDefaultNamespace("magma_cube")
     ));
     private static boolean registered;
 
@@ -98,7 +98,7 @@ public final class ClientEvents {
                         playerPos.x + range, playerPos.y + 2.0D, playerPos.z + range
                 ),
                 mob -> {
-                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(mob.getType())) {
+                    if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
                         return false;
                     }
                     Vec3 toMob = mob.position().add(0.0D, mob.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
@@ -148,7 +148,17 @@ public final class ClientEvents {
         int x = hotbarLeft - ARMOR_ICON_SIZE - 4;
         int y = hotbarTop + (22 - ARMOR_ICON_SIZE) / 2;
 
-        gui.fill(x, y, x + ARMOR_ICON_SIZE, y + ARMOR_ICON_SIZE, 0x26000000);
+        gui.blit(RenderPipelines.GUI_TEXTURED,
+            ARMOR_COOLDOWN_ICON,
+            x,
+            y,
+            0.0F,
+            0.0F,
+            ARMOR_ICON_SIZE,
+            ARMOR_ICON_SIZE,
+            ARMOR_ICON_SIZE,
+            ARMOR_ICON_SIZE,
+            0x59FFFFFF);
 
         int fillHeight = Math.max(0, Math.min(ARMOR_ICON_SIZE, Math.round(cooldownProgress * ARMOR_ICON_SIZE)));
         if (fillHeight > 0) {
@@ -164,6 +174,7 @@ public final class ClientEvents {
                     ARMOR_ICON_SIZE,
                     ARMOR_ICON_SIZE);
         }
+
     }
 
     private static boolean isWearingFullEnderniumSet(Player player) {

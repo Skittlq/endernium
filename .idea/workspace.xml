@@ -4,55 +4,107 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="629918e8-cb06-4900-88f0-d96302fa8133" name="Changes" comment="1.21.1 neoforge">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/1794898701/neoforge.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/1794898701/neoforge.main.iml" afterDir="false" />
+    <list default="true" id="629918e8-cb06-4900-88f0-d96302fa8133" name="Changes" comment="26.2 neoforge">
+      <change afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/entity/equipment/horse_body/endernium.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/entity/equipment/nautilus_body/endernium.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/item/endernium_horse_armor.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/item/endernium_nautilus_armor.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/item/endernium_spear.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/item/endernium_spear_in_hand.png" afterDir="false" />
+      <change afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/entity/equipment/horse_body/endernium.png" afterDir="false" />
+      <change afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/entity/equipment/nautilus_body/endernium.png" afterDir="false" />
+      <change afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/item/endernium_horse_armor.png" afterDir="false" />
+      <change afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/item/endernium_nautilus_armor.png" afterDir="false" />
+      <change afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/item/endernium_spear.png" afterDir="false" />
+      <change afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/item/endernium_spear_in_hand.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/-1437938077/com.skittlq.endernium.endernium.test.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/generated/resources/data/minecraft/tags/item/trim_materials.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/generated/resources/data/minecraft/tags/item/trimmable_armor.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/advancement/ModCriteriaTriggers.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/advancement/ModCriteriaTriggers.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/client/ClientEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/client/ClientEvents.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/generated/resources/data/endernium/tags/item/ingots/endernium.json" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/generated/resources/data/endernium/tags/item/ingots/endernium.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/Endernium.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/Endernium.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/attachment/ModAttachments.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/attachment/ModAttachments.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/client/ClientEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/client/ClientEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModBlockTagProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModBlockTagProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/ModItems.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/ModItems.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumArmorAbilityHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumArmorAbilityHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumAxe.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumAxe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumHoe.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumHoe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumPickaxe.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumPickaxe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumShovel.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumShovel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumVeinMiningToolHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumVeinMiningToolHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/util/EnderniumUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/java/com/skittlq/endernium/util/EnderniumUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/lang/en_us.json" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/lang/en_us.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/trims (ignore)/color_palettes/endernium.png" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/resources/assets/endernium/textures/trims/color_palettes/endernium.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/src/main/resources/fabric.mod.json" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/src/main/resources/fabric.mod.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/DataGenerators.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/DataGenerators.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/ModItems.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/ModItems.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/ModArmorMaterial.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/ModArmorMaterial.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/particles/custom/EnderniumBit.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/particles/custom/EnderniumBit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/trim/ModTrimMaterials.java" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/java/com/skittlq/endernium/trim/ModTrimMaterials.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/equipment/endernium.json" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/equipment/endernium.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/lang/en_us.json" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/lang/en_us.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/textures/trims (ignore)/color_palettes/endernium.png" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/resources/assets/endernium/textures/trims/color_palettes/endernium.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neoforge/src/main/resources/assets/minecraft/atlases/armor_trims.json" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/resources/assets/minecraft/atlases/armor_trims.json" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules.xml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules/1794898701/neoforge.main.iml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules/1794898701/neoforge.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neoforge/src/main/templates/META-INF/neoforge.mods.toml" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/src/main/templates/META-INF/neoforge.mods.toml" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/jarRepositories.xml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/misc.xml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules/-1437938077/com.skittlq.endernium.endernium.main.iml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules/-1437938077/com.skittlq.endernium.endernium.main.iml" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules/-1437938077/com.skittlq.endernium.endernium.test.iml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/modules/-1437938077/com.skittlq.endernium.endernium.test.iml" afterDir="false" />
       <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/workspace.xml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/gradle.properties" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/gradle.properties" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/generated/resources/data/minecraft/tags/item/trim_materials.json" beforeDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/generated/resources/data/minecraft/tags/item/trimmable_armor.json" beforeDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/advancement/ModCriteriaTriggers.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/advancement/ModCriteriaTriggers.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/client/ClientEvents.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/client/ClientEvents.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/build.gradle" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/build.gradle" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/gradle.properties" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/gradle.properties" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/generated/resources/data/endernium/tags/item/ingots/endernium.json" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/generated/resources/data/endernium/tags/item/ingots/endernium.json" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/Endernium.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/Endernium.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/advancement/EnderniumSwordSweepTrigger.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/attachment/ModAttachments.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/attachment/ModAttachments.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/client/ClientEvents.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/client/ClientEvents.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModAdvancementProvider.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModBlockTagProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModBlockTagProvider.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/ModItems.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/ModItems.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumArmorAbilityHandler.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumArmorAbilityHandler.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumAxe.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumAxe.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumHoe.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumHoe.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumPickaxe.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumPickaxe.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumShovel.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumShovel.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumVeinMiningToolHelper.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/item/tools/EnderniumVeinMiningToolHelper.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/util/EnderniumUtils.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/java/com/skittlq/endernium/util/EnderniumUtils.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/icon.png" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/icon.png" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/lang/en_us.json" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/lang/en_us.json" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/trims (ignore)/color_palettes/endernium.png" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium/textures/trims/color_palettes/endernium.png" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/fabric.mod.json" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/fabric.mod.json" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/DataGenerators.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/DataGenerators.java" afterDir="false" />
       <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/ModItemTagProvider.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/datagen/ModModelProvider.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/ModCreativeModeTabs.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/ModItems.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/ModItems.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumBoots.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumChestplate.java" afterDir="false" />
       <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumHelmet.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/ModArmorMaterial.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/ModArmorMaterial.java" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/armor/EnderniumLeggings.java" afterDir="false" />
       <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/item/tools/EnderniumSword.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/particles/custom/EnderniumBit.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/particles/custom/EnderniumBit.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/trim/ModTrimMaterials.java" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/java/com/skittlq/endernium/trim/ModTrimMaterials.java" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/equipment/endernium.json" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/equipment/endernium.json" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/lang/en_us.json" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/lang/en_us.json" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/textures/particle/endernium_bit.png" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/textures/trims (ignore)/color_palettes/endernium.png" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/endernium/textures/trims/color_palettes/endernium.png" afterDir="false" />
-      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/minecraft/atlases/armor_trims.json" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/assets/minecraft/atlases/armor_trims.json" afterDir="false" />
+      <change beforePath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/templates/META-INF/neoforge.mods.toml" beforeDir="false" afterPath="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/templates/META-INF/neoforge.mods.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,6 +238,17 @@
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="endernium" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="endernium" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="fabric" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="neoforge" type="f1a62948:ProjectNode" />
               </path>
               <path>
@@ -198,6 +261,12 @@
                 <item name="neoforge" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="neoforge" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="mod development" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -263,6 +332,7 @@
     "Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runDatagen].executor": "Run",
     "Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [:net.neoforged.devlaunch.Main.main()].executor": "Run",
     "Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build].executor": "Run",
+    "Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -272,22 +342,23 @@
     "git-widget-placeholder": "26.2",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/skitt/Nextcloud/Documents/Minecraft Mods/endernium/neoforge/src/main/resources/data",
+    "last_opened_file_path": "C:/Users/skitt/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium",
     "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\fabric\src\main\resources\assets\endernium" />
+      <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\fabric\src\main\resources\assets\endernium\textures" />
       <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\neoforge\src\main\resources\data" />
       <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\fabric\src\main\java\com\skittlq\endernium" />
       <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\fabric\src\main\java\com\skittlq\endernium\item" />
-      <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\fabric\src\main\resources\assets" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build]">
+  <component name="RunManager" selected="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runClient]">
     <configuration name="Client" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="net.neoforged.devlaunch.Main" />
       <module name="neoforge.main" />
@@ -416,12 +487,35 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$USER_HOME$/Nextcloud/Documents/Minecraft Mods/endernium/neoforge" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="runData" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build]" />
-        <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [build]" />
         <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runClient]" />
         <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runDatagen]" />
+        <item itemvalue="Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData]" />
+        <item itemvalue="Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build]" />
+        <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [build]" />
       </list>
     </recent_temporary>
   </component>
@@ -434,6 +528,21 @@
       <updated>1778627117101</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="26.2 neoforge" />
+    <option name="LAST_COMMIT_MESSAGE" value="26.2 neoforge" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

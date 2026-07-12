@@ -289,7 +289,6 @@ public class EnderniumSword extends Item {
         tooltipAdder.accept(Component.literal("§5Right-click to activate ability."));
         tooltipAdder.accept(Component.literal("§5Cooldown: 10 seconds + 5 seconds per mob attacked."));
         tooltipAdder.accept(Component.literal("§7Works best against a group of enemies."));
-        tooltipAdder.accept(Component.literal(""));
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

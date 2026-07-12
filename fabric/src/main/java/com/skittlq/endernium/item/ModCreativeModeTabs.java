@@ -23,6 +23,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ENDERNIUM_BLOCK_ITEM);
                         output.accept(ModBlocks.ENDERNIUM_ORE_ITEM);
                         output.accept(ModItems.ENDERNIUM_SWORD);
+                        output.accept(ModItems.ENDERNIUM_SPEAR);
                         output.accept(ModItems.ENDERNIUM_SHOVEL);
                         output.accept(ModItems.ENDERNIUM_PICKAXE);
                         output.accept(ModItems.ENDERNIUM_AXE);
@@ -31,6 +32,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ENDERNIUM_CHESTPLATE);
                         output.accept(ModItems.ENDERNIUM_LEGGINGS);
                         output.accept(ModItems.ENDERNIUM_BOOTS);
+                        output.accept(ModItems.ENDERNIUM_HORSE_ARMOR);
+                        output.accept(ModItems.ENDERNIUM_NAUTILUS_ARMOR);
                     }).build());
 
     public static void registerModCreativeModeTabs() {

@@ -1,5 +1,6 @@
 package com.skittlq.endernium;
 
+import com.skittlq.endernium.attachment.ModAttachments;
 import com.skittlq.endernium.advancement.ModCriteriaTriggers;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.config.EnderniumConfigManager;
@@ -10,6 +11,7 @@ import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
+import com.skittlq.endernium.util.EnderniumUtils;
 import com.skittlq.endernium.worldgen.ModWorldgen;
 import net.fabricmc.api.ModInitializer;
 
@@ -24,6 +26,7 @@ public class Endernium implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		EnderniumConfigManager.load();
+		ModAttachments.initialize();
 		ModCreativeModeTabs.registerModCreativeModeTabs();
 		ModBlocks.register();
         ModItems.register();
@@ -33,6 +36,7 @@ public class Endernium implements ModInitializer {
 		ModWorldgen.register();
 		ModLootModifiers.register();
 		EnderniumTickScheduler.register();
+		EnderniumUtils.register();
 		EnderniumArmorAbilityHandler.register();
 	}
 }

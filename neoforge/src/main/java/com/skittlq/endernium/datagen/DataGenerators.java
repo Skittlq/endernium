@@ -20,6 +20,7 @@ public class DataGenerators {
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
+        generator.addProvider(true, new ModBlockTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModItemTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModModelProvider(packOutput));
         generator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
@@ -37,6 +38,7 @@ public class DataGenerators {
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
+        generator.addProvider(true, new ModBlockTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModModelProvider(packOutput));
         generator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModItemTagProvider(packOutput, lookupProvider));

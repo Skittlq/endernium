@@ -30,7 +30,6 @@ public class EnderniumChestplate extends Item {
             tooltipAdder.accept(Component.literal("§5Cooldown: " +
                     Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong() + " seconds."));
             tooltipAdder.accept(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
-            tooltipAdder.accept(Component.literal(""));
         }
 
         super.appendHoverText(stack, context, display, tooltipAdder, flag);

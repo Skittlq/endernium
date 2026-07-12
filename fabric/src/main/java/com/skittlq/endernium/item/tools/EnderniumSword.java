@@ -7,14 +7,15 @@ import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -43,19 +44,19 @@ import java.util.function.Consumer;
 public class EnderniumSword extends Item {
     private static final Map<UUID, List<Integer>> ACTIVE_TASKS = new HashMap<>();
     private static final Map<UUID, AtomicInteger> MOBS_HIT_MAP = new HashMap<>();
-    private static final Set<EntityType<?>> EXTRA_HOSTILES = new HashSet<>(Set.of(
-            EntityType.PHANTOM,
-            EntityType.SHULKER,
-            EntityType.VEX,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN,
-            EntityType.GHAST,
-            EntityType.PIGLIN,
-            EntityType.PIGLIN_BRUTE,
-            EntityType.SLIME,
-            EntityType.MAGMA_CUBE
+    private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
+        Identifier.withDefaultNamespace("phantom"),
+        Identifier.withDefaultNamespace("shulker"),
+        Identifier.withDefaultNamespace("vex"),
+        Identifier.withDefaultNamespace("ender_dragon"),
+        Identifier.withDefaultNamespace("wither"),
+        Identifier.withDefaultNamespace("warden"),
+        Identifier.withDefaultNamespace("elder_guardian"),
+        Identifier.withDefaultNamespace("ghast"),
+        Identifier.withDefaultNamespace("piglin"),
+        Identifier.withDefaultNamespace("piglin_brute"),
+        Identifier.withDefaultNamespace("slime"),
+        Identifier.withDefaultNamespace("magma_cube")
     ));
 
     public EnderniumSword(Properties properties) {
@@ -209,7 +210,6 @@ public class EnderniumSword extends Item {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        EnderniumUtils.handleBlockMine(stack, level, state, pos, entity);
         return super.mineBlock(stack, level, state, pos, entity);
     }
 
@@ -219,12 +219,11 @@ public class EnderniumSword extends Item {
         tooltipAdder.accept(Component.literal("§5Right-click to activate ability."));
         tooltipAdder.accept(Component.literal("§5Cooldown: 10 seconds + 5 seconds per mob attacked."));
         tooltipAdder.accept(Component.literal("§7Works best against a group of enemies."));
-        tooltipAdder.accept(Component.literal(""));
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 
     private static boolean isValidSwordTarget(Mob mob, Vec3 playerPos, Vec3 lookVec, double range, double arc) {
-        if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(mob.getType())) {
+        if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
             return false;
         }
         Vec3 toMob = mob.position().add(0.0D, mob.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);

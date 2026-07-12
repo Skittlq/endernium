@@ -23,14 +23,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-final class EnderniumVeinMiningToolHelper {
+public final class EnderniumVeinMiningToolHelper {
     static final String VEIN_MINING_KEY = "VeinMiningEnabled";
     private static final String VEIN_MINING_NOTIFIED_KEY = "VeinMiningNotified";
 
     private EnderniumVeinMiningToolHelper() {
     }
 
-    static boolean isVeinMiningEnabled(ItemStack stack) {
+    public static boolean isVeinMiningEnabled(ItemStack stack) {
         CompoundTag tag = getOrCreateCustomDataTag(stack);
         return tag.getBooleanOr(VEIN_MINING_KEY, false);
     }
@@ -58,7 +58,7 @@ final class EnderniumVeinMiningToolHelper {
                         SoundEvents.ENDERMAN_TELEPORT,
                         SoundSource.PLAYERS, 0.25F, enabled ? 1.4F : 0.8F);
             }
-            return InteractionResult.PASS;
+            return InteractionResult.SUCCESS;
         }
 
         boolean hadActiveOperation = EnderniumUtils.hasActiveVeinMiningOperation(stack);
@@ -76,7 +76,7 @@ final class EnderniumVeinMiningToolHelper {
                     SoundSource.PLAYERS, 0.25F, 1.0F);
         }
 
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 
     static void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,

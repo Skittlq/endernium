@@ -35,13 +35,6 @@ public class EnderniumShovel extends Item {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack) && entity instanceof Player player && !player.isCreative()) {
-            EnderniumUtils.veinMineBlocks(stack, level, pos, player, MAX_BLOCKS);
-            EnderniumUtils.handleBlockMine(stack, level, state, pos, entity);
-            return true;
-        }
-
-        EnderniumUtils.handleBlockMine(stack, level, state, pos, entity);
         return super.mineBlock(stack, level, state, pos, entity);
     }
 

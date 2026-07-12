@@ -1,6 +1,13 @@
 package com.skittlq.endernium.util;
 
+import com.skittlq.endernium.item.tools.EnderniumAxe;
+import com.skittlq.endernium.item.tools.EnderniumHoe;
+import com.skittlq.endernium.item.tools.EnderniumPickaxe;
+import com.skittlq.endernium.item.tools.EnderniumShovel;
+import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
 import com.skittlq.endernium.particles.ModParticles;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -21,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -35,13 +43,47 @@ import java.util.Set;
 public final class EnderniumUtils {
     public static final String VEIN_MINING_SESSION_ID_KEY = "VeinMiningSessionId";
     public static final int DEFAULT_MAX_BLOCKS = 64;
+    private static final double DROP_COLLECTION_RADIUS = 0.75D;
+    private static boolean registered;
 
     private EnderniumUtils() {
     }
 
+    public static void register() {
+        if (registered) {
+            return;
+        }
+        registered = true;
+        PlayerBlockBreakEvents.AFTER.register(EnderniumUtils::afterBlockBreak);
+    }
+
+    private static void afterBlockBreak(Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+        if (level.isClientSide() || player.isCreative()) {
+            return;
+        }
+
+        ItemStack stack = player.getMainHandItem();
+        if (stack.isEmpty() || !isEnderniumAutoCollectTool(stack)) {
+            return;
+        }
+
+        collectNearbyDrops(level, pos, player);
+
+        if (isEnderniumVeinMiningTool(stack)
+                && EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
+                && !hasActiveVeinMiningOperation(stack)) {
+            veinMineBlocks(stack, level, pos, state, player, DEFAULT_MAX_BLOCKS);
+        }
+    }
+
     public static void handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
         Player player = entity instanceof Player foundPlayer ? foundPlayer : null;
-        if (level.isClientSide() || player == null || player.isCreative() || !(player instanceof ServerPlayer serverPlayer)) {
+        if (level.isClientSide() || player == null || player.isCreative() || !(player instanceof ServerPlayer serverPlayer) || state.isAir()) {
+            return;
+        }
+
+        if (state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) {
+            level.destroyBlock(pos, false, entity);
             return;
         }
 
@@ -53,6 +95,15 @@ public final class EnderniumUtils {
                 .withOptionalParameter(LootContextParams.THIS_ENTITY, entity)
                 .withLuck(player.getLuck());
 
+        if (blockEntity != null) {
+            builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
+        }
+
+        List<ItemStack> drops = state.getDrops(builder);
+        if (!level.destroyBlock(pos, false, entity)) {
+            return;
+        }
+
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
@@ -60,39 +111,29 @@ public final class EnderniumUtils {
         }
         level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.04F, 1.5F);
 
-        if (blockEntity != null) {
-            builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
-        }
-
-        List<ItemStack> drops = state.getDrops(builder);
-
-        if (state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) {
-            level.removeBlock(pos, false);
-            return;
-        }
-
         for (ItemStack drop : drops) {
             if (!player.getInventory().add(drop)) {
                 ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), drop);
                 level.addFreshEntity(itemEntity);
             }
         }
-
-        level.removeBlock(pos, false);
     }
 
-    public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, Player player, int maxBlocks) {
-        BlockState originState = level.getBlockState(origin);
+    public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, BlockState originState, Player player, int maxBlocks) {
         if (!stack.isCorrectToolForDrops(originState)) {
             return;
         }
 
+        int maxAdditionalBlocks = Math.max(0, maxBlocks - 1);
         Set<BlockPos> visited = new HashSet<>();
         Queue<BlockPos> queue = new LinkedList<>();
         List<BlockPos> blocksToMine = new ArrayList<>();
-        queue.add(origin);
+        visited.add(origin);
+        for (Direction direction : Direction.values()) {
+            queue.add(origin.relative(direction));
+        }
 
-        while (!queue.isEmpty() && blocksToMine.size() < maxBlocks) {
+        while (!queue.isEmpty() && blocksToMine.size() < maxAdditionalBlocks) {
             BlockPos current = queue.poll();
             if (visited.contains(current)) {
                 continue;
@@ -100,7 +141,7 @@ public final class EnderniumUtils {
             visited.add(current);
 
             BlockState state = level.getBlockState(current);
-            if (state.getBlock() != originState.getBlock()) {
+            if (state.isAir() || state.getBlock() != originState.getBlock()) {
                 continue;
             }
             if (!stack.isCorrectToolForDrops(state)) {
@@ -145,7 +186,7 @@ public final class EnderniumUtils {
 
             BlockPos pos = iterator.next();
             BlockState state = level.getBlockState(pos);
-            if (stack.isCorrectToolForDrops(state)) {
+            if (!state.isAir() && stack.isCorrectToolForDrops(state)) {
                 handleBlockMine(stack, level, state, pos, player);
 
                 if (!level.isClientSide() && isCropBlock(state)) {
@@ -230,5 +271,38 @@ public final class EnderniumUtils {
             }
         }
         return -1;
+    }
+
+    public static void collectNearbyDrops(Level level, BlockPos pos, Player player) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos), DROP_COLLECTION_RADIUS * 2.0D, DROP_COLLECTION_RADIUS * 2.0D, DROP_COLLECTION_RADIUS * 2.0D);
+        List<ItemEntity> itemEntities = serverLevel.getEntitiesOfClass(ItemEntity.class, dropBox, ItemEntity::isAlive);
+        for (ItemEntity itemEntity : itemEntities) {
+            ItemStack itemStack = itemEntity.getItem();
+            player.getInventory().add(itemStack);
+            if (itemStack.isEmpty()) {
+                itemEntity.discard();
+            }
+        }
+    }
+
+    private static boolean isEnderniumAutoCollectTool(ItemStack stack) {
+        Item item = stack.getItem();
+        return item instanceof EnderniumSword
+                || item instanceof EnderniumPickaxe
+                || item instanceof EnderniumShovel
+                || item instanceof EnderniumAxe
+                || item instanceof EnderniumHoe;
+    }
+
+    private static boolean isEnderniumVeinMiningTool(ItemStack stack) {
+        Item item = stack.getItem();
+        return item instanceof EnderniumPickaxe
+                || item instanceof EnderniumShovel
+                || item instanceof EnderniumAxe
+                || item instanceof EnderniumHoe;
     }
 }

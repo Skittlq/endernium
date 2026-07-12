@@ -1,43 +1,41 @@
 package com.skittlq.endernium.item.armor;
 
+import com.skittlq.endernium.attachment.ModAttachments;
 import com.skittlq.endernium.config.EnderniumConfig;
 import com.skittlq.endernium.config.EnderniumConfigManager;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.particles.ModParticles;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public final class EnderniumArmorAbilityHandler {
-    private static final Set<EntityType<?>> EXTRA_AFFECTED_MOBS = new HashSet<>(Set.of(
-            EntityType.PHANTOM,
-            EntityType.SHULKER,
-            EntityType.VEX,
-            EntityType.ENDER_DRAGON,
-            EntityType.WITHER,
-            EntityType.WARDEN,
-            EntityType.ELDER_GUARDIAN,
-            EntityType.GHAST,
-            EntityType.PIGLIN,
-            EntityType.PIGLIN_BRUTE,
-            EntityType.SLIME,
-            EntityType.MAGMA_CUBE
+    private static final Set<Identifier> EXTRA_AFFECTED_MOBS = new HashSet<>(Set.of(
+        Identifier.withDefaultNamespace("phantom"),
+        Identifier.withDefaultNamespace("shulker"),
+        Identifier.withDefaultNamespace("vex"),
+        Identifier.withDefaultNamespace("ender_dragon"),
+        Identifier.withDefaultNamespace("wither"),
+        Identifier.withDefaultNamespace("warden"),
+        Identifier.withDefaultNamespace("elder_guardian"),
+        Identifier.withDefaultNamespace("ghast"),
+        Identifier.withDefaultNamespace("piglin"),
+        Identifier.withDefaultNamespace("piglin_brute"),
+        Identifier.withDefaultNamespace("slime"),
+        Identifier.withDefaultNamespace("magma_cube")
     ));
-    private static final Map<UUID, Long> LAST_USED_TICK = new HashMap<>();
     private static boolean registered;
 
     private EnderniumArmorAbilityHandler() {
@@ -64,7 +62,7 @@ public final class EnderniumArmorAbilityHandler {
         ServerLevel level = (ServerLevel) player.level();
         long currentTime = level.getGameTime();
         long cooldownTicks = 20L * config.enderniumArmorAbilityCooldown;
-        long lastUsed = LAST_USED_TICK.getOrDefault(player.getUUID(), 0L);
+        long lastUsed = player.getAttachedOrCreate(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK);
         long elapsedTicks = currentTime - lastUsed;
 
         float health = player.getHealth();
@@ -91,7 +89,9 @@ public final class EnderniumArmorAbilityHandler {
         List<Mob> hostiles = level.getEntitiesOfClass(
                 Mob.class,
                 player.getBoundingBox().inflate(radius),
-                mob -> mob.isAlive() && (mob instanceof Monster || EXTRA_AFFECTED_MOBS.contains(mob.getType()))
+            mob -> mob.isAlive()
+                && (mob instanceof Monster
+                || EXTRA_AFFECTED_MOBS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType())))
         );
 
         for (Mob mob : hostiles) {
@@ -107,7 +107,7 @@ public final class EnderniumArmorAbilityHandler {
         }
 
         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-        LAST_USED_TICK.put(player.getUUID(), currentTime);
+    player.setAttached(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK, currentTime);
         int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
         player.getCooldowns().addCooldown(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST), cooldownTicksInt);
 

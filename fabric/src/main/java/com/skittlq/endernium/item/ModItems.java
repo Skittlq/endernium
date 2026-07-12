@@ -6,6 +6,7 @@ import com.skittlq.endernium.item.armor.EnderniumBoots;
 import com.skittlq.endernium.item.armor.EnderniumChestplate;
 import com.skittlq.endernium.item.armor.EnderniumHelmet;
 import com.skittlq.endernium.item.armor.EnderniumLeggings;
+import com.skittlq.endernium.item.armor.ModArmorMaterial;
 import com.skittlq.endernium.item.tools.*;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
@@ -38,7 +39,10 @@ public class ModItems {
                         Identifier.withDefaultNamespace("container/slot/chestplate"),
                         Identifier.withDefaultNamespace("container/slot/leggings"),
                         Identifier.withDefaultNamespace("container/slot/boots"),
+                    Identifier.withDefaultNamespace("container/slot/horse_armor"),
+                    Identifier.withDefaultNamespace("container/slot/nautilus_armor"),
                         Identifier.withDefaultNamespace("container/slot/sword"),
+                    Identifier.withDefaultNamespace("container/slot/spear"),
                         Identifier.withDefaultNamespace("container/slot/axe"),
                         Identifier.withDefaultNamespace("container/slot/shovel"),
                         Identifier.withDefaultNamespace("container/slot/pickaxe"),
@@ -53,6 +57,8 @@ public class ModItems {
     public static final Item ENDERNIUM_UPGRADE_SMITHING_TEMPLATE = registerItem("endernium_upgrade_smithing_template", ModItems::createEnderniumUpgradeTemplate);
 
     public static final Item ENDERNIUM_SWORD = registerItem("endernium_sword", properties -> new EnderniumSword(properties.fireResistant()));
+        public static final Item ENDERNIUM_SPEAR = registerItem("endernium_spear",
+            properties -> new Item(properties.spear(ModToolTiers.ENDERNIUM, 1.15F, 1.2F, 0.4F, 2.5F, 9.0F, 5.5F, 5.1F, 8.75F, 4.6F).fireResistant()));
     public static final Item ENDERNIUM_SHOVEL = registerItem("endernium_shovel", properties -> new EnderniumShovel(properties.fireResistant()));
     public static final Item ENDERNIUM_PICKAXE = registerItem("endernium_pickaxe", properties -> new EnderniumPickaxe(properties.fireResistant()));
     public static final Item ENDERNIUM_AXE = registerItem("endernium_axe", properties -> new EnderniumAxe(properties.fireResistant()));
@@ -61,6 +67,10 @@ public class ModItems {
     public static final Item ENDERNIUM_CHESTPLATE = registerItem("endernium_chestplate", properties -> new EnderniumChestplate(properties));
     public static final Item ENDERNIUM_LEGGINGS = registerItem("endernium_leggings", properties -> new EnderniumLeggings(properties));
     public static final Item ENDERNIUM_BOOTS = registerItem("endernium_boots", properties -> new EnderniumBoots(properties));
+        public static final Item ENDERNIUM_HORSE_ARMOR = registerItem("endernium_horse_armor",
+            properties -> new Item(properties.horseArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()));
+        public static final Item ENDERNIUM_NAUTILUS_ARMOR = registerItem("endernium_nautilus_armor",
+            properties -> new Item(properties.nautilusArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()));
 
 
     public static Item registerItem(String name, Function<Item.Properties, Item> function) {
