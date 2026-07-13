@@ -43,7 +43,7 @@ import java.util.Set;
 public final class EnderniumUtils {
     public static final String VEIN_MINING_SESSION_ID_KEY = "VeinMiningSessionId";
     public static final int DEFAULT_MAX_BLOCKS = 64;
-    private static final double DROP_COLLECTION_RADIUS = 0.75D;
+    private static final double DROP_COLLECTION_RADIUS = 1.25D;
     private static boolean registered;
 
     private EnderniumUtils() {
@@ -67,7 +67,8 @@ public final class EnderniumUtils {
             return;
         }
 
-        collectNearbyDrops(level, pos, player);
+        playAutoCollectEffects(level, pos);
+        scheduleDropCollection(level, pos, player);
 
         if (isEnderniumVeinMiningTool(stack)
                 && EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
@@ -120,7 +121,7 @@ public final class EnderniumUtils {
     }
 
     public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, BlockState originState, Player player, int maxBlocks) {
-        if (!stack.isCorrectToolForDrops(originState)) {
+        if (hasAnyActiveVeinMiningOperation(player) || !stack.isCorrectToolForDrops(originState)) {
             return;
         }
 
@@ -228,6 +229,15 @@ public final class EnderniumUtils {
         return tag.contains(VEIN_MINING_SESSION_ID_KEY);
     }
 
+    public static boolean hasAnyActiveVeinMiningOperation(Player player) {
+        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
+            if (hasActiveVeinMiningOperation(player.getInventory().getItem(index))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static CompoundTag getOrCreateCustomDataTag(ItemStack stack) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         return data != null ? data.copyTag() : new CompoundTag();
@@ -289,6 +299,23 @@ public final class EnderniumUtils {
         }
     }
 
+    private static void playAutoCollectEffects(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
+                    pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                    10, 0.2D, 0.2D, 0.2D, 0.01D);
+        }
+        level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.04F, 1.5F);
+    }
+
+    private static void scheduleDropCollection(Level level, BlockPos pos, Player player) {
+        EnderniumTickScheduler.schedule(() -> {
+            if (!player.isRemoved()) {
+                collectNearbyDrops(level, pos, player);
+            }
+        }, 1);
+    }
+
     private static boolean isEnderniumAutoCollectTool(ItemStack stack) {
         Item item = stack.getItem();
         return item instanceof EnderniumSword
@@ -306,3 +333,7 @@ public final class EnderniumUtils {
                 || item instanceof EnderniumHoe;
     }
 }
+
+
+
+

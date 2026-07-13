@@ -69,7 +69,7 @@ public class EnderniumUtils {
 
     public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, Player player, int maxBlocks) {
         BlockState originState = level.getBlockState(origin);
-        if (!stack.isCorrectToolForDrops(originState)) return;
+        if (hasAnyActiveVeinMiningOperation(player) || !stack.isCorrectToolForDrops(originState)) return;
 
         Set<BlockPos> visited = new HashSet<>();
         Queue<BlockPos> queue = new LinkedList<>();
@@ -164,6 +164,15 @@ public class EnderniumUtils {
         return tag.contains(VEIN_MINING_SESSION_ID_KEY);
     }
 
+    public static boolean hasAnyActiveVeinMiningOperation(Player player) {
+        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
+            if (hasActiveVeinMiningOperation(player.getInventory().getItem(index))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static CompoundTag getOrCreateCustomDataTag(ItemStack stack) {
         var data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
         return data != null ? data.copyTag() : new CompoundTag();
@@ -207,3 +216,6 @@ public class EnderniumUtils {
         return -1;
     }
 }
+
+
+
