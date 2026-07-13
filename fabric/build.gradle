@@ -67,6 +67,16 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(AbstractArchiveTask).configureEach {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	def modName = project.name
+	def modLoader = "fabric"
+	def mcVersion = project.minecraft_version
+	def modVersion = project.mod_version
+	archiveBaseName.set("${modName}_${modLoader}_${mcVersion}")
+	archiveVersion.set("${modVersion}")
+}
+
+tasks.matching { it.name == "jar" || it.name == "remapJar" }.configureEach {
+	archiveFileName.set("${project.name}_fabric_${project.minecraft_version}_${project.mod_version}.jar")
 }
 
 java {
@@ -82,6 +92,8 @@ java {
 jar {
 	def projectName = project.name
 	inputs.property "projectName", projectName
+    def projectVersion = project.version
+    inputs.property "projectVersion", projectVersion
 
 	from("LICENSE") {
 		rename { "${it}_$projectName"}

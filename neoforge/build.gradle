@@ -177,6 +177,19 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
+tasks.withType(AbstractArchiveTask).configureEach {
+    def modName = project.mod_id
+    def modLoader = "neoforge"
+    def mcVersion = project.minecraft_version
+    def modVersion = project.mod_version
+    archiveBaseName.set("${modName}_${modLoader}_${mcVersion}")
+    archiveVersion.set("${modVersion}")
+}
+
+tasks.named('jar', Jar).configure {
+    archiveFileName.set("${project.mod_id}_neoforge_${project.minecraft_version}_${project.mod_version}.jar")
+}
+
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
     module {
