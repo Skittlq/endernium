@@ -6,6 +6,8 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+def targetJavaVersion = 26
+
 sourceSets {
 	main {
 		resources {
@@ -62,7 +64,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = targetJavaVersion
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
@@ -84,9 +86,12 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+	}
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.toVersion(targetJavaVersion)
+	targetCompatibility = JavaVersion.toVersion(targetJavaVersion)
 }
 
 jar {

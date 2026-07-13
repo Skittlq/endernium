@@ -19,10 +19,10 @@ import java.util.function.Function;
 
 public final class ModBlocks {
     public static final Block ENDERNIUM_BLOCK = registerBlock("endernium_block",
-            properties -> new Block(properties.strength(4.0F).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
+            properties -> new Block(properties.strength(55.0F).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
 
     public static final Block ENDERNIUM_ORE = registerBlock("endernium_ore",
-            properties -> new DropExperienceBlock(UniformInt.of(2, 4), properties.requiresCorrectToolForDrops().strength(30.0F, 1200.0F).sound(SoundType.AMETHYST)));
+            properties -> new DropExperienceBlock(UniformInt.of(2, 4), properties.requiresCorrectToolForDrops().strength(12.5F, 1600.0F).sound(SoundType.AMETHYST)));
 
     public static final Item ENDERNIUM_BLOCK_ITEM = registerBlockItem("endernium_block", ENDERNIUM_BLOCK);
     public static final Item ENDERNIUM_ORE_ITEM = registerBlockItem("endernium_ore", ENDERNIUM_ORE);

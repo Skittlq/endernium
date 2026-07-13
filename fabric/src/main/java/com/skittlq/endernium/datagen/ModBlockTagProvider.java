@@ -22,7 +22,9 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
         builder(BlockTags.BEACON_BASE_BLOCKS)
                 .add(blockKey(ModBlocks.ENDERNIUM_BLOCK));
 
-        builder(ModTags.Blocks.NEEDS_ENDERNIUM_TOOL);
+        builder(ModTags.Blocks.NEEDS_ENDERNIUM_TOOL)
+                .add(blockKey(ModBlocks.ENDERNIUM_BLOCK))
+                .add(blockKey(ModBlocks.ENDERNIUM_ORE));
         builder(ModTags.Blocks.INCORRECT_FOR_ENDERNIUM_TOOL);
     }
 
@@ -30,4 +32,3 @@ public class ModBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
         return BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow();
     }
 }
-
