@@ -74,7 +74,7 @@ public final class EnderniumArmorAbilityHandler {
             int particleCount = Math.round((1.0F - healthFraction) * maxParticles);
             if (particleCount > 0) {
                 level.sendParticles(ModParticles.ENDERNIUM_BIT,
-                        player.getX(), player.getY() + 1.0D, player.getZ(),
+                        player.getX(), player.getY() + 1.5D, player.getZ(),
                         particleCount, 0.0D, 0.0D, 0.0D, 20.0D);
             }
         }
@@ -114,7 +114,7 @@ public final class EnderniumArmorAbilityHandler {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.DRAGON_FIREBALL_EXPLODE, player.getSoundSource(), 1.0F, 1.0F);
         level.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
-                player.getX(), player.getY() + 1.0D, player.getZ(),
+                player.getX(), player.getY() + 1.5D, player.getZ(),
                 2000, 0.0D, 0.0D, 0.0D, 1.0D);
     }
 }

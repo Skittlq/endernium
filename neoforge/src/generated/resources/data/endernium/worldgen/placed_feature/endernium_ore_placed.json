@@ -21,6 +21,9 @@
       }
     },
     {
+      "type": "endernium:dragon_defeated"
+    },
+    {
       "type": "minecraft:biome"
     }
   ]

@@ -30,6 +30,7 @@ public class ModPlacedFeatureProvider implements DataProvider {
         placement.add(countPlacement());
         placement.add(typeOnlyPlacement("minecraft:in_square"));
         placement.add(heightRangePlacement());
+        placement.add(typeOnlyPlacement("endernium:dragon_defeated"));
         placement.add(typeOnlyPlacement("minecraft:biome"));
         root.add("placement", placement);
 

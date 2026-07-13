@@ -8,7 +8,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import java.util.List;
 
@@ -18,8 +19,16 @@ public class ModPlacedFeatures {
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        register(context, ENDERNIUM_ORE_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.ENDERNIUM_ORE_KEY),
-                ModOrePlacement.commonOrePlacement(9, HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(80))));
+        register(
+                context,
+                ENDERNIUM_ORE_PLACED_KEY,
+                configuredFeatures.getOrThrow(ModConfiguredFeatures.ENDERNIUM_ORE_KEY),
+                ModOrePlacement.commonOrePlacement(
+                        9,
+                        HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(80)),
+                        DragonDefeatedPlacementFilter.dragonDefeated()
+                )
+        );
     }
 
     private static ResourceKey<PlacedFeature> registerKey(String name) {
@@ -27,7 +36,7 @@ public class ModPlacedFeatures {
     }
 
     private static void register(BootstrapContext<PlacedFeature> context, ResourceKey<PlacedFeature> key, Holder<ConfiguredFeature<?, ?>> configuration,
-                                 List<PlacementModifier> modifiers) {
+                                 List<net.minecraft.world.level.levelgen.placement.PlacementModifier> modifiers) {
         context.register(key, new PlacedFeature(configuration, List.copyOf(modifiers)));
     }
 }

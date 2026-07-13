@@ -17,7 +17,7 @@ public class ReverseEnderniumBit extends EnderniumBit {
         this.burstXd = xSpeed;
         this.burstYd = ySpeed;
         this.burstZd = zSpeed;
-        this.quadSize *= 1.5F;
+        this.quadSize *= 1F;
         this.lifetime = this.random.nextInt(2) + 60;
         this.setSpriteFromAge(sprites);
     }
@@ -45,6 +45,7 @@ public class ReverseEnderniumBit extends EnderniumBit {
         this.y += this.burstYd;
         this.z += this.burstZd;
         this.setPos(this.x, this.y, this.z);
+        this.updateAlphaForNearbyPlayer();
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
@@ -61,4 +62,3 @@ public class ReverseEnderniumBit extends EnderniumBit {
         }
     }
 }
-

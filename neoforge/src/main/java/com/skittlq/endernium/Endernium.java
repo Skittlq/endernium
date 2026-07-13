@@ -9,6 +9,7 @@ import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
+import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -32,42 +33,29 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Endernium.MODID)
 public class Endernium {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "endernium";
-    // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public Endernium(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (Endernium) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
-        ModCreativeModeTabs.register(modEventBus); // Register the creative mode tabs to the mod event bus
-        ModItems.register(modEventBus); // Register the items in ModItems to the mod event bus
-        ModBlocks.register(modEventBus); // Register the blocks in ModItems to the mod event bus
+        ModCreativeModeTabs.register(modEventBus);
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModParticles.register(modEventBus);
         ModCriteriaTriggers.register(modEventBus);
+        ModPlacementModifiers.register(modEventBus);
 
-        // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
-
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        // Some common setup code
         LOGGER.info("sigma endernium armor");
     }
 
-    // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.ENDERNIUM_DUST);
@@ -79,17 +67,15 @@ public class Endernium {
         }
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-        @EventBusSubscriber(value = Dist.CLIENT, modid = MODID)
-        public static class ClientModEvents {
-            @SubscribeEvent
-            public static void onClientSetup(FMLClientSetupEvent event) {
-            }
+    @EventBusSubscriber(value = Dist.CLIENT, modid = MODID)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+        }
 
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
@@ -97,6 +83,5 @@ public class Endernium {
             event.registerSpriteSet(ModParticles.ENDERNIUM_BIT.get(), EnderniumBit.Provider::new);
             event.registerSpriteSet(ModParticles.REVERSE_ENDERNIUM_BIT.get(), ReverseEnderniumBit.Provider::new);
         }
-
     }
 }

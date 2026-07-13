@@ -12,6 +12,7 @@ import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumUtils;
+import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import com.skittlq.endernium.worldgen.ModWorldgen;
 import net.fabricmc.api.ModInitializer;
 
@@ -19,24 +20,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Endernium implements ModInitializer {
-	public static final String MOD_ID = "endernium";
+    public static final String MOD_ID = "endernium";
 
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	@Override
-	public void onInitialize() {
-		EnderniumConfigManager.load();
-		ModAttachments.initialize();
-		ModCreativeModeTabs.registerModCreativeModeTabs();
-		ModBlocks.register();
+    @Override
+    public void onInitialize() {
+        EnderniumConfigManager.load();
+        ModAttachments.initialize();
+        ModCreativeModeTabs.registerModCreativeModeTabs();
+        ModBlocks.register();
         ModItems.register();
-		ModParticles.register();
-		ModNetworking.register();
-		ModCriteriaTriggers.register();
-		ModWorldgen.register();
-		ModLootModifiers.register();
-		EnderniumTickScheduler.register();
-		EnderniumUtils.register();
-		EnderniumArmorAbilityHandler.register();
-	}
+        ModParticles.register();
+        ModNetworking.register();
+        ModCriteriaTriggers.register();
+        ModPlacementModifiers.register();
+        ModWorldgen.register();
+        ModLootModifiers.register();
+        EnderniumTickScheduler.register();
+        EnderniumUtils.register();
+        EnderniumArmorAbilityHandler.register();
+    }
 }

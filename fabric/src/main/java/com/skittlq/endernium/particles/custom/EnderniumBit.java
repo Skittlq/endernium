@@ -11,6 +11,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 public class EnderniumBit extends SingleQuadParticle {
+    protected static final float PLAYER_FADE_START_DISTANCE = 5.0F;
+    protected static final float PLAYER_FADE_END_DISTANCE = 1F;
     protected double xStart;
     protected double yStart;
     protected double zStart;
@@ -33,7 +35,7 @@ public class EnderniumBit extends SingleQuadParticle {
         this.burstZd = zSpeed;
         this.lifetime = this.random.nextInt(10) + 40;
         this.burstTicks = Math.max(1, (int) (this.lifetime * 0.1F));
-        this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F);
+        this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F) * 0.25F;
         this.rCol = 1.0F;
         this.gCol = 1.0F;
         this.bCol = 1.0F;
@@ -102,6 +104,26 @@ public class EnderniumBit extends SingleQuadParticle {
             this.z += this.burstZd;
             this.setPos(this.x, this.y, this.z);
         }
+
+        this.updateAlphaForNearbyPlayer();
+    }
+
+    protected void updateAlphaForNearbyPlayer() {
+        Player player = this.level.getNearestPlayer(this.x, this.y, this.z, PLAYER_FADE_START_DISTANCE, false);
+        if (player == null) {
+            this.alpha = 1.0F;
+            return;
+        }
+
+        double distanceSqr = player.distanceToSqr(this.x, this.y, this.z);
+        float distance = (float) Math.sqrt(distanceSqr);
+        if (distance <= PLAYER_FADE_END_DISTANCE) {
+            this.alpha = 0.0F;
+            return;
+        }
+
+        float fadeRange = PLAYER_FADE_START_DISTANCE - PLAYER_FADE_END_DISTANCE;
+        this.alpha = Math.clamp((distance - PLAYER_FADE_END_DISTANCE) / fadeRange, 0.0F, 1.0F);
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
@@ -118,4 +140,3 @@ public class EnderniumBit extends SingleQuadParticle {
         }
     }
 }
-
