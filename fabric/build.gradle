@@ -10,7 +10,11 @@ def targetJavaVersion = 26
 
 sourceSets {
 	main {
+		java {
+			srcDir "../common/src/main/java"
+		}
 		resources {
+			srcDir "../common/src/main/resources"
 			srcDir "src/generated/resources"
 			exclude ".cache/**"
 		}

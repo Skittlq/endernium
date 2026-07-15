@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "endernium:endernium_ingot",
-  "base": "minecraft:netherite_nautilus_armor",
-  "result": {
-    "id": "endernium:endernium_nautilus_armor"
-  },
-  "template": "endernium:endernium_upgrade_smithing_template"
-}

@@ -6,6 +6,11 @@
     {
       "path": "./neoforge",
     },
+    {
+      "path": "common",
+    },
   ],
-  "settings": {},
+  "settings": {
+    "java.configuration.updateBuildConfiguration": "automatic",
+  },
 }

@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "endernium:endernium_ingot",
-  "base": "minecraft:netherite_spear",
-  "result": {
-    "id": "endernium:endernium_spear"
-  },
-  "template": "endernium:endernium_upgrade_smithing_template"
-}
