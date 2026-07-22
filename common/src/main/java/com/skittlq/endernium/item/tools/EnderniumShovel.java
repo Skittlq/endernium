@@ -1,7 +1,6 @@
 package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.item.ModToolTiers;
-import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -21,11 +20,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class EnderniumPickaxe extends Item {
-    public static final int MAX_BLOCKS = 64;
-
-    public EnderniumPickaxe(Properties properties) {
-        super(properties.pickaxe(ModToolTiers.ENDERNIUM, 1.0F, -2.8F));
+public class EnderniumShovel extends Item {
+    public EnderniumShovel(Properties properties) {
+        super(properties.shovel(ModToolTiers.ENDERNIUM, 1.5F, -3.0F));
     }
 
     @Override
@@ -35,6 +32,9 @@ public class EnderniumPickaxe extends Item {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
+        if (EnderniumVeinMiningToolHelper.mineBlock(stack, level, state, pos, entity)) {
+            return true;
+        }
         return super.mineBlock(stack, level, state, pos, entity);
     }
 
@@ -51,4 +51,3 @@ public class EnderniumPickaxe extends Item {
         EnderniumVeinMiningToolHelper.inventoryTick(stack, level, entity, slot);
     }
 }
-

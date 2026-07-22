@@ -1,7 +1,6 @@
 package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.item.ModToolTiers;
-import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -11,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -21,11 +20,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class EnderniumHoe extends HoeItem {
-    public static final int MAX_BLOCKS = 64;
-
-    public EnderniumHoe(Properties properties) {
-        super(ModToolTiers.ENDERNIUM, -4.0F, 0.0F, properties);
+public class EnderniumPickaxe extends Item {
+    public EnderniumPickaxe(Properties properties) {
+        super(properties.pickaxe(ModToolTiers.ENDERNIUM, 1.0F, -2.8F));
     }
 
     @Override
@@ -35,6 +32,9 @@ public class EnderniumHoe extends HoeItem {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
+        if (EnderniumVeinMiningToolHelper.mineBlock(stack, level, state, pos, entity)) {
+            return true;
+        }
         return super.mineBlock(stack, level, state, pos, entity);
     }
 
@@ -51,4 +51,3 @@ public class EnderniumHoe extends HoeItem {
         EnderniumVeinMiningToolHelper.inventoryTick(stack, level, entity, slot);
     }
 }
-

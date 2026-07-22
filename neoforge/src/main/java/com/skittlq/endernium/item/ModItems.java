@@ -54,16 +54,14 @@ public class ModItems {
     public static final DeferredItem<Item> ENDERNIUM_UPGRADE_SMITHING_TEMPLATE =
             ITEMS.registerItem("endernium_upgrade_smithing_template", ModItems::createEnderniumUpgradeTemplate);
 
-    //    public static final DeferredItem<Item> VOID_BAG = ITEMS.registerItem("void_bag",
-//            (properties) -> new Item(properties.stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
     public static final DeferredItem<Item> ENDERNIUM_SWORD = ITEMS.registerItem("endernium_sword",
             (properties) -> new EnderniumSword(properties.sword(ModToolTiers.ENDERNIUM, 3.0F, -2.4F).fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_SPEAR = ITEMS.registerItem("endernium_spear",
             (properties) -> new Item(properties.spear(ModToolTiers.ENDERNIUM, 1.15F, 1.2F, 0.4F, 2.5F, 9.0F, 5.5F, 5.1F, 8.75F, 4.6F).fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_PICKAXE = ITEMS.registerItem("endernium_pickaxe",
-            (properties) -> new EnderniumPickaxe(properties.pickaxe(ModToolTiers.ENDERNIUM, 1.0F, -2.8F).fireResistant()));
+            (properties) -> new EnderniumPickaxe(properties.fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_SHOVEL = ITEMS.registerItem("endernium_shovel",
-            (properties) -> new EnderniumShovel(properties.shovel(ModToolTiers.ENDERNIUM, 1.5F, -3.0F).fireResistant()));
+            (properties) -> new EnderniumShovel(properties.fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_AXE = ITEMS.registerItem("endernium_axe",
             (properties) -> new EnderniumAxe(properties.fireResistant()));
     public static final DeferredItem<Item> ENDERNIUM_HOE = ITEMS.registerItem("endernium_hoe",

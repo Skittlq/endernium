@@ -1,8 +1,8 @@
 package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.item.ModToolTiers;
-import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -19,11 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
-import net.minecraft.network.chat.Component;
 
 public class EnderniumAxe extends AxeItem {
-    public static final int MAX_BLOCKS = 64;
-
     public EnderniumAxe(Properties properties) {
         super(ModToolTiers.ENDERNIUM, 5.0F, -3.0F, properties);
     }
@@ -35,6 +32,9 @@ public class EnderniumAxe extends AxeItem {
 
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
+        if (EnderniumVeinMiningToolHelper.mineBlock(stack, level, state, pos, entity)) {
+            return true;
+        }
         return super.mineBlock(stack, level, state, pos, entity);
     }
 
@@ -51,4 +51,3 @@ public class EnderniumAxe extends AxeItem {
         EnderniumVeinMiningToolHelper.inventoryTick(stack, level, entity, slot);
     }
 }
-

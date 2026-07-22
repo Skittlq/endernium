@@ -5,7 +5,6 @@ import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
-import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
 import com.skittlq.endernium.particles.ModParticles;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
@@ -24,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -67,14 +67,8 @@ public final class EnderniumUtils {
             return;
         }
 
-        playAutoCollectEffects(level, pos);
+        playEnderniumBreakEffects(level, pos);
         scheduleDropCollection(level, pos, player);
-
-        if (isEnderniumVeinMiningTool(stack)
-                && EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
-                && !hasActiveVeinMiningOperation(stack)) {
-            veinMineBlocks(stack, level, pos, state, player, DEFAULT_MAX_BLOCKS);
-        }
     }
 
     public static void handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
@@ -83,8 +77,10 @@ public final class EnderniumUtils {
             return;
         }
 
+        emitVanillaBreakEffects(level, pos, state);
+
         if (state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) {
-            level.destroyBlock(pos, false, entity);
+            level.removeBlock(pos, false);
             return;
         }
 
@@ -101,16 +97,11 @@ public final class EnderniumUtils {
         }
 
         List<ItemStack> drops = state.getDrops(builder);
-        if (!level.destroyBlock(pos, false, entity)) {
+        if (!level.removeBlock(pos, false)) {
             return;
         }
 
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
-                    pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
-                    10, 0.2D, 0.2D, 0.2D, 0.01D);
-        }
-        level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.04F, 1.5F);
+        playEnderniumBreakEffects(level, pos);
 
         for (ItemStack drop : drops) {
             if (!player.getInventory().add(drop)) {
@@ -141,11 +132,11 @@ public final class EnderniumUtils {
             }
             visited.add(current);
 
-            BlockState state = level.getBlockState(current);
-            if (state.isAir() || state.getBlock() != originState.getBlock()) {
+            BlockState currentState = level.getBlockState(current);
+            if (currentState.isAir() || currentState.getBlock() != originState.getBlock()) {
                 continue;
             }
-            if (!stack.isCorrectToolForDrops(state)) {
+            if (!stack.isCorrectToolForDrops(currentState)) {
                 continue;
             }
 
@@ -185,22 +176,22 @@ public final class EnderniumUtils {
                 return;
             }
 
-            BlockPos pos = iterator.next();
-            BlockState state = level.getBlockState(pos);
-            if (!state.isAir() && stack.isCorrectToolForDrops(state)) {
-                handleBlockMine(stack, level, state, pos, player);
+            BlockPos nextPos = iterator.next();
+            BlockState nextState = level.getBlockState(nextPos);
+            if (!nextState.isAir() && stack.isCorrectToolForDrops(nextState)) {
+                handleBlockMine(stack, level, nextState, nextPos, player);
 
-                if (!level.isClientSide() && isCropBlock(state)) {
-                    Item seedItem = getSeedForCrop(state);
+                if (!level.isClientSide() && isCropBlock(nextState)) {
+                    Item seedItem = getSeedForCrop(nextState);
                     int slot = findSeedSlot(player, seedItem);
                     if (seedItem != null && slot != -1) {
                         EnderniumTickScheduler.schedule(() -> {
-                            BlockState afterMine = level.getBlockState(pos);
+                            BlockState afterMine = level.getBlockState(nextPos);
                             if (afterMine.isAir()) {
                                 player.getInventory().removeItem(slot, 1);
-                                BlockState cropState = getDefaultCropState(state, level, pos);
-                                level.setBlockAndUpdate(pos, cropState);
-                                level.playSound(null, pos, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 0.7F, 1.1F);
+                                BlockState cropState = getDefaultCropState(nextState, level, nextPos);
+                                level.setBlockAndUpdate(nextPos, cropState);
+                                level.playSound(null, nextPos, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 0.7F, 1.1F);
                             }
                         }, 1);
                     }
@@ -299,7 +290,11 @@ public final class EnderniumUtils {
         }
     }
 
-    private static void playAutoCollectEffects(Level level, BlockPos pos) {
+    private static void emitVanillaBreakEffects(Level level, BlockPos pos, BlockState state) {
+        level.levelEvent(2001, pos, Block.getId(state));
+    }
+
+    private static void playEnderniumBreakEffects(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
@@ -324,16 +319,4 @@ public final class EnderniumUtils {
                 || item instanceof EnderniumAxe
                 || item instanceof EnderniumHoe;
     }
-
-    private static boolean isEnderniumVeinMiningTool(ItemStack stack) {
-        Item item = stack.getItem();
-        return item instanceof EnderniumPickaxe
-                || item instanceof EnderniumShovel
-                || item instanceof EnderniumAxe
-                || item instanceof EnderniumHoe;
-    }
 }
-
-
-
-
