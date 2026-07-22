@@ -17,6 +17,10 @@ public final class ModPlacementModifiers {
     private ModPlacementModifiers() {
     }
 
+    public static PlacementModifierType<DragonDefeatedPlacementFilter> dragonDefeatedType() {
+        return DRAGON_DEFEATED.get();
+    }
+
     public static void register(IEventBus eventBus) {
         PLACEMENT_MODIFIER_TYPES.register(eventBus);
     }

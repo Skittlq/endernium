@@ -34,6 +34,15 @@ public final class DragonDefeatedPlacementFilter extends PlacementFilter {
 
     @Override
     public PlacementModifierType<?> type() {
-        return ModPlacementModifiers.DRAGON_DEFEATED.get();
+        try {
+            Object value = ModPlacementModifiers.class.getField("DRAGON_DEFEATED").get(null);
+            if (value instanceof PlacementModifierType<?> placementModifierType) {
+                return placementModifierType;
+            }
+
+            return (PlacementModifierType<?>) value.getClass().getMethod("get").invoke(value);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Unable to resolve dragon_defeated placement modifier type", exception);
+        }
     }
 }

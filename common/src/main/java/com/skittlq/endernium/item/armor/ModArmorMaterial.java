@@ -19,6 +19,11 @@ public final class ModArmorMaterial {
                 map.put(ArmorType.LEGGINGS, 7);
                 map.put(ArmorType.CHESTPLATE, 9);
                 map.put(ArmorType.HELMET, 4);
+
+                try {
+                    map.put(ArmorType.valueOf("BODY"), 20);
+                } catch (IllegalArgumentException ignored) {
+                }
             }),
             20,
             SoundEvents.ARMOR_EQUIP_DIAMOND,

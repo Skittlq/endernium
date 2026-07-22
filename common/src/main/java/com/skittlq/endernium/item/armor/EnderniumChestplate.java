@@ -1,6 +1,5 @@
 package com.skittlq.endernium.item.armor;
 
-import com.skittlq.endernium.config.EnderniumConfigManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,18 +17,7 @@ public class EnderniumChestplate extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        var player = EnderniumArmorUtil.getTooltipPlayer(context);
-        var config = EnderniumConfigManager.getConfig();
-        if (player != null && EnderniumArmorUtil.hasFullEnderniumSet(player)) {
-            tooltipAdder.accept(Component.literal("§5Ender Repulsion Ability"));
-            tooltipAdder.accept(Component.literal("§5Triggers when your health is below "
-                    + config.enderniumArmorAbilityThreshold + " HP and you have the full armor set equipped."));
-            tooltipAdder.accept(Component.literal("§5Cooldown: "
-                    + config.enderniumArmorAbilityCooldown + " seconds."));
-            tooltipAdder.accept(Component.literal("§7Pushes nearby hostile mobs away and grants regeneration."));
-        }
-
+        EnderniumArmorTooltipHelper.appendFullSetAbilityTooltip(context, tooltipAdder);
         super.appendHoverText(stack, context, display, tooltipAdder, flag);
     }
 }
-
