@@ -1,20 +1,23 @@
 package com.skittlq.endernium.worldgen;
 
-import com.skittlq.endernium.Endernium;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
 import java.util.List;
 
-public class ModPlacedFeatures {
+public final class ModPlacedFeatures {
     public static final ResourceKey<PlacedFeature> ENDERNIUM_ORE_PLACED_KEY = registerKey("endernium_ore_placed");
+
+    private ModPlacedFeatures() {
+    }
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -32,11 +35,15 @@ public class ModPlacedFeatures {
     }
 
     private static ResourceKey<PlacedFeature> registerKey(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(Endernium.MODID, name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("endernium", name));
     }
 
-    private static void register(BootstrapContext<PlacedFeature> context, ResourceKey<PlacedFeature> key, Holder<ConfiguredFeature<?, ?>> configuration,
-                                 List<net.minecraft.world.level.levelgen.placement.PlacementModifier> modifiers) {
+    private static void register(
+            BootstrapContext<PlacedFeature> context,
+            ResourceKey<PlacedFeature> key,
+            Holder<ConfiguredFeature<?, ?>> configuration,
+            List<PlacementModifier> modifiers
+    ) {
         context.register(key, new PlacedFeature(configuration, List.copyOf(modifiers)));
     }
 }

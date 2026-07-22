@@ -33,6 +33,10 @@ public class ModBlocks {
         ModItems.ITEMS.registerItem(name, (properties) -> new BlockItem(block.get(), properties.useBlockDescriptionPrefix()));
     }
 
+    public static Block enderniumOreBlock() {
+        return ENDERNIUM_ORE.get();
+    }
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }

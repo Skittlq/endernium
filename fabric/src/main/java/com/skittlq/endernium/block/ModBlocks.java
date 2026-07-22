@@ -40,6 +40,10 @@ public final class ModBlocks {
         return ModItems.registerItem(name, properties -> new BlockItem(block, properties.useBlockDescriptionPrefix()));
     }
 
+    public static Block enderniumOreBlock() {
+        return ENDERNIUM_ORE;
+    }
+
     public static void register() {
         Endernium.LOGGER.info("Registering Mod Blocks for {}", Endernium.MOD_ID);
     }

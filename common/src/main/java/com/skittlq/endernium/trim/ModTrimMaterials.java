@@ -1,6 +1,5 @@
 package com.skittlq.endernium.trim;
 
-import com.skittlq.endernium.Endernium;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
@@ -14,13 +13,14 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial;
 
 import java.util.Map;
 
-public class ModTrimMaterials {
+public final class ModTrimMaterials {
+    public static final ResourceKey<TrimMaterial> ENDERNIUM = ResourceKey.create(
+            Registries.TRIM_MATERIAL,
+            Identifier.fromNamespaceAndPath("endernium", "endernium")
+    );
 
-    public static final ResourceKey<TrimMaterial> ENDERNIUM =
-            ResourceKey.create(
-                    Registries.TRIM_MATERIAL,
-                    Identifier.fromNamespaceAndPath(Endernium.MODID, "endernium")
-            );
+    private ModTrimMaterials() {
+    }
 
     public static void bootstrap(BootstrapContext<TrimMaterial> context) {
         register(
@@ -30,21 +30,13 @@ public class ModTrimMaterials {
         );
     }
 
-    private static void register(
-            BootstrapContext<TrimMaterial> context,
-            ResourceKey<TrimMaterial> trimKey,
-            Style style
-    ) {
-        var assetInfo = new MaterialAssetGroup.AssetInfo(
-                trimKey.identifier().getPath()
-        );
+    private static void register(BootstrapContext<TrimMaterial> context, ResourceKey<TrimMaterial> trimKey, Style style) {
+        var assetInfo = new MaterialAssetGroup.AssetInfo(trimKey.identifier().getPath());
         var assets = new MaterialAssetGroup(assetInfo, Map.of());
 
         TrimMaterial material = new TrimMaterial(
                 assets,
-                Component
-                        .translatable(Util.makeDescriptionId("trim_material", trimKey.identifier()))
-                        .withStyle(style)
+                Component.translatable(Util.makeDescriptionId("trim_material", trimKey.identifier())).withStyle(style)
         );
 
         context.register(trimKey, material);

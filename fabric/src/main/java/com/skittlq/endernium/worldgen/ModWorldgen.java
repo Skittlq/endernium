@@ -3,6 +3,7 @@ package com.skittlq.endernium.worldgen;
 import com.skittlq.endernium.Endernium;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.levelgen.GenerationStep;
 
 public final class ModWorldgen {
@@ -17,7 +18,7 @@ public final class ModWorldgen {
         }
         registered = true;
         BiomeModifications.addFeature(
-                BiomeSelectors.foundInTheEnd(),
+                BiomeSelectors.tag(BiomeTags.IS_END),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
                 ModPlacedFeatures.ENDERNIUM_ORE_PLACED_KEY
         );

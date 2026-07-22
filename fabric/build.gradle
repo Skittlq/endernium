@@ -15,6 +15,7 @@ sourceSets {
 		}
 		resources {
 			srcDir "../common/src/main/resources"
+			srcDir "../common/src/main/java/com/skittlq/endernium/resources"
 			srcDir "src/generated/resources"
 			exclude ".cache/**"
 		}

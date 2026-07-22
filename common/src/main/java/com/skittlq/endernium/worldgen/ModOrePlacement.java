@@ -1,11 +1,17 @@
 package com.skittlq.endernium.worldgen;
 
-import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModOrePlacement {
+public final class ModOrePlacement {
+    private ModOrePlacement() {
+    }
+
     public static List<PlacementModifier> orePlacement(PlacementModifier countPlacement, PlacementModifier heightRange, PlacementModifier... extraModifiers) {
         List<PlacementModifier> modifiers = new ArrayList<>();
         modifiers.add(countPlacement);
