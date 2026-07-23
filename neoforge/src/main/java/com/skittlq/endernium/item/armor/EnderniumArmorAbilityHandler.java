@@ -1,11 +1,7 @@
 package com.skittlq.endernium.item.armor;
 
-import com.skittlq.endernium.attachment.ModAttachments;
-import com.skittlq.endernium.config.EnderniumConfig;
-import com.skittlq.endernium.config.EnderniumConfigManager;
-import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.Config;
 import com.skittlq.endernium.particles.ModParticles;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -13,9 +9,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,18 +23,18 @@ import java.util.Set;
 
 public final class EnderniumArmorAbilityHandler {
     private static final Set<Identifier> EXTRA_AFFECTED_MOBS = new HashSet<>(Set.of(
-        Identifier.withDefaultNamespace("phantom"),
-        Identifier.withDefaultNamespace("shulker"),
-        Identifier.withDefaultNamespace("vex"),
-        Identifier.withDefaultNamespace("ender_dragon"),
-        Identifier.withDefaultNamespace("wither"),
-        Identifier.withDefaultNamespace("warden"),
-        Identifier.withDefaultNamespace("elder_guardian"),
-        Identifier.withDefaultNamespace("ghast"),
-        Identifier.withDefaultNamespace("piglin"),
-        Identifier.withDefaultNamespace("piglin_brute"),
-        Identifier.withDefaultNamespace("slime"),
-        Identifier.withDefaultNamespace("magma_cube")
+            Identifier.withDefaultNamespace("phantom"),
+            Identifier.withDefaultNamespace("shulker"),
+            Identifier.withDefaultNamespace("vex"),
+            Identifier.withDefaultNamespace("ender_dragon"),
+            Identifier.withDefaultNamespace("wither"),
+            Identifier.withDefaultNamespace("warden"),
+            Identifier.withDefaultNamespace("elder_guardian"),
+            Identifier.withDefaultNamespace("ghast"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("piglin_brute"),
+            Identifier.withDefaultNamespace("slime"),
+            Identifier.withDefaultNamespace("magma_cube")
     ));
     private static boolean registered;
 
@@ -46,23 +46,26 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
         registered = true;
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                tickPlayer(player);
-            }
-        });
+        NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onServerTick);
+    }
+
+    private static void onServerTick(ServerTickEvent.Post event) {
+        for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+            tickPlayer(player);
+        }
     }
 
     private static void tickPlayer(ServerPlayer player) {
-        EnderniumConfig config = EnderniumConfigManager.getConfig();
-        if (!config.enderniumArmorAbility || player.isSpectator() || !EnderniumArmorUtil.hasFullEnderniumSet(player)) {
+        if (!Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean()
+                || player.isSpectator()
+                || !EnderniumArmorUtil.hasFullEnderniumSet(player)) {
             return;
         }
 
         ServerLevel level = (ServerLevel) player.level();
         long currentTime = level.getGameTime();
-        long cooldownTicks = 20L * config.enderniumArmorAbilityCooldown;
-        long lastUsed = player.getAttachedOrCreate(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK);
+        long cooldownTicks = 20L * Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong();
+        long lastUsed = player.getPersistentData().getLong("EnderniumArmorCooldown").orElse(0L);
         long elapsedTicks = currentTime - lastUsed;
         syncCooldownIndicator(player, cooldownTicks, elapsedTicks);
 
@@ -74,13 +77,17 @@ public final class EnderniumArmorAbilityHandler {
             float healthFraction = health / maxHealth;
             int particleCount = Math.round((1.0F - healthFraction) * maxParticles);
             if (particleCount > 0) {
-                level.sendParticles(ModParticles.ENDERNIUM_BIT,
-                        player.getX(), player.getY() + 1.5D, player.getZ(),
-                        particleCount, 0.0D, 0.0D, 0.0D, 20.0D);
+                level.sendParticles(
+                        ModParticles.ENDERNIUM_BIT.get(),
+                        player.getX(), player.getY() + 1.0D, player.getZ(),
+                        particleCount,
+                        0.0D, 0.0D, 0.0D,
+                        20.0D
+                );
             }
         }
 
-        if (health < config.enderniumArmorAbilityThreshold && elapsedTicks > cooldownTicks) {
+        if (health < Config.ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt() && elapsedTicks > cooldownTicks) {
             triggerAbility(player, level, cooldownTicks, currentTime);
         }
     }
@@ -90,9 +97,9 @@ public final class EnderniumArmorAbilityHandler {
         List<Mob> hostiles = level.getEntitiesOfClass(
                 Mob.class,
                 player.getBoundingBox().inflate(radius),
-            mob -> mob.isAlive()
-                && (mob instanceof Monster
-                || EXTRA_AFFECTED_MOBS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType())))
+                mob -> mob.isAlive()
+                        && (mob instanceof Monster
+                        || EXTRA_AFFECTED_MOBS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType())))
         );
 
         for (Mob mob : hostiles) {
@@ -108,14 +115,14 @@ public final class EnderniumArmorAbilityHandler {
         }
 
         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-        player.setAttached(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK, currentTime);
+        player.getPersistentData().putLong("EnderniumArmorCooldown", currentTime);
         int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
-        player.getCooldowns().addCooldown(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST), cooldownTicksInt);
+        player.getCooldowns().addCooldown(player.getItemBySlot(EquipmentSlot.CHEST), cooldownTicksInt);
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.DRAGON_FIREBALL_EXPLODE, player.getSoundSource(), 1.0F, 1.0F);
-        level.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
-                player.getX(), player.getY() + 1.5D, player.getZ(),
+        level.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT.get(),
+                player.getX(), player.getY() + 1.0D, player.getZ(),
                 2000, 0.0D, 0.0D, 0.0D, 1.0D);
     }
 
@@ -124,7 +131,7 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
 
-        var chestStack = player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
+        ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if (chestStack.isEmpty() || player.getCooldowns().isOnCooldown(chestStack)) {
             return;
         }

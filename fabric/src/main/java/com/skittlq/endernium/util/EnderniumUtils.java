@@ -69,6 +69,12 @@ public final class EnderniumUtils {
 
         playEnderniumBreakEffects(level, pos);
         scheduleDropCollection(level, pos, player);
+
+        if (isEnderniumVeinMiningTool(stack)
+                && com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
+                && !hasActiveVeinMiningOperation(stack)) {
+            veinMineBlocks(stack, level, pos, state, player, DEFAULT_MAX_BLOCKS);
+        }
     }
 
     public static void handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
@@ -315,6 +321,14 @@ public final class EnderniumUtils {
         Item item = stack.getItem();
         return item instanceof EnderniumSword
                 || item instanceof EnderniumPickaxe
+                || item instanceof EnderniumShovel
+                || item instanceof EnderniumAxe
+                || item instanceof EnderniumHoe;
+    }
+
+    private static boolean isEnderniumVeinMiningTool(ItemStack stack) {
+        Item item = stack.getItem();
+        return item instanceof EnderniumPickaxe
                 || item instanceof EnderniumShovel
                 || item instanceof EnderniumAxe
                 || item instanceof EnderniumHoe;

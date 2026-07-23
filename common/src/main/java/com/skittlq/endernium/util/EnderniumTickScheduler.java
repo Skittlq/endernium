@@ -1,8 +1,5 @@
 package com.skittlq.endernium.util;
 
-import com.skittlq.endernium.Endernium;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -13,17 +10,8 @@ public final class EnderniumTickScheduler {
     private static final Queue<ScheduledTask> TASKS = new LinkedList<>();
     private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
     private static final Map<Integer, ScheduledTask> TASK_MAP = new HashMap<>();
-    private static boolean registered;
 
     private EnderniumTickScheduler() {
-    }
-
-    public static void register() {
-        if (registered) {
-            return;
-        }
-        registered = true;
-        ServerTickEvents.END_SERVER_TICK.register(server -> onServerTick());
     }
 
     public static int schedule(Runnable action, int delayTicks) {
@@ -41,7 +29,7 @@ public final class EnderniumTickScheduler {
         }
     }
 
-    private static void onServerTick() {
+    public static void tickNow() {
         ScheduledTask[] tasksSnapshot = TASKS.toArray(new ScheduledTask[0]);
         for (ScheduledTask task : tasksSnapshot) {
             task.ticksLeft--;
@@ -49,7 +37,8 @@ public final class EnderniumTickScheduler {
                 try {
                     task.action.run();
                 } catch (Exception exception) {
-                    Endernium.LOGGER.error("Scheduled Endernium task {} failed", task.id, exception);
+                    System.err.println("Scheduled Endernium task " + task.id + " failed");
+                    exception.printStackTrace(System.err);
                 }
                 TASKS.remove(task);
                 TASK_MAP.remove(task.id);
@@ -85,4 +74,3 @@ public final class EnderniumTickScheduler {
         }
     }
 }
-

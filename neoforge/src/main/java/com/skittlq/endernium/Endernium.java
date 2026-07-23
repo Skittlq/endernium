@@ -4,13 +4,13 @@ import com.skittlq.endernium.advancement.ModCriteriaTriggers;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
-import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,7 +30,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Endernium.MODID)
 public class Endernium {
     public static final String MODID = "endernium";
@@ -47,6 +46,7 @@ public class Endernium {
         ModParticles.register(modEventBus);
         ModCriteriaTriggers.register(modEventBus);
         ModPlacementModifiers.register(modEventBus);
+        EnderniumArmorAbilityHandler.register();
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);

@@ -10,7 +10,7 @@ import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
-import com.skittlq.endernium.util.EnderniumTickScheduler;
+import com.skittlq.endernium.util.EnderniumTickSchedulerEvents;
 import com.skittlq.endernium.util.EnderniumUtils;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import com.skittlq.endernium.worldgen.ModWorldgen;
@@ -37,7 +37,7 @@ public class Endernium implements ModInitializer {
         ModPlacementModifiers.register();
         ModWorldgen.register();
         ModLootModifiers.register();
-        EnderniumTickScheduler.register();
+        EnderniumTickSchedulerEvents.register();
         EnderniumUtils.register();
         EnderniumArmorAbilityHandler.register();
     }
