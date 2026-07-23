@@ -3,9 +3,11 @@ Endernium is an advanced material, surpassing Netherite in both strength and rar
 
 ## Obtaining Endernium
 
+Once the Ender Dragon is defeated, you will be able to start finding Endernium Ore scattered across the End islands.
+
 **Upgrade Process:**  
 - Acquire an **Endernium Upgrade Smithing Template** from End City Chests.  
-- Mine **Endernium Ore** across the End islands. When broken, Endernium Ore drops **Endernium Dust**.
+- Mine **Endernium Ore** from the End islands. When broken, Endernium Ore drops **Endernium Dust**.
 - Combine four Endernium Dust to craft an **Endernium Shard**.
 - Surround a Netherite Ingot with Endernium Shards to create an **Endernium Ingot**.
 
@@ -17,19 +19,22 @@ Using Endernium Ingots and the appropriate Smithing Template, you may upgrade th
 - Pickaxe
 - Axe
 - Hoe
-- All Armor pieces
+- Helmet, Chestplate, Leggings, Boots
+- Horse Armor
+- Nautilus Armor
+- Spear
 
 ## Special Abilities
 
-Each Endernium tool and the full armor set comes with a unique special ability. These enhancements offer more than simple protection or power—each brings a distinct advantage to your gameplay.
+Each Endernium tool and the full armor set comes with a unique special ability. \.
 
 * **Endernium Armor Set**
 
   * Grants a unique "last-minute defense" ability when wearing the full set of armor.
-  * When health drops below 4, nearby monsters are launched away.
+  * When health drops below 4 (2 hearts), nearby monsters are launched away.
   * You are granted a short regeneration buff to get you back up.
   * Offers a final chance to survive dangerous encounters.
-  * 2 minute cooldown.
+  * 1.5 minute cooldown.
 
 * **Endernium Sword**
 
