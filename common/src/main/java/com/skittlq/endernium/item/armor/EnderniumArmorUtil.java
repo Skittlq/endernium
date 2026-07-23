@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-final class EnderniumArmorUtil {
+public final class EnderniumArmorUtil {
     private EnderniumArmorUtil() {
     }
 
@@ -36,7 +36,7 @@ final class EnderniumArmorUtil {
         return Minecraft.getInstance().player;
     }
 
-    static boolean hasFullEnderniumSet(Player player) {
+    public static boolean hasFullEnderniumSet(Player player) {
         ArmorMaterial material = ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL;
         return isEnderniumPiece(player.getItemBySlot(EquipmentSlot.HEAD), material)
                 && isEnderniumPiece(player.getItemBySlot(EquipmentSlot.CHEST), material)

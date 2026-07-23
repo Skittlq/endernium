@@ -2,15 +2,14 @@ package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
 import com.skittlq.endernium.item.ModToolTiers;
-import com.skittlq.endernium.network.ModNetworking;
-import com.skittlq.endernium.particles.ModParticles;
+import com.skittlq.endernium.network.EnderniumNetworking;
+import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
+import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -19,7 +18,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,10 +31,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -44,20 +40,6 @@ import java.util.function.Consumer;
 public class EnderniumSword extends Item {
     private static final Map<UUID, List<Integer>> ACTIVE_TASKS = new HashMap<>();
     private static final Map<UUID, AtomicInteger> MOBS_HIT_MAP = new HashMap<>();
-    private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
-            Identifier.withDefaultNamespace("phantom"),
-            Identifier.withDefaultNamespace("shulker"),
-            Identifier.withDefaultNamespace("vex"),
-            Identifier.withDefaultNamespace("ender_dragon"),
-            Identifier.withDefaultNamespace("wither"),
-            Identifier.withDefaultNamespace("warden"),
-            Identifier.withDefaultNamespace("elder_guardian"),
-            Identifier.withDefaultNamespace("ghast"),
-            Identifier.withDefaultNamespace("piglin"),
-            Identifier.withDefaultNamespace("piglin_brute"),
-            Identifier.withDefaultNamespace("slime"),
-            Identifier.withDefaultNamespace("magma_cube")
-    ));
 
     public EnderniumSword(Properties properties) {
         super(properties.sword(ModToolTiers.ENDERNIUM, 3.0F, -2.4F));
@@ -83,10 +65,10 @@ public class EnderniumSword extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        double range = 10.0D;
-        double arc = Math.PI / 1.5D;
+        double range = EnderniumTargeting.SWORD_RANGE;
+        double arc = EnderniumTargeting.SWORD_ARC;
         Vec3 lookVec = player.getLookAngle();
-        Vec3 playerPos = player.position().add(0.0D, player.getEyeHeight(), 0.0D);
+        Vec3 playerPos = EnderniumTargeting.eyePosition(player);
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENCHANTMENT_TABLE_USE, player.getSoundSource(), 0.6F, 1.0F);
@@ -97,7 +79,7 @@ public class EnderniumSword extends Item {
                         playerPos.x - range, playerPos.y - 2.0D, playerPos.z - range,
                         playerPos.x + range, playerPos.y + 2.0D, playerPos.z + range
                 ),
-                mob -> isValidSwordTarget(mob, playerPos, lookVec, range, arc)
+                mob -> EnderniumTargeting.isValidSwordTarget(mob, playerPos, lookVec, range, arc)
         );
 
         List<Mob> sortedTargets = targets.stream()
@@ -156,7 +138,7 @@ public class EnderniumSword extends Item {
                 float pitch = (float) Math.toDegrees(-Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
 
                 if (player instanceof ServerPlayer serverPlayer) {
-                    ModNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
+                    EnderniumNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
                 }
 
                 if (level instanceof ServerLevel serverLevel) {
@@ -177,7 +159,7 @@ public class EnderniumSword extends Item {
                 mobsHit.incrementAndGet();
 
                 if (level instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(ModParticles.enderniumSweepParticle(),
+                    serverLevel.sendParticles(EnderniumParticles.ENDERNIUM_SWEEP.get(),
                             mob.getX(), mob.getY() + mob.getBbHeight() / 2.0D, mob.getZ(),
                             1, 0.0D, 0.0D, 0.0D, 0.0D);
                     serverLevel.playSound(null, mob.getX(), mob.getY(), mob.getZ(),
@@ -219,21 +201,5 @@ public class EnderniumSword extends Item {
         tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.cooldown").withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
-    }
-
-    private static boolean isValidSwordTarget(Mob mob, Vec3 playerPos, Vec3 lookVec, double range, double arc) {
-        if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
-            return false;
-        }
-
-        Vec3 toMob = mob.position().add(0.0D, mob.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
-        double distance = toMob.length();
-        if (distance > range) {
-            return false;
-        }
-
-        double angle = lookVec.normalize().dot(toMob.normalize());
-        double theta = Math.acos(angle);
-        return theta < (arc / 2.0D);
     }
 }

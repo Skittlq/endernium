@@ -12,13 +12,21 @@ public final class ModPlacementModifiers {
             DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, Endernium.MODID);
 
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<DragonDefeatedPlacementFilter>> DRAGON_DEFEATED =
-            PLACEMENT_MODIFIER_TYPES.register("dragon_defeated", () -> () -> DragonDefeatedPlacementFilter.CODEC);
+            registerDragonDefeated();
 
     private ModPlacementModifiers() {
     }
 
+    private static DeferredHolder<PlacementModifierType<?>, PlacementModifierType<DragonDefeatedPlacementFilter>> registerDragonDefeated() {
+        DeferredHolder<PlacementModifierType<?>, PlacementModifierType<DragonDefeatedPlacementFilter>> holder =
+                PLACEMENT_MODIFIER_TYPES.register(EnderniumPlacementModifiers.DRAGON_DEFEATED_ID,
+                        () -> () -> DragonDefeatedPlacementFilter.CODEC);
+        EnderniumPlacementModifiers.bindDragonDefeated(holder);
+        return holder;
+    }
+
     public static PlacementModifierType<DragonDefeatedPlacementFilter> dragonDefeatedType() {
-        return DRAGON_DEFEATED.get();
+        return EnderniumPlacementModifiers.dragonDefeatedType();
     }
 
     public static void register(IEventBus eventBus) {

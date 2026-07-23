@@ -1,6 +1,6 @@
 package com.skittlq.endernium.worldgen;
 
-import com.skittlq.endernium.block.ModBlocks;
+import com.skittlq.endernium.block.EnderniumBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
@@ -26,7 +26,7 @@ public final class ModConfiguredFeatures {
                 context,
                 ENDERNIUM_ORE_KEY,
                 Feature.ORE,
-                new OreConfiguration(endReplaceables, ModBlocks.enderniumOreBlock().defaultBlockState(), 4)
+                new OreConfiguration(endReplaceables, EnderniumBlocks.ENDERNIUM_ORE.block().defaultBlockState(), 4)
         );
     }
 

@@ -13,6 +13,8 @@ public final class ModNetworking {
 
     public static void register() {
         PayloadTypeRegistry.clientboundPlay().register(CameraLerpPayload.TYPE, CameraLerpPayload.STREAM_CODEC);
+        EnderniumNetworking.bindCameraLerpSender((player, targetYaw, targetPitch, durationTicks) ->
+                ServerPlayNetworking.send(player, new CameraLerpPayload(targetYaw, targetPitch, durationTicks)));
     }
 
     public static void registerClient() {
@@ -21,7 +23,6 @@ public final class ModNetworking {
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {
-        ServerPlayNetworking.send(player, new CameraLerpPayload(targetYaw, targetPitch, durationTicks));
+        EnderniumNetworking.sendCameraLerp(player, targetYaw, targetPitch, durationTicks);
     }
 }
-

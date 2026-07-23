@@ -1,7 +1,7 @@
 package com.skittlq.endernium.datagen;
 
 import com.skittlq.endernium.Endernium;
-import com.skittlq.endernium.block.ModBlocks;
+import com.skittlq.endernium.block.EnderniumBlocks;
 import com.skittlq.endernium.trim.ModTrimMaterials;
 import com.skittlq.endernium.worldgen.ModConfiguredFeatures;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -32,7 +32,7 @@ public class ModDynamicRegistryProvider extends FabricDynamicRegistryProvider {
                 ModConfiguredFeatures.ENDERNIUM_ORE_KEY,
                 new ConfiguredFeature<>(
                         Feature.ORE,
-                        new OreConfiguration(new BlockMatchTest(Blocks.END_STONE), ModBlocks.ENDERNIUM_ORE.defaultBlockState(), 4)
+                        new OreConfiguration(new BlockMatchTest(Blocks.END_STONE), EnderniumBlocks.ENDERNIUM_ORE.block().defaultBlockState(), 4)
                 )
         );
 
@@ -51,6 +51,3 @@ public class ModDynamicRegistryProvider extends FabricDynamicRegistryProvider {
         return Endernium.MOD_ID + " Dynamic Registry Provider";
     }
 }
-
-
-

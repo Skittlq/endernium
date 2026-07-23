@@ -3,10 +3,12 @@ package com.skittlq.endernium;
 import com.mojang.logging.LogUtils;
 import com.skittlq.endernium.advancement.ModCriteriaTriggerRegistrar;
 import com.skittlq.endernium.block.ModBlocks;
+import com.skittlq.endernium.item.EnderniumCreativeTabContents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.loot.ModLootModifiers;
+import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
@@ -56,12 +58,9 @@ public class Endernium {
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ModItems.ENDERNIUM_DUST);
-            event.accept(ModItems.ENDERNIUM_SHARD);
-            event.accept(ModItems.ENDERNIUM_INGOT);
+            EnderniumCreativeTabContents.acceptIngredients(item -> event.accept(item));
         } else if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
-            event.accept(ModBlocks.ENDERNIUM_BLOCK);
-            event.accept(ModBlocks.ENDERNIUM_ORE);
+            EnderniumCreativeTabContents.acceptBuildingBlocks(item -> event.accept(item));
         }
     }
 
@@ -77,9 +76,9 @@ public class Endernium {
 
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-            event.registerSpriteSet(ModParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);
-            event.registerSpriteSet(ModParticles.ENDERNIUM_BIT.get(), EnderniumBit.Provider::new);
-            event.registerSpriteSet(ModParticles.REVERSE_ENDERNIUM_BIT.get(), ReverseEnderniumBit.Provider::new);
+            event.registerSpriteSet(EnderniumParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);
+            event.registerSpriteSet(EnderniumParticles.ENDERNIUM_BIT.get(), EnderniumBit.Provider::new);
+            event.registerSpriteSet(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(), ReverseEnderniumBit.Provider::new);
         }
     }
 }

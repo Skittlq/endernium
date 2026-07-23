@@ -15,7 +15,7 @@ public class Config {
 
         public static final ModConfigSpec.LongValue ENDERNIUM_ARMOR_ABILITY_COOLDOWN = BUILDER
                 .comment("How long the Endernium Armor ability should be on cooldown, in seconds.")
-                .defineInRange("enderniumArmorAbilityCooldown", 120, 1, Long.MAX_VALUE);
+                .defineInRange("enderniumArmorAbilityCooldown", 90, 1, Long.MAX_VALUE);
 
         // TODO: ADD MORE CONFIG OPTIONS FOR ENDERNIUM SWORD, PICKAXE, SHOVEL, AXE, AND HOE
 

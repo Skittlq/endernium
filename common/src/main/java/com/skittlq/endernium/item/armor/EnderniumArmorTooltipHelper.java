@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 final class EnderniumArmorTooltipHelper {
     private static final int DEFAULT_THRESHOLD = 4;
-    private static final long DEFAULT_COOLDOWN = 120L;
+    private static final long DEFAULT_COOLDOWN = 90L;
 
     private EnderniumArmorTooltipHelper() {
     }

@@ -1,93 +1,52 @@
 package com.skittlq.endernium.item;
 
 import com.skittlq.endernium.Endernium;
-import com.skittlq.endernium.block.ModBlocks;
-import com.skittlq.endernium.item.armor.EnderniumBoots;
-import com.skittlq.endernium.item.armor.EnderniumChestplate;
-import com.skittlq.endernium.item.armor.EnderniumHelmet;
-import com.skittlq.endernium.item.armor.EnderniumLeggings;
-import com.skittlq.endernium.item.armor.ModArmorMaterial;
-import com.skittlq.endernium.item.tools.*;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SmithingTemplateItem;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class ModItems {
+    public static final Item ENDERNIUM_DUST = registerItem(EnderniumItems.ENDERNIUM_DUST);
+    public static final Item ENDERNIUM_SHARD = registerItem(EnderniumItems.ENDERNIUM_SHARD);
+    public static final Item ENDERNIUM_INGOT = registerItem(EnderniumItems.ENDERNIUM_INGOT);
+    public static final Item ENDERNIUM_UPGRADE_SMITHING_TEMPLATE = registerItem(EnderniumItems.ENDERNIUM_UPGRADE_SMITHING_TEMPLATE);
+    public static final Item ENDERNIUM_SWORD = registerItem(EnderniumItems.ENDERNIUM_SWORD);
+    public static final Item ENDERNIUM_SPEAR = registerItem(EnderniumItems.ENDERNIUM_SPEAR);
+    public static final Item ENDERNIUM_SHOVEL = registerItem(EnderniumItems.ENDERNIUM_SHOVEL);
+    public static final Item ENDERNIUM_PICKAXE = registerItem(EnderniumItems.ENDERNIUM_PICKAXE);
+    public static final Item ENDERNIUM_AXE = registerItem(EnderniumItems.ENDERNIUM_AXE);
+    public static final Item ENDERNIUM_HOE = registerItem(EnderniumItems.ENDERNIUM_HOE);
+    public static final Item ENDERNIUM_HELMET = registerItem(EnderniumItems.ENDERNIUM_HELMET);
+    public static final Item ENDERNIUM_CHESTPLATE = registerItem(EnderniumItems.ENDERNIUM_CHESTPLATE);
+    public static final Item ENDERNIUM_LEGGINGS = registerItem(EnderniumItems.ENDERNIUM_LEGGINGS);
+    public static final Item ENDERNIUM_BOOTS = registerItem(EnderniumItems.ENDERNIUM_BOOTS);
+    public static final Item ENDERNIUM_HORSE_ARMOR = registerItem(EnderniumItems.ENDERNIUM_HORSE_ARMOR);
+    public static final Item ENDERNIUM_NAUTILUS_ARMOR = registerItem(EnderniumItems.ENDERNIUM_NAUTILUS_ARMOR);
 
-    public static final Item ENDERNIUM_INGOT = registerItem("endernium_ingot", properties -> new Item(properties.fireResistant()));
-    public static final Item ENDERNIUM_SHARD = registerItem("endernium_shard", properties -> new Item(properties));
-    public static final Item ENDERNIUM_DUST = registerItem("endernium_dust", properties -> new Item(properties));
-
-    public static SmithingTemplateItem createEnderniumUpgradeTemplate(Item.Properties properties) {
-        return new SmithingTemplateItem(
-                Component.translatable("upgrade.minecraft.endernium_upgrade.applies_to"),
-                Component.translatable("upgrade.minecraft.endernium_upgrade.ingredients"),
-                Component.translatable("upgrade.minecraft.endernium_upgrade.base_slot_description"),
-                Component.translatable("upgrade.minecraft.endernium_upgrade.additions_slot_description"),
-                List.of(
-                        Identifier.withDefaultNamespace("container/slot/helmet"),
-                        Identifier.withDefaultNamespace("container/slot/chestplate"),
-                        Identifier.withDefaultNamespace("container/slot/leggings"),
-                        Identifier.withDefaultNamespace("container/slot/boots"),
-                    Identifier.withDefaultNamespace("container/slot/horse_armor"),
-                    Identifier.withDefaultNamespace("container/slot/nautilus_armor"),
-                        Identifier.withDefaultNamespace("container/slot/sword"),
-                    Identifier.withDefaultNamespace("container/slot/spear"),
-                        Identifier.withDefaultNamespace("container/slot/axe"),
-                        Identifier.withDefaultNamespace("container/slot/shovel"),
-                        Identifier.withDefaultNamespace("container/slot/pickaxe"),
-                        Identifier.withDefaultNamespace("container/slot/hoe")
-                ),
-                List.of(
-                        Identifier.withDefaultNamespace("container/slot/ingot")
-                ),
-                properties
-        );
+    public static Item registerItem(EnderniumItems item) {
+        Item registered = registerItem(item.id(), item::create);
+        item.bind(() -> registered);
+        return registered;
     }
-    public static final Item ENDERNIUM_UPGRADE_SMITHING_TEMPLATE = registerItem("endernium_upgrade_smithing_template", ModItems::createEnderniumUpgradeTemplate);
-
-    public static final Item ENDERNIUM_SWORD = registerItem("endernium_sword", properties -> new EnderniumSword(properties.fireResistant()));
-        public static final Item ENDERNIUM_SPEAR = registerItem("endernium_spear",
-            properties -> new Item(properties.spear(ModToolTiers.ENDERNIUM, 1.15F, 1.2F, 0.4F, 2.5F, 9.0F, 5.5F, 5.1F, 8.75F, 4.6F).fireResistant()));
-    public static final Item ENDERNIUM_SHOVEL = registerItem("endernium_shovel", properties -> new EnderniumShovel(properties.fireResistant()));
-    public static final Item ENDERNIUM_PICKAXE = registerItem("endernium_pickaxe", properties -> new EnderniumPickaxe(properties.fireResistant()));
-    public static final Item ENDERNIUM_AXE = registerItem("endernium_axe", properties -> new EnderniumAxe(properties.fireResistant()));
-    public static final Item ENDERNIUM_HOE = registerItem("endernium_hoe", properties -> new EnderniumHoe(properties.fireResistant()));
-    public static final Item ENDERNIUM_HELMET = registerItem("endernium_helmet", properties -> new EnderniumHelmet(properties));
-    public static final Item ENDERNIUM_CHESTPLATE = registerItem("endernium_chestplate", properties -> new EnderniumChestplate(properties));
-    public static final Item ENDERNIUM_LEGGINGS = registerItem("endernium_leggings", properties -> new EnderniumLeggings(properties));
-    public static final Item ENDERNIUM_BOOTS = registerItem("endernium_boots", properties -> new EnderniumBoots(properties));
-        public static final Item ENDERNIUM_HORSE_ARMOR = registerItem("endernium_horse_armor",
-            properties -> new Item(properties.horseArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()));
-        public static final Item ENDERNIUM_NAUTILUS_ARMOR = registerItem("endernium_nautilus_armor",
-            properties -> new Item(properties.nautilusArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()));
-
 
     public static Item registerItem(String name, Function<Item.Properties, Item> function) {
-        return Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(Endernium.MOD_ID, name),
-                function.apply(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Endernium.MOD_ID, name)))));
+        Identifier id = Identifier.fromNamespaceAndPath(Endernium.MOD_ID, name);
+        return Registry.register(BuiltInRegistries.ITEM, id,
+                function.apply(new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id))));
     }
 
     public static void register() {
         Endernium.LOGGER.info("Registering Mod Items for " + Endernium.MOD_ID);
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS).register(output -> {
-            output.accept(ENDERNIUM_INGOT);
-            output.accept(ENDERNIUM_SHARD);
-            output.accept(ENDERNIUM_DUST);
-        });
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS).register(output -> {
-            output.accept(ModBlocks.ENDERNIUM_BLOCK_ITEM);
-            output.accept(ModBlocks.ENDERNIUM_ORE_ITEM);
-        });
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
+                .register(output -> EnderniumCreativeTabContents.acceptIngredients(item -> output.accept(item)));
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.BUILDING_BLOCKS)
+                .register(output -> EnderniumCreativeTabContents.acceptBuildingBlocks(item -> output.accept(item)));
     }
 }

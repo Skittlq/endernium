@@ -12,15 +12,21 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 
 public final class ModParticles {
-    public static final SimpleParticleType ENDERNIUM_SWEEP = register("endernium_sweep");
-    public static final SimpleParticleType ENDERNIUM_BIT = register("endernium_bit");
-    public static final SimpleParticleType REVERSE_ENDERNIUM_BIT = register("reverse_endernium_bit");
+    public static final SimpleParticleType ENDERNIUM_SWEEP = register(EnderniumParticles.ENDERNIUM_SWEEP);
+    public static final SimpleParticleType ENDERNIUM_BIT = register(EnderniumParticles.ENDERNIUM_BIT);
+    public static final SimpleParticleType REVERSE_ENDERNIUM_BIT = register(EnderniumParticles.REVERSE_ENDERNIUM_BIT);
 
     private ModParticles() {
     }
 
-    private static SimpleParticleType register(String name) {
-        return Registry.register(BuiltInRegistries.PARTICLE_TYPE, Identifier.fromNamespaceAndPath(Endernium.MOD_ID, name), FabricParticleTypes.simple(true));
+    private static SimpleParticleType register(EnderniumParticles definition) {
+        SimpleParticleType particle = Registry.register(
+                BuiltInRegistries.PARTICLE_TYPE,
+                Identifier.fromNamespaceAndPath(Endernium.MOD_ID, definition.id()),
+                FabricParticleTypes.simple(true)
+        );
+        definition.bind(() -> particle);
+        return particle;
     }
 
     public static void register() {
@@ -34,10 +40,10 @@ public final class ModParticles {
     }
 
     public static SimpleParticleType enderniumSweepParticle() {
-        return ENDERNIUM_SWEEP;
+        return EnderniumParticles.ENDERNIUM_SWEEP.get();
     }
 
     public static SimpleParticleType reverseEnderniumBitParticle() {
-        return REVERSE_ENDERNIUM_BIT;
+        return EnderniumParticles.REVERSE_ENDERNIUM_BIT.get();
     }
 }

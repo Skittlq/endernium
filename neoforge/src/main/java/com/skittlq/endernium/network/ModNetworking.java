@@ -20,9 +20,11 @@ public class ModNetworking {
                 CameraLerpPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> CameraLerpHandler.onCameraLerpPacket(payload))
         );
+        EnderniumNetworking.bindCameraLerpSender((player, targetYaw, targetPitch, durationTicks) ->
+                PacketDistributor.sendToPlayer(player, new CameraLerpPayload(targetYaw, targetPitch, durationTicks)));
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {
-        PacketDistributor.sendToPlayer(player, new CameraLerpPayload(targetYaw, targetPitch, durationTicks));
+        EnderniumNetworking.sendCameraLerp(player, targetYaw, targetPitch, durationTicks);
     }
 }

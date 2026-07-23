@@ -3,7 +3,7 @@ package com.skittlq.endernium.config;
 public class EnderniumConfig {
     public boolean enderniumArmorAbility = true;
     public int enderniumArmorAbilityThreshold = 4;
-    public long enderniumArmorAbilityCooldown = 120L;
+    public long enderniumArmorAbilityCooldown = 90L;
 
     public EnderniumConfig copy() {
         EnderniumConfig copy = new EnderniumConfig();

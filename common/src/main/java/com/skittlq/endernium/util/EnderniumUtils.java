@@ -6,7 +6,7 @@ import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
-import com.skittlq.endernium.particles.ModParticles;
+import com.skittlq.endernium.particles.EnderniumParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -301,7 +301,7 @@ public final class EnderniumUtils {
 
     private static void playEnderniumBreakEffects(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ModParticles.reverseEnderniumBitParticle(),
+            serverLevel.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                     10, 0.2D, 0.2D, 0.2D, 0.01D);
         }

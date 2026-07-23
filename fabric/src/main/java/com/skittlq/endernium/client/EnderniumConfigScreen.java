@@ -41,7 +41,7 @@ public final class EnderniumConfigScreen {
         general.addEntry(entries.startLongField(
                         Component.translatable("endernium.config.armor_ability_cooldown"),
                         config.enderniumArmorAbilityCooldown)
-                .setDefaultValue(120L)
+                .setDefaultValue(90L)
                 .setMin(1L)
                 .setTooltip(Component.translatable("endernium.config.armor_ability_cooldown.tooltip"))
                 .setSaveConsumer(value -> config.enderniumArmorAbilityCooldown = value)
