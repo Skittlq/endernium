@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -54,8 +55,7 @@ public final class EnderniumVeinMiningToolHelper {
 
             if (!level.isClientSide()) {
                 player.sendOverlayMessage(
-                        Component.literal("Vein Mining: " + (enabled ? "Enabled" : "Disabled"))
-                                .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY)
+                        veinMiningStatus(enabled).withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY)
                 );
                 level.playSound(null, player.blockPosition(),
                         SoundEvents.ENDERMAN_TELEPORT,
@@ -70,7 +70,7 @@ public final class EnderniumVeinMiningToolHelper {
         if (!level.isClientSide()) {
             if (hadActiveOperation) {
                 player.sendOverlayMessage(
-                        Component.literal("Cancelled all vein mining operations")
+                        Component.translatable("endernium.message.vein_mining.cancelled")
                                 .withStyle(ChatFormatting.GRAY)
                 );
             }
@@ -92,12 +92,12 @@ public final class EnderniumVeinMiningToolHelper {
     static void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         boolean enabled = isVeinMiningEnabled(stack);
-        tooltipAdder.accept(Component.literal("Vein Mining: " + (enabled ? "Enabled" : "Disabled"))
+        tooltipAdder.accept(veinMiningStatus(enabled)
                 .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY));
-        tooltipAdder.accept(Component.literal(""));
-        tooltipAdder.accept(Component.literal("\u00A75Sneak + Right-click to toggle vein mining."));
-        tooltipAdder.accept(Component.literal("\u00A75Right-click to cancel all vein mining."));
-        tooltipAdder.accept(Component.literal("\u00A77Works on blocks that the tool can mine."));
+        tooltipAdder.accept(Component.empty());
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.toggle").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.cancel").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.works").withStyle(ChatFormatting.GRAY));
     }
 
     static void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
@@ -119,11 +119,21 @@ public final class EnderniumVeinMiningToolHelper {
 
         if (!notified) {
             player.sendOverlayMessage(
-                    Component.literal("Vein Mining is Enabled").withStyle(ChatFormatting.LIGHT_PURPLE)
+                    Component.translatable("endernium.message.vein_mining.enabled_overlay")
+                            .withStyle(ChatFormatting.LIGHT_PURPLE)
             );
             tag.putByte(VEIN_MINING_NOTIFIED_KEY, (byte) 1);
             stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         }
+    }
+
+    private static MutableComponent veinMiningStatus(boolean enabled) {
+        return Component.translatable(
+                "endernium.tooltip.vein_mining.status",
+                Component.translatable(enabled
+                        ? "endernium.tooltip.vein_mining.enabled"
+                        : "endernium.tooltip.vein_mining.disabled")
+        );
     }
 
     private static CompoundTag getOrCreateCustomDataTag(ItemStack stack) {

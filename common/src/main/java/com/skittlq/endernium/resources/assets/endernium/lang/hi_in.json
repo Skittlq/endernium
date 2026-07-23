@@ -1,0 +1,75 @@
+{
+  "creativetab.endernium": "एंडर्नियम",
+
+  "item.endernium.endernium_dust": "एंडर्नियम धूल",
+  "item.endernium.endernium_shard": "एंडर्नियम टुकड़ा",
+  "item.endernium.endernium_ingot": "एंडर्नियम सिल्ला",
+  "item.endernium.endernium_upgrade_smithing_template": "\u00A7eएंडर्नियम अपग्रेड",
+  "block.endernium.endernium_block": "एंडर्नियम का ब्लॉक",
+  "block.endernium.endernium_ore": "एंडर्नियम अयस्क",
+
+  "item.endernium.endernium_pickaxe": "\u00A7dएंडर्नियम कुदाल",
+  "item.endernium.endernium_axe": "\u00A7dएंडर्नियम कुल्हाड़ी",
+  "item.endernium.endernium_shovel": "\u00A7dएंडर्नियम फावड़ा",
+  "item.endernium.endernium_hoe": "\u00A7dएंडर्नियम हंसिया",
+  "item.endernium.endernium_sword": "\u00A7dएंडर्नियम तलवार",
+  "item.endernium.endernium_spear": "\u00A7dएंडर्नियम भाला",
+  "item.endernium.endernium_helmet": "\u00A7dएंडर्नियम हेलमेट",
+  "item.endernium.endernium_chestplate": "\u00A7dएंडर्नियम चेस्टप्लेट",
+  "item.endernium.endernium_leggings": "\u00A7dएंडर्नियम लेगिंग्स",
+  "item.endernium.endernium_boots": "\u00A7dएंडर्नियम जूते",
+  "item.endernium.endernium_horse_armor": "\u00A7dएंडर्नियम घोड़ा कवच",
+  "item.endernium.endernium_nautilus_armor": "\u00A7dएंडर्नियम नॉटिलस कवच",
+
+  "upgrade.minecraft.endernium_upgrade.applies_to": "\u00A79नेदराइट उपकरण",
+  "upgrade.minecraft.endernium_upgrade.ingredients": "\u00A79एंडर्नियम सिल्ला",
+  "upgrade.minecraft.endernium_upgrade.base_slot_description": "नेदराइट कवच, हथियार या औजार जोड़ें",
+  "upgrade.minecraft.endernium_upgrade.additions_slot_description": "एंडर्नियम सिल्ला जोड़ें",
+
+  "advancements.endernium.obtain_hoe.title": "खेती इतनी भी गंभीर नहीं हो सकती...",
+  "advancements.endernium.obtain_hoe.desc": "एक एंडर्नियम हंसिया प्राप्त करें।",
+
+  "advancements.endernium.full_armor.title": "मुझे एंडर्नियम से ढक दो",
+  "advancements.endernium.full_armor.desc": "इन्वेंटरी में एंडर्नियम कवच का पूरा सेट रखें।",
+
+  "advancements.endernium.get_ingot.title": "'गेट एंड्रे अचीव' -Nova",
+  "advancements.endernium.get_ingot.desc": "एक एंडर्नियम सिल्ला प्राप्त करें।",
+
+  "advancements.endernium.sword_ability.title": "आयामी संहार",
+  "advancements.endernium.sword_ability.desc": "एंडर्नियम तलवार की विशेष क्षमता से एक साथ 15 मॉब्स मारें।",
+
+  "endernium.configuration.title": "एंडर्नियम कॉन्फ़िग",
+  "endernium.configuration.section.endernium.server.toml": "एंडर्नियम कॉन्फ़िग",
+  "endernium.configuration.section.endernium.server.toml.title": "एंडर्नियम कॉन्फ़िग",
+  "endernium.configuration.enderniumArmorAbility": "एंडर्नियम कवच क्षमता सक्षम करें",
+  "endernium.configuration.enderniumArmorAbilityThreshold": "एंडर्नियम कवच क्षमता ट्रिगर सीमा",
+  "endernium.configuration.enderniumArmorAbilityCooldown": "एंडर्नियम कवच क्षमता कूलडाउन अवधि",
+
+  "endernium.config.title": "एंडर्नियम कॉन्फ़िग",
+  "endernium.config.category.general": "सामान्य",
+  "endernium.config.armor_ability": "एंडर्नियम कवच क्षमता सक्षम करें",
+  "endernium.config.armor_ability.tooltip": "एंडर्नियम कवच सेट की क्षमता सक्षम करता है।",
+  "endernium.config.armor_ability_threshold": "कवच क्षमता ट्रिगर सीमा",
+  "endernium.config.armor_ability_threshold.tooltip": "कितने HP से नीचे आने पर कवच क्षमता सक्रिय होगी।",
+  "endernium.config.armor_ability_cooldown": "कवच क्षमता कूलडाउन अवधि",
+  "endernium.config.armor_ability_cooldown.tooltip": "कवच क्षमता फिर से सक्रिय होने से पहले का कूलडाउन समय (टिक्स में)।",
+
+  "endernium.tooltip.sword.activate": "क्षमता सक्रिय करने के लिए राइट-क्लिक करें।",
+  "endernium.tooltip.sword.cooldown": "कूलडाउन: 10 सेकंड + प्रति मॉब 5 सेकंड।",
+  "endernium.tooltip.sword.description": "दुश्मनों के समूह के खिलाफ सबसे अच्छा काम करता है।",
+
+  "endernium.tooltip.vein_mining.status": "वेन माइनिंग: %s",
+  "endernium.tooltip.vein_mining.enabled": "सक्रिय",
+  "endernium.tooltip.vein_mining.disabled": "निष्क्रिय",
+  "endernium.tooltip.vein_mining.toggle": "वेन माइनिंग टॉगल करने के लिए झुकें + राइट-क्लिक करें।",
+  "endernium.tooltip.vein_mining.cancel": "सारी वेन माइनिंग रद्द करने के लिए राइट-क्लिक करें।",
+  "endernium.tooltip.vein_mining.works": "उन ब्लॉकों पर काम करता है जिन्हें यह औजार खनन कर सकता है।",
+
+  "endernium.message.vein_mining.cancelled": "सभी वेन माइनिंग क्रियाएँ रद्द कर दी गईं",
+  "endernium.message.vein_mining.enabled_overlay": "वेन माइनिंग सक्रिय है",
+
+  "endernium.tooltip.armor_ability.title": "एंडर प्रतिकर्षण क्षमता",
+  "endernium.tooltip.armor_ability.trigger": "जब आपका स्वास्थ्य %s HP से नीचे हो और पूरा कवच सेट पहना हो, तब सक्रिय होती है।",
+  "endernium.tooltip.armor_ability.cooldown": "कूलडाउन: %s सेकंड।",
+  "endernium.tooltip.armor_ability.description": "पास के शत्रुतापूर्ण मॉब्स को दूर धकेलती है और पुनर्जीवन देती है।"
+}

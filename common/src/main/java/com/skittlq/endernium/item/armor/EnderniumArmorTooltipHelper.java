@@ -1,5 +1,6 @@
 package com.skittlq.endernium.item.armor;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 
@@ -20,12 +21,16 @@ final class EnderniumArmorTooltipHelper {
             return;
         }
 
-        tooltipAdder.accept(Component.literal("\u00A75Ender Repulsion Ability"));
-        tooltipAdder.accept(Component.literal("\u00A75Triggers when your health is below "
-                + getArmorAbilityThreshold() + " HP and you have the full armor set equipped."));
-        tooltipAdder.accept(Component.literal("\u00A75Cooldown: "
-                + getArmorAbilityCooldown() + " seconds."));
-        tooltipAdder.accept(Component.literal("\u00A77Pushes nearby hostile mobs away and grants regeneration."));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.armor_ability.title").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable(
+                "endernium.tooltip.armor_ability.trigger",
+                getArmorAbilityThreshold()
+        ).withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable(
+                "endernium.tooltip.armor_ability.cooldown",
+                getArmorAbilityCooldown()
+        ).withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.armor_ability.description").withStyle(ChatFormatting.GRAY));
     }
 
     private static int getArmorAbilityThreshold() {

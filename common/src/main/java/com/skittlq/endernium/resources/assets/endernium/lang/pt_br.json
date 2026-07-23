@@ -1,0 +1,75 @@
+{
+  "creativetab.endernium": "Endernium",
+
+  "item.endernium.endernium_dust": "Pó de Endernium",
+  "item.endernium.endernium_shard": "Fragmento de Endernium",
+  "item.endernium.endernium_ingot": "Lingote de Endernium",
+  "item.endernium.endernium_upgrade_smithing_template": "\u00A7eAprimoramento de Endernium",
+  "block.endernium.endernium_block": "Bloco de Endernium",
+  "block.endernium.endernium_ore": "Minério de Endernium",
+
+  "item.endernium.endernium_pickaxe": "\u00A7dPicareta de Endernium",
+  "item.endernium.endernium_axe": "\u00A7dMachado de Endernium",
+  "item.endernium.endernium_shovel": "\u00A7dPá de Endernium",
+  "item.endernium.endernium_hoe": "\u00A7dEnxada de Endernium",
+  "item.endernium.endernium_sword": "\u00A7dEspada de Endernium",
+  "item.endernium.endernium_spear": "\u00A7dLança de Endernium",
+  "item.endernium.endernium_helmet": "\u00A7dCapacete de Endernium",
+  "item.endernium.endernium_chestplate": "\u00A7dPeitoral de Endernium",
+  "item.endernium.endernium_leggings": "\u00A7dCalças de Endernium",
+  "item.endernium.endernium_boots": "\u00A7dBotas de Endernium",
+  "item.endernium.endernium_horse_armor": "\u00A7dArmadura de Cavalo de Endernium",
+  "item.endernium.endernium_nautilus_armor": "\u00A7dArmadura de Náutilo de Endernium",
+
+  "upgrade.minecraft.endernium_upgrade.applies_to": "\u00A79Equipamento de Netherita",
+  "upgrade.minecraft.endernium_upgrade.ingredients": "\u00A79Lingote de Endernium",
+  "upgrade.minecraft.endernium_upgrade.base_slot_description": "Adicione armadura, arma ou ferramenta de netherita",
+  "upgrade.minecraft.endernium_upgrade.additions_slot_description": "Adicione um Lingote de Endernium",
+
+  "advancements.endernium.obtain_hoe.title": "Farming não pode ser TÃO sério assim...",
+  "advancements.endernium.obtain_hoe.desc": "Obtenha uma Enxada de Endernium.",
+
+  "advancements.endernium.full_armor.title": "Cubra-me com Endernium",
+  "advancements.endernium.full_armor.desc": "Tenha um conjunto completo de armadura de Endernium no inventário.",
+
+  "advancements.endernium.get_ingot.title": "'pega conquista endre' -Nova",
+  "advancements.endernium.get_ingot.desc": "Obtenha um Lingote de Endernium.",
+
+  "advancements.endernium.sword_ability.title": "Massacre Dimensional",
+  "advancements.endernium.sword_ability.desc": "Mate 15 mobs de uma vez com a habilidade especial da Espada de Endernium.",
+
+  "endernium.configuration.title": "Configurações do Endernium",
+  "endernium.configuration.section.endernium.server.toml": "Configurações do Endernium",
+  "endernium.configuration.section.endernium.server.toml.title": "Configurações do Endernium",
+  "endernium.configuration.enderniumArmorAbility": "Ativar habilidade da armadura de Endernium",
+  "endernium.configuration.enderniumArmorAbilityThreshold": "Limite de ativação da habilidade da armadura de Endernium",
+  "endernium.configuration.enderniumArmorAbilityCooldown": "Duração da recarga da habilidade da armadura de Endernium",
+
+  "endernium.config.title": "Configuração do Endernium",
+  "endernium.config.category.general": "Geral",
+  "endernium.config.armor_ability": "Ativar habilidade da armadura de Endernium",
+  "endernium.config.armor_ability.tooltip": "Ativa a habilidade do conjunto de armadura de Endernium.",
+  "endernium.config.armor_ability_threshold": "Limite de ativação da habilidade da armadura",
+  "endernium.config.armor_ability_threshold.tooltip": "Quantos pontos de vida você deve perder antes que a habilidade da armadura ative.",
+  "endernium.config.armor_ability_cooldown": "Duração da recarga da habilidade da armadura",
+  "endernium.config.armor_ability_cooldown.tooltip": "Tempo de recarga em ticks antes que a habilidade da armadura possa ativar novamente.",
+
+  "endernium.tooltip.sword.activate": "Clique com o botão direito para ativar a habilidade.",
+  "endernium.tooltip.sword.cooldown": "Recarga: 10 segundos + 5 segundos por mob atacado.",
+  "endernium.tooltip.sword.description": "Funciona melhor contra um grupo de inimigos.",
+
+  "endernium.tooltip.vein_mining.status": "Mineração em Veia: %s",
+  "endernium.tooltip.vein_mining.enabled": "Ativada",
+  "endernium.tooltip.vein_mining.disabled": "Desativada",
+  "endernium.tooltip.vein_mining.toggle": "Agache + clique com o botão direito para alternar a mineração em veia.",
+  "endernium.tooltip.vein_mining.cancel": "Clique com o botão direito para cancelar toda a mineração em veia.",
+  "endernium.tooltip.vein_mining.works": "Funciona em blocos que a ferramenta pode minerar.",
+
+  "endernium.message.vein_mining.cancelled": "Todas as operações de mineração em veia foram canceladas",
+  "endernium.message.vein_mining.enabled_overlay": "Mineração em veia ativada",
+
+  "endernium.tooltip.armor_ability.title": "Habilidade de Repulsão do Ender",
+  "endernium.tooltip.armor_ability.trigger": "Ativa quando sua vida fica abaixo de %s HP e você está com o conjunto completo equipado.",
+  "endernium.tooltip.armor_ability.cooldown": "Recarga: %s segundos.",
+  "endernium.tooltip.armor_ability.description": "Empurra mobs hostis próximos para longe e concede regeneração."
+}

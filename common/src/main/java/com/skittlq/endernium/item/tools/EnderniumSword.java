@@ -5,6 +5,7 @@ import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -214,9 +215,9 @@ public class EnderniumSword extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        tooltipAdder.accept(Component.literal("\u00A75Right-click to activate ability."));
-        tooltipAdder.accept(Component.literal("\u00A75Cooldown: 10 seconds + 5 seconds per mob attacked."));
-        tooltipAdder.accept(Component.literal("\u00A77Works best against a group of enemies."));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.activate").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.cooldown").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 
