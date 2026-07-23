@@ -20,10 +20,11 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -114,7 +115,7 @@ public final class EnderniumUtils {
     }
 
     public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, BlockState originState, Player player, int maxBlocks) {
-        if (hasAnyActiveVeinMiningOperation(player) || !stack.isCorrectToolForDrops(originState)) {
+        if (hasAnyActiveVeinMiningOperation(player) || !canVeinMineBlock(stack, originState)) {
             return;
         }
 
@@ -138,7 +139,7 @@ public final class EnderniumUtils {
             if (currentState.isAir() || currentState.getBlock() != originState.getBlock()) {
                 continue;
             }
-            if (!stack.isCorrectToolForDrops(currentState)) {
+            if (!canVeinMineBlock(stack, currentState)) {
                 continue;
             }
 
@@ -152,11 +153,16 @@ public final class EnderniumUtils {
             }
         }
 
-        float speed = stack.getDestroySpeed(originState);
-        if (speed <= 0.0F) {
-            speed = 1.0F;
+        int ticksPerBlock;
+        if (stack.getItem() instanceof EnderniumHoe && isHarvestableCrop(originState)) {
+            ticksPerBlock = 2;
+        } else {
+            float speed = stack.getDestroySpeed(originState);
+            if (speed <= 0.0F) {
+                speed = 1.0F;
+            }
+            ticksPerBlock = Math.max(1, Math.round((2.0F / speed) * 20.0F));
         }
-        int ticksPerBlock = Math.max(1, Math.round((2.0F / speed) * 20.0F));
         Iterator<BlockPos> iterator = blocksToMine.iterator();
 
         int sessionId = new Random().nextInt();
@@ -180,24 +186,8 @@ public final class EnderniumUtils {
 
             BlockPos nextPos = iterator.next();
             BlockState nextState = level.getBlockState(nextPos);
-            if (!nextState.isAir() && stack.isCorrectToolForDrops(nextState)) {
+            if (!nextState.isAir() && canVeinMineBlock(stack, nextState)) {
                 handleBlockMine(stack, level, nextState, nextPos, player);
-
-                if (!level.isClientSide() && isCropBlock(nextState)) {
-                    Item seedItem = getSeedForCrop(nextState);
-                    int slot = findSeedSlot(player, seedItem);
-                    if (seedItem != null && slot != -1) {
-                        EnderniumTickScheduler.schedule(() -> {
-                            BlockState afterMine = level.getBlockState(nextPos);
-                            if (afterMine.isAir()) {
-                                player.getInventory().removeItem(slot, 1);
-                                BlockState cropState = getDefaultCropState(nextState, level, nextPos);
-                                level.setBlockAndUpdate(nextPos, cropState);
-                                level.playSound(null, nextPos, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 0.7F, 1.1F);
-                            }
-                        }, 1);
-                    }
-                }
             }
 
             if (iterator.hasNext()) {
@@ -236,44 +226,15 @@ public final class EnderniumUtils {
         return data != null ? data.copyTag() : new CompoundTag();
     }
 
-    public static boolean isCropBlock(BlockState state) {
-        String blockName = state.getBlock().getDescriptionId();
-        return blockName.contains("wheat")
-                || blockName.contains("carrot")
-                || blockName.contains("potato")
-                || blockName.contains("beetroot")
-                || blockName.contains("nether_wart")
-                || blockName.contains("melon_stem")
-                || blockName.contains("pumpkin_stem");
-    }
-
-    public static Item getSeedForCrop(BlockState state) {
-        String name = state.getBlock().getDescriptionId();
-        if (name.contains("wheat")) return Items.WHEAT_SEEDS;
-        if (name.contains("carrot")) return Items.CARROT;
-        if (name.contains("potato")) return Items.POTATO;
-        if (name.contains("beetroot")) return Items.BEETROOT_SEEDS;
-        if (name.contains("nether_wart")) return Items.NETHER_WART;
-        if (name.contains("melon_stem")) return Items.MELON_SEEDS;
-        if (name.contains("pumpkin_stem")) return Items.PUMPKIN_SEEDS;
-        return null;
-    }
-
-    public static BlockState getDefaultCropState(BlockState oldState, Level level, BlockPos pos) {
-        return oldState.getBlock().defaultBlockState();
-    }
-
-    public static int findSeedSlot(Player player, Item seed) {
-        if (seed == null) {
-            return -1;
+    public static boolean isHarvestableCrop(BlockState state) {
+        Block block = state.getBlock();
+        if (block instanceof CropBlock cropBlock) {
+            return cropBlock.isMaxAge(state);
         }
-        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
-            ItemStack stack = player.getInventory().getItem(index);
-            if (!stack.isEmpty() && stack.getItem() == seed) {
-                return index;
-            }
+        if (block instanceof NetherWartBlock) {
+            return state.getValue(NetherWartBlock.AGE) == 3;
         }
-        return -1;
+        return false;
     }
 
     public static void collectNearbyDrops(Level level, BlockPos pos, Player player) {
@@ -340,5 +301,12 @@ public final class EnderniumUtils {
                 || item instanceof EnderniumShovel
                 || item instanceof EnderniumAxe
                 || item instanceof EnderniumHoe;
+    }
+
+    private static boolean canVeinMineBlock(ItemStack stack, BlockState state) {
+        if (stack.isCorrectToolForDrops(state)) {
+            return true;
+        }
+        return stack.getItem() instanceof EnderniumHoe && isHarvestableCrop(state);
     }
 }
