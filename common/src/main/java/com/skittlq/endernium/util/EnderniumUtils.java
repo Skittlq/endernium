@@ -27,8 +27,6 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -88,36 +86,21 @@ public final class EnderniumUtils {
         }
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        LootParams.Builder builder = new LootParams.Builder(serverPlayer.level())
-                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-                .withParameter(LootContextParams.TOOL, stack)
-                .withParameter(LootContextParams.BLOCK_STATE, state)
-                .withOptionalParameter(LootContextParams.THIS_ENTITY, entity)
-                .withLuck(player.getLuck());
-
-        if (blockEntity != null) {
-            builder.withParameter(LootContextParams.BLOCK_ENTITY, blockEntity);
-        }
-
-        List<ItemStack> drops = state.getDrops(builder);
         if (!level.removeBlock(pos, false)) {
             return;
         }
 
+        Block.dropResources(state, level, pos, blockEntity, entity, stack);
         playEnderniumBreakEffects(level, pos);
-
-        for (ItemStack drop : drops) {
-            if (!player.getInventory().add(drop)) {
-                ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), drop);
-                level.addFreshEntity(itemEntity);
-            }
-        }
+        scheduleDropCollection(level, pos, player);
     }
 
     public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, BlockState originState, Player player, int maxBlocks) {
-        if (hasAnyActiveVeinMiningOperation(player) || !canVeinMineBlock(stack, originState)) {
+        if (!canVeinMineBlock(stack, originState)) {
             return;
         }
+
+        cancelAllVeinMiningOperations(player);
 
         int maxAdditionalBlocks = Math.max(0, maxBlocks - 1);
         Set<BlockPos> visited = new HashSet<>();
@@ -219,6 +202,15 @@ public final class EnderniumUtils {
             }
         }
         return false;
+    }
+
+    public static void cancelAllVeinMiningOperations(Player player) {
+        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
+            ItemStack inventoryStack = player.getInventory().getItem(index);
+            if (hasActiveVeinMiningOperation(inventoryStack)) {
+                cancelVeinMining(inventoryStack);
+            }
+        }
     }
 
     public static CompoundTag getOrCreateCustomDataTag(ItemStack stack) {
