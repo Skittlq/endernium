@@ -32,6 +32,12 @@ public final class ModParticles {
         ParticleProviderRegistry.getInstance().register(ENDERNIUM_BIT, EnderniumBit.Provider::new);
         ParticleProviderRegistry.getInstance().register(REVERSE_ENDERNIUM_BIT, ReverseEnderniumBit.Provider::new);
     }
+
+    public static SimpleParticleType enderniumSweepParticle() {
+        return ENDERNIUM_SWEEP;
+    }
+
+    public static SimpleParticleType reverseEnderniumBitParticle() {
+        return REVERSE_ENDERNIUM_BIT;
+    }
 }
-
-

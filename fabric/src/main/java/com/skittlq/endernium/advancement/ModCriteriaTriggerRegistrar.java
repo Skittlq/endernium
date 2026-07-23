@@ -3,10 +3,10 @@ package com.skittlq.endernium.advancement;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-public final class ModCriteriaTriggers {
+public final class ModCriteriaTriggerRegistrar {
     private static boolean registered;
 
-    private ModCriteriaTriggers() {
+    private ModCriteriaTriggerRegistrar() {
     }
 
     public static void register() {
@@ -14,6 +14,6 @@ public final class ModCriteriaTriggers {
             return;
         }
         registered = true;
-        Registry.register(BuiltInRegistries.TRIGGER_TYPES, EnderniumSwordSweepTrigger.ID, EnderniumSwordSweepTrigger.INSTANCE);
+        Registry.register(BuiltInRegistries.TRIGGER_TYPES, EnderniumSwordSweepTrigger.ID, ModCriteriaTriggers.SWORD_SWEEP);
     }
 }

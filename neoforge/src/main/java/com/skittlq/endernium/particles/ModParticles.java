@@ -20,9 +20,15 @@ public class ModParticles {
     public static final Supplier<SimpleParticleType> REVERSE_ENDERNIUM_BIT =
             PARTICLE_TYPES.register("reverse_endernium_bit", () -> new SimpleParticleType(true));
 
-
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);
     }
 
+    public static SimpleParticleType enderniumSweepParticle() {
+        return ENDERNIUM_SWEEP.get();
+    }
+
+    public static SimpleParticleType reverseEnderniumBitParticle() {
+        return REVERSE_ENDERNIUM_BIT.get();
+    }
 }

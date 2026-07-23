@@ -7,13 +7,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-public class ModCriteriaTriggers {
-    public static final DeferredRegister<CriterionTrigger<?>> TRIGGERS =
+public final class ModCriteriaTriggerRegistrar {
+    private static final DeferredRegister<CriterionTrigger<?>> TRIGGERS =
             DeferredRegister.create(BuiltInRegistries.TRIGGER_TYPES, "endernium");
 
-    // Use Supplier, not RegistryObject
     public static final Supplier<CriterionTrigger<?>> SWORD_SWEEP =
-            TRIGGERS.register("sword_sweep", () -> EnderniumSwordSweepTrigger.INSTANCE);
+            TRIGGERS.register("sword_sweep", () -> ModCriteriaTriggers.SWORD_SWEEP);
+
+    private ModCriteriaTriggerRegistrar() {
+    }
 
     public static void register(IEventBus eventBus) {
         TRIGGERS.register(eventBus);

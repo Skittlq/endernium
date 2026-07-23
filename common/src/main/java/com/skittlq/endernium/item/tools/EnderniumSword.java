@@ -5,10 +5,9 @@ import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
-import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -45,18 +44,18 @@ public class EnderniumSword extends Item {
     private static final Map<UUID, List<Integer>> ACTIVE_TASKS = new HashMap<>();
     private static final Map<UUID, AtomicInteger> MOBS_HIT_MAP = new HashMap<>();
     private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
-        Identifier.withDefaultNamespace("phantom"),
-        Identifier.withDefaultNamespace("shulker"),
-        Identifier.withDefaultNamespace("vex"),
-        Identifier.withDefaultNamespace("ender_dragon"),
-        Identifier.withDefaultNamespace("wither"),
-        Identifier.withDefaultNamespace("warden"),
-        Identifier.withDefaultNamespace("elder_guardian"),
-        Identifier.withDefaultNamespace("ghast"),
-        Identifier.withDefaultNamespace("piglin"),
-        Identifier.withDefaultNamespace("piglin_brute"),
-        Identifier.withDefaultNamespace("slime"),
-        Identifier.withDefaultNamespace("magma_cube")
+            Identifier.withDefaultNamespace("phantom"),
+            Identifier.withDefaultNamespace("shulker"),
+            Identifier.withDefaultNamespace("vex"),
+            Identifier.withDefaultNamespace("ender_dragon"),
+            Identifier.withDefaultNamespace("wither"),
+            Identifier.withDefaultNamespace("warden"),
+            Identifier.withDefaultNamespace("elder_guardian"),
+            Identifier.withDefaultNamespace("ghast"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("piglin_brute"),
+            Identifier.withDefaultNamespace("slime"),
+            Identifier.withDefaultNamespace("magma_cube")
     ));
 
     public EnderniumSword(Properties properties) {
@@ -116,9 +115,9 @@ public class EnderniumSword extends Item {
         ACTIVE_TASKS.put(uuid, taskIds);
         MOBS_HIT_MAP.put(uuid, mobsHit);
 
-        for (int i = 0; i < sortedTargets.size(); i++) {
-            Mob mob = sortedTargets.get(i);
-            int delay = i * ticksBetweenHits;
+        for (int index = 0; index < sortedTargets.size(); index++) {
+            Mob mob = sortedTargets.get(index);
+            int delay = index * ticksBetweenHits;
 
             int taskId = EnderniumTickScheduler.schedule(() -> {
                 if (!mob.isAlive() || mob.distanceTo(player) > range + 1.0D) {
@@ -159,11 +158,11 @@ public class EnderniumSword extends Item {
                     ModNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
                 }
 
-                if (level instanceof ServerLevel serverLevel2) {
-                    serverLevel2.sendParticles(ParticleTypes.PORTAL,
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.PORTAL,
                             teleportPos.x, teleportPos.y + 1.0D, teleportPos.z,
                             32, 0.5D, 1.0D, 0.5D, 0.2D);
-                    serverLevel2.playSound(null, teleportPos.x, teleportPos.y, teleportPos.z,
+                    serverLevel.playSound(null, teleportPos.x, teleportPos.y, teleportPos.z,
                             SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 0.85F + 0.3F * level.getRandom().nextFloat());
                 }
 
@@ -172,16 +171,15 @@ public class EnderniumSword extends Item {
 
                 var attackDamage = player.getAttribute(Attributes.ATTACK_DAMAGE);
                 double baseAttack = attackDamage != null ? attackDamage.getValue() : 1.0D;
-                double totalDamage = baseAttack * 3.0D;
-                mob.hurt(player.damageSources().playerAttack(player), (float) totalDamage);
+                mob.hurt(player.damageSources().playerAttack(player), (float) (baseAttack * 3.0D));
                 player.swing(hand, true);
                 mobsHit.incrementAndGet();
 
-                if (level instanceof ServerLevel serverLevel3) {
-                    serverLevel3.sendParticles(ModParticles.ENDERNIUM_SWEEP,
+                if (level instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ModParticles.enderniumSweepParticle(),
                             mob.getX(), mob.getY() + mob.getBbHeight() / 2.0D, mob.getZ(),
                             1, 0.0D, 0.0D, 0.0D, 0.0D);
-                    serverLevel3.playSound(null, mob.getX(), mob.getY(), mob.getZ(),
+                    serverLevel.playSound(null, mob.getX(), mob.getY(), mob.getZ(),
                             SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
                 }
             }, delay);
@@ -216,9 +214,9 @@ public class EnderniumSword extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        tooltipAdder.accept(Component.literal("§5Right-click to activate ability."));
-        tooltipAdder.accept(Component.literal("§5Cooldown: 10 seconds + 5 seconds per mob attacked."));
-        tooltipAdder.accept(Component.literal("§7Works best against a group of enemies."));
+        tooltipAdder.accept(Component.literal("\u00A75Right-click to activate ability."));
+        tooltipAdder.accept(Component.literal("\u00A75Cooldown: 10 seconds + 5 seconds per mob attacked."));
+        tooltipAdder.accept(Component.literal("\u00A77Works best against a group of enemies."));
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 
@@ -226,15 +224,15 @@ public class EnderniumSword extends Item {
         if (!(mob instanceof Monster) && !EXTRA_HOSTILES.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()))) {
             return false;
         }
+
         Vec3 toMob = mob.position().add(0.0D, mob.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
         double distance = toMob.length();
         if (distance > range) {
             return false;
         }
+
         double angle = lookVec.normalize().dot(toMob.normalize());
         double theta = Math.acos(angle);
         return theta < (arc / 2.0D);
     }
 }
-
-

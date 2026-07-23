@@ -3,8 +3,10 @@ package com.skittlq.endernium.network;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.CameraLerpHandler;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -18,5 +20,9 @@ public class ModNetworking {
                 CameraLerpPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> CameraLerpHandler.onCameraLerpPacket(payload))
         );
+    }
+
+    public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {
+        PacketDistributor.sendToPlayer(player, new CameraLerpPayload(targetYaw, targetPitch, durationTicks));
     }
 }

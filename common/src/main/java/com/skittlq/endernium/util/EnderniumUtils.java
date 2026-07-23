@@ -5,8 +5,8 @@ import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
 import com.skittlq.endernium.particles.ModParticles;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -44,20 +44,11 @@ public final class EnderniumUtils {
     public static final String VEIN_MINING_SESSION_ID_KEY = "VeinMiningSessionId";
     public static final int DEFAULT_MAX_BLOCKS = 64;
     private static final double DROP_COLLECTION_RADIUS = 1.25D;
-    private static boolean registered;
 
     private EnderniumUtils() {
     }
 
-    public static void register() {
-        if (registered) {
-            return;
-        }
-        registered = true;
-        PlayerBlockBreakEvents.AFTER.register(EnderniumUtils::afterBlockBreak);
-    }
-
-    private static void afterBlockBreak(Level level, Player player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+    public static void onAutoCollectToolBlockBreak(Level level, Player player, BlockPos pos, BlockState state, boolean allowVeinMiningFallback) {
         if (level.isClientSide() || player.isCreative()) {
             return;
         }
@@ -67,14 +58,19 @@ public final class EnderniumUtils {
             return;
         }
 
-        playEnderniumBreakEffects(level, pos);
-        scheduleDropCollection(level, pos, player);
+        if (allowVeinMiningFallback) {
+            playEnderniumBreakEffects(level, pos);
+            scheduleDropCollection(level, pos, player);
 
-        if (isEnderniumVeinMiningTool(stack)
-                && com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
-                && !hasActiveVeinMiningOperation(stack)) {
-            veinMineBlocks(stack, level, pos, state, player, DEFAULT_MAX_BLOCKS);
+            if (isEnderniumVeinMiningTool(stack)
+                    && EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
+                    && !hasActiveVeinMiningOperation(stack)) {
+                veinMineBlocks(stack, level, pos, state, player, DEFAULT_MAX_BLOCKS);
+            }
+            return;
         }
+
+        scheduleVerifiedDropCollection(level, pos, player);
     }
 
     public static void handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
@@ -285,7 +281,10 @@ public final class EnderniumUtils {
             return;
         }
 
-        AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos), DROP_COLLECTION_RADIUS * 2.0D, DROP_COLLECTION_RADIUS * 2.0D, DROP_COLLECTION_RADIUS * 2.0D);
+        AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos),
+                DROP_COLLECTION_RADIUS * 2.0D,
+                DROP_COLLECTION_RADIUS * 2.0D,
+                DROP_COLLECTION_RADIUS * 2.0D);
         List<ItemEntity> itemEntities = serverLevel.getEntitiesOfClass(ItemEntity.class, dropBox, ItemEntity::isAlive);
         for (ItemEntity itemEntity : itemEntities) {
             ItemStack itemStack = itemEntity.getItem();
@@ -302,7 +301,7 @@ public final class EnderniumUtils {
 
     private static void playEnderniumBreakEffects(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ModParticles.REVERSE_ENDERNIUM_BIT,
+            serverLevel.sendParticles(ModParticles.reverseEnderniumBitParticle(),
                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                     10, 0.2D, 0.2D, 0.2D, 0.01D);
         }
@@ -312,6 +311,15 @@ public final class EnderniumUtils {
     private static void scheduleDropCollection(Level level, BlockPos pos, Player player) {
         EnderniumTickScheduler.schedule(() -> {
             if (!player.isRemoved()) {
+                collectNearbyDrops(level, pos, player);
+            }
+        }, 1);
+    }
+
+    private static void scheduleVerifiedDropCollection(Level level, BlockPos pos, Player player) {
+        EnderniumTickScheduler.schedule(() -> {
+            if (!player.isRemoved() && level.getBlockState(pos).isAir()) {
+                playEnderniumBreakEffects(level, pos);
                 collectNearbyDrops(level, pos, player);
             }
         }, 1);
