@@ -26,7 +26,7 @@ Using Endernium Ingots and the appropriate Smithing Template, you may upgrade th
 
 ## Special Abilities
 
-Each Endernium tool and the full armor set comes with a unique special ability. \.
+Each Endernium tool and the full armor set comes with a unique special ability.
 
 * **Endernium Armor Set**
 
