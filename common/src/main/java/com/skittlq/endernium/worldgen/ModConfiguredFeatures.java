@@ -25,7 +25,7 @@ public final class ModConfiguredFeatures {
         register(
                 context,
                 ENDERNIUM_ORE_KEY,
-                Feature.ORE,
+                EnderniumFeatures.surfaceEnderniumOre(),
                 new OreConfiguration(endReplaceables, EnderniumBlocks.ENDERNIUM_ORE.block().defaultBlockState(), 4)
         );
     }

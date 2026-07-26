@@ -6,6 +6,9 @@
       "loot_table_id": "minecraft:chests/end_city_treasure"
     },
     {
+      "condition": "endernium:dragon_defeated"
+    },
+    {
       "chance": 0.3,
         "condition": "minecraft:random_chance"
     }

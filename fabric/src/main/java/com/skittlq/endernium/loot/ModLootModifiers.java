@@ -95,6 +95,9 @@ public final class ModLootModifiers {
         List<LootModifierDefinition> definitions = MODIFIERS_BY_TABLE.getOrDefault(key.identifier(), Collections.emptyList());
         for (LootModifierDefinition definition : definitions) {
             LootPool.Builder pool = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
+            if (definition.requiresDragonDefeated()) {
+                pool.when(DragonDefeatedLootCondition.dragonDefeated());
+            }
             if (definition.chance() < 1.0F) {
                 pool.when(LootItemRandomChanceCondition.randomChance(definition.chance()));
             }
@@ -121,6 +124,7 @@ public final class ModLootModifiers {
 
         Identifier lootTableId = null;
         float chance = 1.0F;
+        boolean requiresDragonDefeated = false;
         JsonArray conditions = GsonHelper.getAsJsonArray(json, "conditions", new JsonArray());
         for (JsonElement element : conditions) {
             if (!element.isJsonObject()) {
@@ -132,6 +136,8 @@ public final class ModLootModifiers {
                 lootTableId = Identifier.parse(GsonHelper.getAsString(condition, "loot_table_id"));
             } else if ("minecraft:random_chance".equals(conditionType)) {
                 chance = GsonHelper.getAsFloat(condition, "chance", 1.0F);
+            } else if ("endernium:dragon_defeated".equals(conditionType)) {
+                requiresDragonDefeated = true;
             }
         }
 
@@ -162,9 +168,9 @@ public final class ModLootModifiers {
             maxCount = GsonHelper.getAsInt(count, "max", minCount);
         }
 
-        return new LootModifierDefinition(lootTableId, item, chance, minCount, maxCount);
+        return new LootModifierDefinition(lootTableId, item, chance, minCount, maxCount, requiresDragonDefeated);
     }
 
-    private record LootModifierDefinition(Identifier lootTableId, Item item, float chance, int minCount, int maxCount) {
+    private record LootModifierDefinition(Identifier lootTableId, Item item, float chance, int minCount, int maxCount, boolean requiresDragonDefeated) {
     }
 }

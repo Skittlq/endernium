@@ -7,12 +7,14 @@ import com.skittlq.endernium.item.EnderniumCreativeTabContents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
+import com.skittlq.endernium.loot.ModLootConditions;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
+import com.skittlq.endernium.worldgen.ModFeatures;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.api.distmarker.Dist;
@@ -43,8 +45,10 @@ public class Endernium {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModLootModifiers.register(modEventBus);
+        ModLootConditions.register(modEventBus);
         ModParticles.register(modEventBus);
         ModCriteriaTriggerRegistrar.register(modEventBus);
+        ModFeatures.register(modEventBus);
         ModPlacementModifiers.register(modEventBus);
         EnderniumArmorAbilityHandler.register();
 

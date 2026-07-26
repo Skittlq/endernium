@@ -1,10 +1,10 @@
 package com.skittlq.endernium.worldgen;
 
 import com.mojang.serialization.MapCodec;
+import com.skittlq.endernium.util.EnderniumDragonState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
@@ -23,13 +23,7 @@ public final class DragonDefeatedPlacementFilter extends PlacementFilter {
     @Override
     protected boolean shouldPlace(PlacementContext context, RandomSource random, BlockPos pos) {
         ServerLevel level = context.getLevel().getLevel();
-        ServerLevel endLevel = level.getServer().getLevel(Level.END);
-        if (endLevel == null) {
-            return false;
-        }
-
-        var dragonFight = endLevel.getDragonFight();
-        return dragonFight != null && dragonFight.hasPreviouslyKilledDragon();
+        return EnderniumDragonState.hasDragonBeenDefeated(level);
     }
 
     @Override
