@@ -39,7 +39,7 @@ Each Endernium tool and the full armor set comes with a unique special ability.
 * **Endernium Sword**
 
   * Features a *Teleportation Barrage* attack.
-  * Right Click to automatically teleport to each hostile mob in front of you and slice them.
+  * Press **`R`** to automatically teleport to each hostile mob in front of you and slice them.
   * Deals **triple damage** to each mob hit.
   * Base cooldown: **10 seconds**.
   * Additional **5 seconds** cooldown per mob hit.
@@ -48,9 +48,9 @@ Each Endernium tool and the full armor set comes with a unique special ability.
 
   * All tools have **Vein Mining** ability:
 
-    * Toggle with **Sneak + Right Click**.
+    * Toggle with **Sneak + `R`**.
     * Mine up to **64 connected blocks of the same type** at once.
-    * Cancel vein mining mid-operation with **Right Click**.
+    * Cancel vein mining mid-operation with **`R`**.
   * Blocks broken with Endernium tools are **teleported directly to your inventory** (unless full).
 
 ## Credits
