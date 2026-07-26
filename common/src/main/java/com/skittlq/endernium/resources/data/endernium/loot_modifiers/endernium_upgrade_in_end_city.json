@@ -6,10 +6,11 @@
       "loot_table_id": "minecraft:chests/end_city_treasure"
     },
     {
-      "chance": 0.5,
+      "chance": 0.15,
         "condition": "minecraft:random_chance"
     }
   ],
   "item": "endernium:endernium_upgrade_smithing_template"
 }
+
 

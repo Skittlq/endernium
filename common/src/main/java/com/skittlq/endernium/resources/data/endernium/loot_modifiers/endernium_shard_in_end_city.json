@@ -6,10 +6,9 @@
       "loot_table_id": "minecraft:chests/end_city_treasure"
     },
     {
-      "chance": 0.4,
+      "chance": 0.3,
         "condition": "minecraft:random_chance"
     }
   ],
   "item": "endernium:endernium_shard"
 }
-

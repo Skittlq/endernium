@@ -76,7 +76,7 @@ public final class EnderniumArmorAbility {
             mob.push(pushVec.x, 1.0D, pushVec.z);
         }
 
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
+        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));
         cooldownStore.setLastUsedTick(player, currentTime);
         int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
         player.getCooldowns().addCooldown(player.getItemBySlot(EquipmentSlot.CHEST), cooldownTicksInt);

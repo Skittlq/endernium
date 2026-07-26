@@ -7,14 +7,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.skittlq.endernium.Endernium;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -25,7 +20,9 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCon
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
-import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,8 +31,8 @@ import java.util.Map;
 
 public final class ModLootModifiers {
     private static final Gson GSON = new GsonBuilder().create();
-    private static final Identifier RELOAD_LISTENER_ID = Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "loot_modifiers");
-    private static final String LOOT_MODIFIERS_ROOT = "loot_modifiers";
+    private static final String GLOBAL_LOOT_MODIFIERS_INDEX = "data/neoforge/loot_modifiers/global_loot_modifiers.json";
+    private static final String LOOT_MODIFIER_PATH_TEMPLATE = "data/%s/loot_modifiers/%s.json";
     private static final Map<Identifier, List<LootModifierDefinition>> MODIFIERS_BY_TABLE = new HashMap<>();
     private static boolean registered;
 
@@ -48,35 +45,46 @@ public final class ModLootModifiers {
         }
         registered = true;
 
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-            @Override
-            public Identifier getFabricId() {
-                return RELOAD_LISTENER_ID;
-            }
-
-            @Override
-            public void onResourceManagerReload(ResourceManager resourceManager) {
-                reloadModifiers(resourceManager);
-            }
-        });
-
+        reloadModifiers();
         LootTableEvents.MODIFY.register(ModLootModifiers::modifyLootTable);
     }
 
-    private static void reloadModifiers(ResourceManager resourceManager) {
+    private static void reloadModifiers() {
         MODIFIERS_BY_TABLE.clear();
-        Map<Identifier, Resource> resources = resourceManager.listResources(LOOT_MODIFIERS_ROOT, id -> id.getPath().endsWith(".json"));
-        for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
-            try (BufferedReader reader = entry.getValue().openAsReader()) {
-                JsonObject json = GSON.fromJson(reader, JsonObject.class);
-                LootModifierDefinition definition = parse(entry.getKey(), json);
-                if (definition != null) {
-                    MODIFIERS_BY_TABLE.computeIfAbsent(definition.lootTableId(), ignored -> new ArrayList<>()).add(definition);
-                }
-            } catch (Exception exception) {
-                Endernium.LOGGER.error("Failed to load loot modifier {}", entry.getKey(), exception);
+        try (InputStream indexStream = ModLootModifiers.class.getClassLoader().getResourceAsStream(GLOBAL_LOOT_MODIFIERS_INDEX)) {
+            if (indexStream == null) {
+                Endernium.LOGGER.warn("Could not find {}", GLOBAL_LOOT_MODIFIERS_INDEX);
+                return;
             }
+
+            JsonObject indexJson = GSON.fromJson(new InputStreamReader(indexStream, StandardCharsets.UTF_8), JsonObject.class);
+            JsonArray entries = GsonHelper.getAsJsonArray(indexJson, "entries", new JsonArray());
+            for (JsonElement element : entries) {
+                if (!element.isJsonPrimitive()) {
+                    continue;
+                }
+
+                Identifier modifierId = Identifier.parse(element.getAsString());
+                String resourcePath = LOOT_MODIFIER_PATH_TEMPLATE.formatted(modifierId.getNamespace(), modifierId.getPath());
+                try (InputStream modifierStream = ModLootModifiers.class.getClassLoader().getResourceAsStream(resourcePath)) {
+                    if (modifierStream == null) {
+                        Endernium.LOGGER.warn("Could not find loot modifier resource {}", resourcePath);
+                        continue;
+                    }
+
+                    JsonObject json = GSON.fromJson(new InputStreamReader(modifierStream, StandardCharsets.UTF_8), JsonObject.class);
+                    LootModifierDefinition definition = parse(modifierId, json);
+                    if (definition != null) {
+                        MODIFIERS_BY_TABLE.computeIfAbsent(definition.lootTableId(), ignored -> new ArrayList<>()).add(definition);
+                    }
+                } catch (Exception exception) {
+                    Endernium.LOGGER.error("Failed to load loot modifier {}", modifierId, exception);
+                }
+            }
+        } catch (Exception exception) {
+            Endernium.LOGGER.error("Failed to load Fabric loot modifier index", exception);
         }
+
         Endernium.LOGGER.info("Loaded {} Endernium loot modifier target sets", MODIFIERS_BY_TABLE.size());
     }
 
@@ -160,6 +168,3 @@ public final class ModLootModifiers {
     private record LootModifierDefinition(Identifier lootTableId, Item item, float chance, int minCount, int maxCount) {
     }
 }
-
-
-

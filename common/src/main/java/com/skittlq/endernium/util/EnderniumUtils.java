@@ -32,7 +32,6 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -78,6 +77,7 @@ public final class EnderniumUtils {
             return;
         }
 
+        clearVeinMiningBlockProgress(level, pos, player);
         emitVanillaBreakEffects(level, pos, state);
 
         if (state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) {
@@ -136,52 +136,58 @@ public final class EnderniumUtils {
             }
         }
 
-        int ticksPerBlock;
-        if (stack.getItem() instanceof EnderniumHoe && isHarvestableCrop(originState)) {
-            ticksPerBlock = 2;
-        } else {
-            float speed = stack.getDestroySpeed(originState);
-            if (speed <= 0.0F) {
-                speed = 1.0F;
-            }
-            ticksPerBlock = Math.max(1, Math.round((2.0F / speed) * 20.0F));
-        }
-        Iterator<BlockPos> iterator = blocksToMine.iterator();
-
         int sessionId = new Random().nextInt();
         CompoundTag tag = getOrCreateCustomDataTag(stack);
         tag.putInt(VEIN_MINING_SESSION_ID_KEY, sessionId);
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
+        if (blocksToMine.isEmpty()) {
+            tag.remove(VEIN_MINING_SESSION_ID_KEY);
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+            clearVeinMiningBlockProgress(level, origin, player);
+            return;
+        }
+
+        int[] currentIndex = {0};
         Runnable[] task = new Runnable[1];
         task[0] = () -> {
             CompoundTag checkTag = getOrCreateCustomDataTag(stack);
             int currentSession = checkTag.getIntOr(VEIN_MINING_SESSION_ID_KEY, 0);
             if (currentSession != sessionId) {
+                clearVeinMiningBlockProgress(level, origin, player);
                 return;
             }
 
-            if (!iterator.hasNext()) {
+            if (currentIndex[0] >= blocksToMine.size()) {
                 checkTag.remove(VEIN_MINING_SESSION_ID_KEY);
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(checkTag));
                 return;
             }
 
-            BlockPos nextPos = iterator.next();
+            BlockPos nextPos = blocksToMine.get(currentIndex[0]++);
             BlockState nextState = level.getBlockState(nextPos);
             if (!nextState.isAir() && canVeinMineBlock(stack, nextState)) {
                 handleBlockMine(stack, level, nextState, nextPos, player);
             }
 
-            if (iterator.hasNext()) {
-                EnderniumTickScheduler.schedule(task[0], ticksPerBlock);
+            if (currentIndex[0] < blocksToMine.size()) {
+                BlockPos upcomingPos = blocksToMine.get(currentIndex[0]);
+                BlockState upcomingState = level.getBlockState(upcomingPos);
+                int ticksUntilNextBlock = getVeinMiningDelayTicks(level, upcomingState, upcomingPos, player);
+                scheduleVeinMiningProgress(stack, level, upcomingPos, player, sessionId, ticksUntilNextBlock);
+                EnderniumTickScheduler.schedule(task[0], ticksUntilNextBlock);
             } else {
                 checkTag.remove(VEIN_MINING_SESSION_ID_KEY);
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(checkTag));
+                clearVeinMiningBlockProgress(level, nextPos, player);
             }
         };
 
-        EnderniumTickScheduler.schedule(task[0], 0);
+        BlockPos firstPos = blocksToMine.get(0);
+        BlockState firstState = level.getBlockState(firstPos);
+        int initialDelay = getVeinMiningDelayTicks(level, firstState, firstPos, player);
+        scheduleVeinMiningProgress(stack, level, firstPos, player, sessionId, initialDelay);
+        EnderniumTickScheduler.schedule(task[0], initialDelay);
     }
 
     public static void cancelVeinMining(ItemStack stack) {
@@ -300,5 +306,44 @@ public final class EnderniumUtils {
             return true;
         }
         return stack.getItem() instanceof EnderniumHoe && isHarvestableCrop(state);
+    }
+
+    private static int getVeinMiningDelayTicks(Level level, BlockState state, BlockPos pos, Player player) {
+        float destroyProgress = state.getDestroyProgress(player, level, pos);
+        if (destroyProgress <= 0.0F) {
+            return 20;
+        }
+        return Math.max(1, (int) Math.ceil(1.0F / destroyProgress));
+    }
+
+    private static void scheduleVeinMiningProgress(ItemStack stack, Level level, BlockPos pos, Player player, int sessionId, int totalTicks) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        int steps = Math.min(10, Math.max(1, totalTicks));
+        int breakerId = getVeinMiningBreakerId(player);
+        for (int step = 0; step < steps; step++) {
+            int crackStage = Math.min(9, Math.max(0, (int) Math.floor(((step + 1) * 10.0D) / steps) - 1));
+            int delay = Math.max(0, (int) Math.floor((step * (double) totalTicks) / steps));
+            EnderniumTickScheduler.schedule(() -> {
+                CompoundTag tag = getOrCreateCustomDataTag(stack);
+                if (tag.getIntOr(VEIN_MINING_SESSION_ID_KEY, 0) != sessionId || player.isRemoved() || level.getBlockState(pos).isAir()) {
+                    serverLevel.destroyBlockProgress(breakerId, pos, -1);
+                    return;
+                }
+                serverLevel.destroyBlockProgress(breakerId, pos, crackStage);
+            }, delay);
+        }
+    }
+
+    private static void clearVeinMiningBlockProgress(Level level, BlockPos pos, Player player) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.destroyBlockProgress(getVeinMiningBreakerId(player), pos, -1);
+        }
+    }
+
+    private static int getVeinMiningBreakerId(Player player) {
+        return Integer.MIN_VALUE + player.getId();
     }
 }

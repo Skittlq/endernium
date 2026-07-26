@@ -6,11 +6,13 @@
       "loot_table_id": "minecraft:chests/end_city_treasure"
     },
     {
-      "chance": 0.7,
+      "chance": 0.5,
         "condition": "minecraft:random_chance"
     }
   ],
   "item": "endernium:endernium_dust",
+  "min_count": 1,
+  "max_count": 4,
   "functions": [
         {
         "function": "minecraft:set_count",
@@ -21,4 +23,3 @@
       }
   ]
 }
-
