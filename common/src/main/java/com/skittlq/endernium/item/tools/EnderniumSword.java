@@ -47,6 +47,10 @@ public class EnderniumSword extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        return InteractionResult.PASS;
+    }
+
+    public InteractionResult activateAbility(Level level, Player player, InteractionHand hand) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -62,6 +66,10 @@ public class EnderniumSword extends Item {
             int cooldown = 100 + 100 * mobsHit;
             player.getCooldowns().addCooldown(player.getItemInHand(hand), cooldown);
             MOBS_HIT_MAP.remove(uuid);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (player.getCooldowns().isOnCooldown(player.getItemInHand(hand))) {
             return InteractionResult.SUCCESS;
         }
 

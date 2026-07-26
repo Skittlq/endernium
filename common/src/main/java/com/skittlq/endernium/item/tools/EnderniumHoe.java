@@ -4,12 +4,9 @@ import com.skittlq.endernium.item.ModToolTiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -23,11 +20,6 @@ import java.util.function.Consumer;
 public class EnderniumHoe extends HoeItem {
     public EnderniumHoe(Properties properties) {
         super(ModToolTiers.ENDERNIUM, -4.0F, 0.0F, properties);
-    }
-
-    @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        return EnderniumVeinMiningToolHelper.use(level, player, hand);
     }
 
     @Override

@@ -46,7 +46,7 @@ public final class EnderniumVeinMiningToolHelper {
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 
-    static InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public static InteractionResult activate(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
         if (player.isShiftKeyDown()) {

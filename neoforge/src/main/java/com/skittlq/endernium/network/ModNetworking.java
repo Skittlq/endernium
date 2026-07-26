@@ -2,8 +2,11 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.CameraLerpHandler;
+import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
+import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -20,11 +23,21 @@ public class ModNetworking {
                 CameraLerpPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> CameraLerpHandler.onCameraLerpPacket(payload))
         );
+        registrar.playToServer(
+                EnderniumAbilityPayload.TYPE,
+                EnderniumAbilityPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() ->
+                        EnderniumAbilityHandler.activateHeldAbility(context.player().level(), context.player()))
+        );
         EnderniumNetworking.bindCameraLerpSender((player, targetYaw, targetPitch, durationTicks) ->
                 PacketDistributor.sendToPlayer(player, new CameraLerpPayload(targetYaw, targetPitch, durationTicks)));
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {
         EnderniumNetworking.sendCameraLerp(player, targetYaw, targetPitch, durationTicks);
+    }
+
+    public static void sendAbilityActivation() {
+        ClientPacketDistributor.sendToServer(EnderniumAbilityPayload.INSTANCE);
     }
 }
