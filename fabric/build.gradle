@@ -6,7 +6,7 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
-def targetJavaVersion = 26
+def targetJavaVersion = 25
 
 sourceSets {
 	main {

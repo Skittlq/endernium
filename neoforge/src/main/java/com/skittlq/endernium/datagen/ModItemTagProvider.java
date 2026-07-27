@@ -19,6 +19,8 @@ public class ModItemTagProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(ModTags.Items.ENDERNIUM_REPAIRABLE)
                 .add(ModItems.ENDERNIUM_INGOT.getKey());
+        tag(ModTags.Items.INGOTS_ENDERNIUM)
+                .add(ModItems.ENDERNIUM_INGOT.getKey());
         tag(ItemTags.BEACON_PAYMENT_ITEMS)
                 .add(ModItems.ENDERNIUM_INGOT.getKey());
 
