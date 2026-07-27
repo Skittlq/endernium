@@ -1,16 +1,23 @@
 ![Endernium Logo Large](https://github.com/Skittlq/endernium/blob/26.2/brand/endernium-titlecard.png?raw=true)
 Endernium is an advanced material, surpassing Netherite in both strength and rarity, found exclusively within The End.
 
+## Requirements
+
+- Minecraft 26.2
+- Java 25 or newer
+- Fabric or NeoForge
+
 ## Obtaining Endernium
 
 Once the Ender Dragon is defeated, you will be able to start finding Endernium Ore scattered across the End islands.
 
 **Upgrade Process:**
 
-- Acquire an **Endernium Upgrade Smithing Template** from End City Chests.
+- Acquire an **Endernium Upgrade Smithing Template** from End City Chests. End City Chests can also contain Endernium Dust and Endernium Shards after the dragon has been defeated.
 - Mine **Endernium Ore** from the End islands. When broken, Endernium Ore drops **Endernium Dust**.
 - Combine four Endernium Dust to craft an **Endernium Shard**.
-- Surround a Netherite Ingot with Endernium Shards to create an **Endernium Ingot**.
+- Surround a Netherite Ingot with eight Endernium Shards to create an **Endernium Ingot**.
+- Duplicate Endernium Upgrade Smithing Templates with End Stone and a Netherite Ingot.
 
 ## Upgradable Items
 
@@ -28,7 +35,7 @@ Using Endernium Ingots and the appropriate Smithing Template, you may upgrade th
 
 ## Special Abilities
 
-Each Endernium tool and the full armor set comes with a unique special ability.
+The Endernium Sword, Endernium tools, and full armor set come with special abilities.
 
 - **Endernium Armor Set**
   - Grants a unique "last-minute defense" ability when wearing the full set of armor.
@@ -45,12 +52,16 @@ Each Endernium tool and the full armor set comes with a unique special ability.
   - Additional **5 seconds** cooldown per mob hit.
 
 - **Endernium Tools**
-  - All tools have **Vein Mining** ability:
+  - Endernium Pickaxes, Shovels, Axes, and Hoes have a **Vein Mining** ability:
     - Toggle with **Sneak + `R`**.
     - Mine up to **64 connected blocks of the same type** at once.
     - Cancel vein mining mid-operation with **`R`**.
 
   - Blocks broken with Endernium tools are **teleported directly to your inventory** (unless full).
+
+## Configuration
+
+Endernium's armor ability, sword ability cooldowns, and tool vein mining can be configured.
 
 ## Credits
 
@@ -58,7 +69,7 @@ _Textures designed by [Alizarin](https://x.com/AliCrimzon)._
 
 ## Issues & Bug Reports
 
-Should you encounter any bugs, issues, or require assistance, please submit a report via the [GitHub Issues page](https://github.com/Skittlq/endernium-neoforge/issues). Feedback and suggestions are always appreciated.
+Should you encounter any bugs, issues, or require assistance, please submit a report via the [GitHub Issues page](https://github.com/Skittlq/endernium/issues). Feedback and suggestions are always appreciated.
 
 ## License
 
