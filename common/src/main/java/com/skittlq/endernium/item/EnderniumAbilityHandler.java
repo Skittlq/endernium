@@ -1,5 +1,6 @@
 package com.skittlq.endernium.item;
 
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.tools.EnderniumAxe;
 import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.item.tools.EnderniumPickaxe;
@@ -27,6 +28,9 @@ public final class EnderniumAbilityHandler {
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
         if (item instanceof EnderniumSword sword) {
+            if (!EnderniumGameplayConfig.swordAbilityEnabled()) {
+                return false;
+            }
             sword.activateAbility(level, player, hand);
             return true;
         }
@@ -35,6 +39,9 @@ public final class EnderniumAbilityHandler {
                 || item instanceof EnderniumShovel
                 || item instanceof EnderniumAxe
                 || item instanceof EnderniumHoe) {
+            if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
+                return false;
+            }
             EnderniumVeinMiningToolHelper.activate(level, player, hand);
             return true;
         }

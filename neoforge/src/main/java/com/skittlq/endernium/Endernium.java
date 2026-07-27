@@ -54,6 +54,7 @@ public class Endernium {
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+        Config.bindGameplayConfig();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

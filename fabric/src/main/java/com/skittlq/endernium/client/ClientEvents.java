@@ -41,6 +41,7 @@ public final class ClientEvents {
         }
         registered = true;
         KeyMappingHelper.registerKeyMapping(ENDERNIUM_ABILITY_KEY);
+        EnderniumKeyBindings.bindAbilityKeyName(ENDERNIUM_ABILITY_KEY::getTranslatedKeyMessage);
         ClientTickEvents.END_CLIENT_TICK.register(EnderniumClientBehavior::tickClient);
         ClientTickEvents.END_CLIENT_TICK.register(ClientEvents::handleAbilityKey);
         HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, ARMOR_COOLDOWN_HUD, ClientEvents::renderArmorCooldownHud);

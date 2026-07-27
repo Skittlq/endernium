@@ -64,6 +64,8 @@ public final class EnderniumConfigManager {
         EnderniumConfig sanitized = rawConfig == null ? new EnderniumConfig() : rawConfig.copy();
         sanitized.enderniumArmorAbilityThreshold = Math.max(1, sanitized.enderniumArmorAbilityThreshold);
         sanitized.enderniumArmorAbilityCooldown = Math.max(1L, sanitized.enderniumArmorAbilityCooldown);
+        sanitized.enderniumSwordAbilityBaseCooldown = Math.max(0, sanitized.enderniumSwordAbilityBaseCooldown);
+        sanitized.enderniumSwordAbilityPerMobCooldown = Math.max(0, sanitized.enderniumSwordAbilityPerMobCooldown);
         return sanitized;
     }
 }

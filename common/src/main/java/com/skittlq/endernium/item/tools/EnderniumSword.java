@@ -1,6 +1,8 @@
 package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
+import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
@@ -63,8 +65,7 @@ public class EnderniumSword extends Item {
             ACTIVE_TASKS.get(uuid).clear();
 
             int mobsHit = MOBS_HIT_MAP.getOrDefault(uuid, new AtomicInteger(0)).get();
-            int cooldown = 100 + 100 * mobsHit;
-            player.getCooldowns().addCooldown(player.getItemInHand(hand), cooldown);
+            addConfiguredCooldown(player, player.getItemInHand(hand), mobsHit);
             MOBS_HIT_MAP.remove(uuid);
             return InteractionResult.SUCCESS;
         }
@@ -179,8 +180,7 @@ public class EnderniumSword extends Item {
 
         int totalDuration = sortedTargets.size() * ticksBetweenHits + 5;
         int endTaskId = EnderniumTickScheduler.schedule(() -> {
-            int cooldown = 200 + 100 * mobsHit.get();
-            player.getCooldowns().addCooldown(player.getItemInHand(hand), cooldown);
+            addConfiguredCooldown(player, player.getItemInHand(hand), mobsHit.get());
 
             if (player instanceof ServerPlayer serverPlayer) {
                 int hitCount = mobsHit.get();
@@ -197,6 +197,13 @@ public class EnderniumSword extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    private static void addConfiguredCooldown(Player player, ItemStack stack, int mobsHit) {
+        int cooldownTicks = EnderniumGameplayConfig.swordAbilityCooldownTicks(mobsHit);
+        if (cooldownTicks > 0) {
+            player.getCooldowns().addCooldown(stack, cooldownTicks);
+        }
+    }
+
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
         return super.mineBlock(stack, level, state, pos, entity);
@@ -205,9 +212,18 @@ public class EnderniumSword extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.activate").withStyle(ChatFormatting.LIGHT_PURPLE));
-        tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.cooldown").withStyle(ChatFormatting.LIGHT_PURPLE));
-        tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
+        if (EnderniumGameplayConfig.swordAbilityEnabled()) {
+            tooltipAdder.accept(Component.translatable(
+                    "endernium.tooltip.sword.activate",
+                    EnderniumKeyBindings.abilityKeyName()
+            ).withStyle(ChatFormatting.LIGHT_PURPLE));
+            tooltipAdder.accept(Component.translatable(
+                    "endernium.tooltip.sword.cooldown",
+                    EnderniumGameplayConfig.swordAbilityBaseCooldownSeconds(),
+                    EnderniumGameplayConfig.swordAbilityPerMobCooldownSeconds()
+            ).withStyle(ChatFormatting.LIGHT_PURPLE));
+            tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
+        }
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

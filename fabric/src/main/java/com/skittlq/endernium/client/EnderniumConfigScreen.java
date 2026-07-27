@@ -2,6 +2,7 @@ package com.skittlq.endernium.client;
 
 import com.skittlq.endernium.config.EnderniumConfig;
 import com.skittlq.endernium.config.EnderniumConfigManager;
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -47,6 +48,40 @@ public final class EnderniumConfigScreen {
                 .setSaveConsumer(value -> config.enderniumArmorAbilityCooldown = value)
                 .build());
 
+
+        general.addEntry(entries.startBooleanToggle(
+                        Component.translatable("endernium.config.sword_ability"),
+                        config.enderniumSwordAbility)
+                .setDefaultValue(true)
+                .setTooltip(Component.translatable("endernium.config.sword_ability.tooltip"))
+                .setSaveConsumer(value -> config.enderniumSwordAbility = value)
+                .build());
+
+        general.addEntry(entries.startIntField(
+                        Component.translatable("endernium.config.sword_ability_base_cooldown"),
+                        config.enderniumSwordAbilityBaseCooldown)
+                .setDefaultValue(EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS)
+                .setMin(0)
+                .setTooltip(Component.translatable("endernium.config.sword_ability_base_cooldown.tooltip"))
+                .setSaveConsumer(value -> config.enderniumSwordAbilityBaseCooldown = value)
+                .build());
+
+        general.addEntry(entries.startIntField(
+                        Component.translatable("endernium.config.sword_ability_per_mob_cooldown"),
+                        config.enderniumSwordAbilityPerMobCooldown)
+                .setDefaultValue(EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_PER_MOB_COOLDOWN_SECONDS)
+                .setMin(0)
+                .setTooltip(Component.translatable("endernium.config.sword_ability_per_mob_cooldown.tooltip"))
+                .setSaveConsumer(value -> config.enderniumSwordAbilityPerMobCooldown = value)
+                .build());
+
+        general.addEntry(entries.startBooleanToggle(
+                        Component.translatable("endernium.config.tools_vein_mining"),
+                        config.enderniumToolsVeinMining)
+                .setDefaultValue(true)
+                .setTooltip(Component.translatable("endernium.config.tools_vein_mining.tooltip"))
+                .setSaveConsumer(value -> config.enderniumToolsVeinMining = value)
+                .build());
         builder.setSavingRunnable(() -> {
             EnderniumConfigManager.setConfig(config);
             EnderniumConfigManager.save();

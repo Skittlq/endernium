@@ -16,6 +16,10 @@ final class EnderniumArmorTooltipHelper {
     }
 
     static void appendFullSetAbilityTooltip(Item.TooltipContext context, Consumer<Component> tooltipAdder) {
+        if (!isArmorAbilityEnabled()) {
+            return;
+        }
+
         var player = EnderniumArmorUtil.getTooltipPlayer(context);
         if (player == null || !EnderniumArmorUtil.hasFullEnderniumSet(player)) {
             return;
@@ -31,6 +35,16 @@ final class EnderniumArmorTooltipHelper {
                 getArmorAbilityCooldown()
         ).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable("endernium.tooltip.armor_ability.description").withStyle(ChatFormatting.GRAY));
+    }
+
+    private static boolean isArmorAbilityEnabled() {
+        Boolean fabricValue = readFabricBoolean("enderniumArmorAbility");
+        if (fabricValue != null) {
+            return fabricValue;
+        }
+
+        Boolean neoForgeValue = readNeoForgeBoolean("ENDERNIUM_ARMOR_ABILITY", "getAsBoolean");
+        return neoForgeValue == null || neoForgeValue;
     }
 
     private static int getArmorAbilityThreshold() {
@@ -53,6 +67,18 @@ final class EnderniumArmorTooltipHelper {
         return neoForgeValue != null ? neoForgeValue : DEFAULT_COOLDOWN;
     }
 
+    private static Boolean readFabricBoolean(String fieldName) {
+        try {
+            Class<?> managerClass = Class.forName("com.skittlq.endernium.config.EnderniumConfigManager");
+            Method getConfig = managerClass.getMethod("getConfig");
+            Object config = getConfig.invoke(null);
+            Field field = config.getClass().getField(fieldName);
+            return field.getBoolean(config);
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            return null;
+        }
+    }
+
     private static Integer readFabricInt(String fieldName) {
         try {
             Class<?> managerClass = Class.forName("com.skittlq.endernium.config.EnderniumConfigManager");
@@ -72,6 +98,17 @@ final class EnderniumArmorTooltipHelper {
             Object config = getConfig.invoke(null);
             Field field = config.getClass().getField(fieldName);
             return field.getLong(config);
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            return null;
+        }
+    }
+
+    private static Boolean readNeoForgeBoolean(String fieldName, String methodName) {
+        try {
+            Class<?> configClass = Class.forName("com.skittlq.endernium.Config");
+            Object value = configClass.getField(fieldName).get(null);
+            Method getter = value.getClass().getMethod(methodName);
+            return (Boolean) getter.invoke(value);
         } catch (ReflectiveOperationException | RuntimeException ignored) {
             return null;
         }

@@ -1,5 +1,6 @@
 package com.skittlq.endernium;
 
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class Config {
@@ -17,7 +18,45 @@ public class Config {
                 .comment("How long the Endernium Armor ability should be on cooldown, in seconds.")
                 .defineInRange("enderniumArmorAbilityCooldown", 90, 1, Long.MAX_VALUE);
 
-        // TODO: ADD MORE CONFIG OPTIONS FOR ENDERNIUM SWORD, PICKAXE, SHOVEL, AXE, AND HOE
+
+        public static final ModConfigSpec.BooleanValue ENDERNIUM_SWORD_ABILITY = BUILDER
+                .comment("Whether the Endernium Sword ability can be activated.")
+                .define("enderniumSwordAbility", true);
+
+        public static final ModConfigSpec.IntValue ENDERNIUM_SWORD_ABILITY_BASE_COOLDOWN = BUILDER
+                .comment("Base cooldown for the Endernium Sword ability, in seconds.")
+                .defineInRange("enderniumSwordAbilityBaseCooldown", EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS, 0, Integer.MAX_VALUE);
+
+        public static final ModConfigSpec.IntValue ENDERNIUM_SWORD_ABILITY_PER_MOB_COOLDOWN = BUILDER
+                .comment("Additional cooldown per mob hit by the Endernium Sword ability, in seconds.")
+                .defineInRange("enderniumSwordAbilityPerMobCooldown", EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_PER_MOB_COOLDOWN_SECONDS, 0, Integer.MAX_VALUE);
+
+        public static final ModConfigSpec.BooleanValue ENDERNIUM_TOOLS_VEIN_MINING = BUILDER
+                .comment("Whether Endernium tools can use vein mining.")
+                .define("enderniumToolsVeinMining", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
+    public static void bindGameplayConfig() {
+        EnderniumGameplayConfig.bind(new EnderniumGameplayConfig.Settings() {
+            @Override
+            public boolean swordAbilityEnabled() {
+                return ENDERNIUM_SWORD_ABILITY.getAsBoolean();
+            }
+
+            @Override
+            public int swordAbilityBaseCooldownSeconds() {
+                return ENDERNIUM_SWORD_ABILITY_BASE_COOLDOWN.getAsInt();
+            }
+
+            @Override
+            public int swordAbilityPerMobCooldownSeconds() {
+                return ENDERNIUM_SWORD_ABILITY_PER_MOB_COOLDOWN.getAsInt();
+            }
+
+            @Override
+            public boolean toolsVeinMiningEnabled() {
+                return ENDERNIUM_TOOLS_VEIN_MINING.getAsBoolean();
+            }
+        });
+    }
 }

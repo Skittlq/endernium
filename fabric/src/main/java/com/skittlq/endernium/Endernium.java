@@ -4,6 +4,7 @@ import com.skittlq.endernium.attachment.ModAttachments;
 import com.skittlq.endernium.advancement.ModCriteriaTriggerRegistrar;
 import com.skittlq.endernium.block.ModBlocks;
 import com.skittlq.endernium.config.EnderniumConfigManager;
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
@@ -28,6 +29,7 @@ public class Endernium implements ModInitializer {
     @Override
     public void onInitialize() {
         EnderniumConfigManager.load();
+        bindGameplayConfig();
         ModAttachments.initialize();
         ModCreativeModeTabs.registerModCreativeModeTabs();
         ModBlocks.register();
@@ -43,5 +45,28 @@ public class Endernium implements ModInitializer {
         EnderniumTickSchedulerEvents.register();
         EnderniumUtilsEvents.register();
         EnderniumArmorAbilityHandler.register();
+    }
+    private static void bindGameplayConfig() {
+        EnderniumGameplayConfig.bind(new EnderniumGameplayConfig.Settings() {
+            @Override
+            public boolean swordAbilityEnabled() {
+                return EnderniumConfigManager.getConfig().enderniumSwordAbility;
+            }
+
+            @Override
+            public int swordAbilityBaseCooldownSeconds() {
+                return EnderniumConfigManager.getConfig().enderniumSwordAbilityBaseCooldown;
+            }
+
+            @Override
+            public int swordAbilityPerMobCooldownSeconds() {
+                return EnderniumConfigManager.getConfig().enderniumSwordAbilityPerMobCooldown;
+            }
+
+            @Override
+            public boolean toolsVeinMiningEnabled() {
+                return EnderniumConfigManager.getConfig().enderniumToolsVeinMining;
+            }
+        });
     }
 }

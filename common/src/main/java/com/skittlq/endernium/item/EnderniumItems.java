@@ -21,10 +21,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public enum EnderniumItems {
-    ENDERNIUM_DUST("endernium_dust", Item::new),
-    ENDERNIUM_SHARD("endernium_shard", Item::new),
-    ENDERNIUM_INGOT("endernium_ingot", properties -> new Item(properties.fireResistant())),
-    ENDERNIUM_UPGRADE_SMITHING_TEMPLATE("endernium_upgrade_smithing_template", EnderniumItems::createEnderniumUpgradeTemplate),
+    ENDERNIUM_SHOVEL("endernium_shovel", properties -> new EnderniumShovel(properties.fireResistant())),
+    ENDERNIUM_PICKAXE("endernium_pickaxe", properties -> new EnderniumPickaxe(properties.fireResistant())),
+    ENDERNIUM_AXE("endernium_axe", properties -> new EnderniumAxe(properties.fireResistant())),
+    ENDERNIUM_HOE("endernium_hoe", properties -> new EnderniumHoe(properties.fireResistant())),
     ENDERNIUM_SWORD("endernium_sword", properties -> new EnderniumSword(properties.fireResistant())),
     ENDERNIUM_SPEAR("endernium_spear", properties -> new Item(properties.spear(
             ModToolTiers.ENDERNIUM,
@@ -38,10 +38,6 @@ public enum EnderniumItems {
             8.75F,
             4.6F
     ).fireResistant())),
-    ENDERNIUM_SHOVEL("endernium_shovel", properties -> new EnderniumShovel(properties.fireResistant())),
-    ENDERNIUM_PICKAXE("endernium_pickaxe", properties -> new EnderniumPickaxe(properties.fireResistant())),
-    ENDERNIUM_AXE("endernium_axe", properties -> new EnderniumAxe(properties.fireResistant())),
-    ENDERNIUM_HOE("endernium_hoe", properties -> new EnderniumHoe(properties.fireResistant())),
     ENDERNIUM_HELMET("endernium_helmet", EnderniumHelmet::new),
     ENDERNIUM_CHESTPLATE("endernium_chestplate", EnderniumChestplate::new),
     ENDERNIUM_LEGGINGS("endernium_leggings", EnderniumLeggings::new),
@@ -51,7 +47,11 @@ public enum EnderniumItems {
     )),
     ENDERNIUM_NAUTILUS_ARMOR("endernium_nautilus_armor", properties -> new Item(
             properties.nautilusArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()
-    ));
+    )),
+    ENDERNIUM_DUST("endernium_dust", Item::new),
+    ENDERNIUM_SHARD("endernium_shard", Item::new),
+    ENDERNIUM_INGOT("endernium_ingot", properties -> new Item(properties.fireResistant())),
+    ENDERNIUM_UPGRADE_SMITHING_TEMPLATE("endernium_upgrade_smithing_template", EnderniumItems::createEnderniumUpgradeTemplate);
 
     private final String id;
     private final Function<Item.Properties, Item> factory;

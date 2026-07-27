@@ -1,5 +1,7 @@
 package com.skittlq.endernium.item.tools;
 
+import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -35,6 +37,10 @@ public final class EnderniumVeinMiningToolHelper {
     }
 
     public static boolean isVeinMiningEnabled(ItemStack stack) {
+        if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
+            return false;
+        }
+
         CompoundTag tag = getOrCreateCustomDataTag(stack);
         return tag.getBooleanOr(VEIN_MINING_KEY, false);
     }
@@ -47,6 +53,10 @@ public final class EnderniumVeinMiningToolHelper {
     }
 
     public static InteractionResult activate(Level level, Player player, InteractionHand hand) {
+        if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
+            return InteractionResult.PASS;
+        }
+
         ItemStack stack = player.getItemInHand(hand);
 
         if (player.isShiftKeyDown()) {
@@ -91,12 +101,22 @@ public final class EnderniumVeinMiningToolHelper {
 
     static void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
+            return;
+        }
+
         boolean enabled = isVeinMiningEnabled(stack);
         tooltipAdder.accept(veinMiningStatus(enabled)
                 .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY));
         tooltipAdder.accept(Component.empty());
-        tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.toggle").withStyle(ChatFormatting.LIGHT_PURPLE));
-        tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.cancel").withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable(
+                "endernium.tooltip.vein_mining.toggle",
+                EnderniumKeyBindings.abilityKeyName()
+        ).withStyle(ChatFormatting.LIGHT_PURPLE));
+        tooltipAdder.accept(Component.translatable(
+                "endernium.tooltip.vein_mining.cancel",
+                EnderniumKeyBindings.abilityKeyName()
+        ).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.works").withStyle(ChatFormatting.GRAY));
     }
 
