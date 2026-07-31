@@ -1,4 +1,4 @@
-{
+﻿{
   "creativetab.endernium": "Endernium",
 
   "item.endernium.endernium_dust": "Endernium Dust",
@@ -67,15 +67,15 @@
   "endernium.config.sword_ability_per_mob_cooldown.tooltip": "Additional cooldown in seconds for each mob hit by the Endernium Sword ability.",
   "endernium.config.tools_vein_mining": "Enable Endernium Tools Vein Mining",
   "endernium.config.tools_vein_mining.tooltip": "Allows Endernium pickaxes, shovels, axes, and hoes to use vein mining.",
-  "endernium.tooltip.sword.activate": "Press %s to activate ability.",
+  "endernium.tooltip.sword.activate": "[%s] to activate ability.",
   "endernium.tooltip.sword.cooldown": "Cooldown: %s seconds + %s seconds per mob attacked.",
   "endernium.tooltip.sword.description": "Works best against a group of enemies.",
 
   "endernium.tooltip.vein_mining.status": "Vein Mining: %s",
   "endernium.tooltip.vein_mining.enabled": "Enabled",
   "endernium.tooltip.vein_mining.disabled": "Disabled",
-  "endernium.tooltip.vein_mining.toggle": "Sneak + %s to toggle vein mining.",
-  "endernium.tooltip.vein_mining.cancel": "%s to cancel all vein mining.",
+  "endernium.tooltip.vein_mining.toggle": "Sneak + [%s] to toggle vein mining.",
+  "endernium.tooltip.vein_mining.cancel": "[%s] to cancel all vein mining.",
   "endernium.tooltip.vein_mining.works": "Works on blocks that the tool can mine.",
 
   "endernium.message.vein_mining.cancelled": "Cancelled all vein mining operations",
