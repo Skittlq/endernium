@@ -10,6 +10,11 @@
         "texture": "endernium:endernium"
       }
     ],
+    "humanoid_baby": [
+      {
+        "texture": "endernium:endernium"
+      }
+    ],
     "humanoid_leggings": [
       {
         "texture": "endernium:endernium"
