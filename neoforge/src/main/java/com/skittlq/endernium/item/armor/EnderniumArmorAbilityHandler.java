@@ -1,7 +1,7 @@
 package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.Config;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
@@ -27,13 +27,13 @@ public final class EnderniumArmorAbilityHandler {
 
     private static final EnderniumArmorAbility.CooldownStore COOLDOWN_STORE = new EnderniumArmorAbility.CooldownStore() {
         @Override
-        public long getLastUsedTick(ServerPlayer player) {
-            return player.getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
+        public long getLastUsedTick(LivingEntity entity) {
+            return entity.getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
         }
 
         @Override
-        public void setLastUsedTick(ServerPlayer player, long tick) {
-            player.getPersistentData().putLong(COOLDOWN_KEY, tick);
+        public void setLastUsedTick(LivingEntity entity, long tick) {
+            entity.getPersistentData().putLong(COOLDOWN_KEY, tick);
         }
     };
 
@@ -52,5 +52,6 @@ public final class EnderniumArmorAbilityHandler {
 
     private static void onServerTick(ServerTickEvent.Post event) {
         EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE);
+        EnderniumArmorAbility.tickMobs(event.getServer().getAllLevels(), SETTINGS, COOLDOWN_STORE);
     }
 }

@@ -12,7 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -46,6 +46,9 @@ public final class EnderniumClientBehavior {
 
     public static void tickClient(Minecraft client) {
         CameraLerpHandler.clientTick(client);
+        if (client.player == null) {
+            EnderniumTargeting.clearClientCombatOpponents();
+        }
         renderSwordPreviewParticles(client.player);
     }
 
@@ -154,12 +157,12 @@ public final class EnderniumClientBehavior {
             return;
         }
 
-        for (Mob mob : EnderniumTargeting.findSwordTargets(player)) {
-            AABB box = mob.getBoundingBox();
+        for (LivingEntity target : EnderniumTargeting.findSwordPreviewTargets(player)) {
+            AABB box = target.getBoundingBox();
             for (int i = 0; i < 4; i++) {
-                double px = box.minX + mob.level().getRandom().nextDouble() * (box.maxX - box.minX);
-                double py = box.minY + mob.level().getRandom().nextDouble() * (box.maxY - box.minY);
-                double pz = box.minZ + mob.level().getRandom().nextDouble() * (box.maxZ - box.minZ);
+                double px = box.minX + target.level().getRandom().nextDouble() * (box.maxX - box.minX);
+                double py = box.minY + target.level().getRandom().nextDouble() * (box.maxY - box.minY);
+                double pz = box.minZ + target.level().getRandom().nextDouble() * (box.maxZ - box.minZ);
                 player.level().addParticle(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(), px, py, pz, 0.0D, 0.0D, 0.0D);
             }
         }

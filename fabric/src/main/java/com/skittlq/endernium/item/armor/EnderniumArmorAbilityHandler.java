@@ -4,7 +4,7 @@ import com.skittlq.endernium.attachment.ModAttachments;
 import com.skittlq.endernium.config.EnderniumConfig;
 import com.skittlq.endernium.config.EnderniumConfigManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 
 public final class EnderniumArmorAbilityHandler {
     private static final EnderniumArmorAbility.Settings SETTINGS = new EnderniumArmorAbility.Settings() {
@@ -30,13 +30,13 @@ public final class EnderniumArmorAbilityHandler {
 
     private static final EnderniumArmorAbility.CooldownStore COOLDOWN_STORE = new EnderniumArmorAbility.CooldownStore() {
         @Override
-        public long getLastUsedTick(ServerPlayer player) {
-            return player.getAttachedOrCreate(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK);
+        public long getLastUsedTick(LivingEntity entity) {
+            return entity.getAttachedOrCreate(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK);
         }
 
         @Override
-        public void setLastUsedTick(ServerPlayer player, long tick) {
-            player.setAttached(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK, tick);
+        public void setLastUsedTick(LivingEntity entity, long tick) {
+            entity.setAttached(ModAttachments.ENDERNIUM_ARMOR_LAST_USED_TICK, tick);
         }
     };
 
@@ -50,7 +50,9 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
         registered = true;
-        ServerTickEvents.END_SERVER_TICK.register(server ->
-                EnderniumArmorAbility.tickPlayers(server.getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE));
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            EnderniumArmorAbility.tickPlayers(server.getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE);
+            EnderniumArmorAbility.tickMobs(server.getAllLevels(), SETTINGS, COOLDOWN_STORE);
+        });
     }
 }

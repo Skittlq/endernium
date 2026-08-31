@@ -3,6 +3,7 @@ package com.skittlq.endernium.item.armor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,12 +37,12 @@ public final class EnderniumArmorUtil {
         return Minecraft.getInstance().player;
     }
 
-    public static boolean hasFullEnderniumSet(Player player) {
+    public static boolean hasFullEnderniumSet(LivingEntity entity) {
         ArmorMaterial material = ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL;
-        return isEnderniumPiece(player.getItemBySlot(EquipmentSlot.HEAD), material)
-                && isEnderniumPiece(player.getItemBySlot(EquipmentSlot.CHEST), material)
-                && isEnderniumPiece(player.getItemBySlot(EquipmentSlot.LEGS), material)
-                && isEnderniumPiece(player.getItemBySlot(EquipmentSlot.FEET), material);
+        return isEnderniumPiece(entity.getItemBySlot(EquipmentSlot.HEAD), material)
+                && isEnderniumPiece(entity.getItemBySlot(EquipmentSlot.CHEST), material)
+                && isEnderniumPiece(entity.getItemBySlot(EquipmentSlot.LEGS), material)
+                && isEnderniumPiece(entity.getItemBySlot(EquipmentSlot.FEET), material);
     }
 
     private static boolean isEnderniumPiece(ItemStack stack, ArmorMaterial material) {

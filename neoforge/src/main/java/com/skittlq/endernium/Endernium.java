@@ -2,6 +2,7 @@ package com.skittlq.endernium;
 
 import com.skittlq.endernium.advancement.ModCriteriaTriggerRegistrar;
 import com.skittlq.endernium.block.ModBlocks;
+import com.skittlq.endernium.combat.EnderniumCombatEvents;
 import com.skittlq.endernium.item.EnderniumCreativeTabContents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
@@ -45,6 +46,7 @@ public class Endernium {
         ModFeatures.register(modEventBus);
         ModPlacementModifiers.register(modEventBus);
         EnderniumArmorAbilityHandler.register();
+        EnderniumCombatEvents.register();
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);

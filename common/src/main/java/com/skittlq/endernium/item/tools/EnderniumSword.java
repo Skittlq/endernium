@@ -18,7 +18,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -27,7 +26,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -74,6 +72,10 @@ public class EnderniumSword extends Item {
             return InteractionResult.SUCCESS;
         }
 
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.PASS;
+        }
+
         double range = EnderniumTargeting.SWORD_RANGE;
         double arc = EnderniumTargeting.SWORD_ARC;
         Vec3 lookVec = player.getLookAngle();
@@ -82,21 +84,14 @@ public class EnderniumSword extends Item {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENCHANTMENT_TABLE_USE, player.getSoundSource(), 0.6F, 1.0F);
 
-        List<Mob> targets = level.getEntitiesOfClass(
-                Mob.class,
-                new AABB(
-                        playerPos.x - range, playerPos.y - 2.0D, playerPos.z - range,
-                        playerPos.x + range, playerPos.y + 2.0D, playerPos.z + range
-                ),
-                mob -> EnderniumTargeting.isValidSwordTarget(mob, playerPos, lookVec, range, arc)
-        );
+        List<LivingEntity> targets = EnderniumTargeting.findSwordTargets(serverPlayer);
 
-        List<Mob> sortedTargets = targets.stream()
-                .sorted(Comparator.comparingDouble(mob -> {
-                    Vec3 toMob = mob.position().add(0.0D, mob.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
-                    double angle = lookVec.normalize().dot(toMob.normalize());
+        List<LivingEntity> sortedTargets = targets.stream()
+                .sorted(Comparator.comparingDouble(target -> {
+                    Vec3 toTarget = target.position().add(0.0D, target.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
+                    double angle = lookVec.normalize().dot(toTarget.normalize());
                     double theta = Math.acos(angle);
-                    double dist = toMob.length();
+                    double dist = toTarget.length();
                     return theta * 2.0D + dist / range;
                 }))
                 .toList();
@@ -108,11 +103,12 @@ public class EnderniumSword extends Item {
         MOBS_HIT_MAP.put(uuid, mobsHit);
 
         for (int index = 0; index < sortedTargets.size(); index++) {
-            Mob mob = sortedTargets.get(index);
+            LivingEntity target = sortedTargets.get(index);
             int delay = index * ticksBetweenHits;
 
             int taskId = EnderniumTickScheduler.schedule(() -> {
-                if (!mob.isAlive() || mob.distanceTo(player) > range + 1.0D) {
+                if (!EnderniumTargeting.isValidPlayerAbilityTarget(serverPlayer, target)
+                        || target.distanceTo(player) > range + 1.0D) {
                     return;
                 }
 
@@ -124,13 +120,13 @@ public class EnderniumSword extends Item {
                             SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 1.0F);
                 }
 
-                Vec3 mobCenter = mob.position().add(0.0D, mob.getBbHeight() / 2.0D, 0.0D);
-                Vec3 toMob = mobCenter.subtract(player.position());
-                Vec3 teleportOffset = toMob.normalize().scale(Math.min(1.5D, Math.max(1.0D, mob.getBbWidth() + 1.0D)));
+                Vec3 targetCenter = target.position().add(0.0D, target.getBbHeight() / 2.0D, 0.0D);
+                Vec3 toTarget = targetCenter.subtract(player.position());
+                Vec3 teleportOffset = toTarget.normalize().scale(Math.min(1.5D, Math.max(1.0D, target.getBbWidth() + 1.0D)));
                 Vec3 teleportPos = new Vec3(
-                        mobCenter.x - teleportOffset.x,
-                        mob.position().y,
-                        mobCenter.z - teleportOffset.z
+                        targetCenter.x - teleportOffset.x,
+                        target.position().y,
+                        targetCenter.z - teleportOffset.z
                 );
 
                 if (!level.noCollision(player, player.getBoundingBox().move(teleportPos.subtract(player.position())))) {
@@ -140,15 +136,13 @@ public class EnderniumSword extends Item {
                 player.teleportTo(teleportPos.x, teleportPos.y, teleportPos.z);
                 player.fallDistance = 0.0F;
 
-                double dx = mob.getX() - player.getX();
-                double dz = mob.getZ() - player.getZ();
-                double dy = (mob.getY() + mob.getBbHeight() / 2.0D) - (player.getY() + player.getEyeHeight());
+                double dx = target.getX() - player.getX();
+                double dz = target.getZ() - player.getZ();
+                double dy = (target.getY() + target.getBbHeight() / 2.0D) - (player.getY() + player.getEyeHeight());
                 float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
                 float pitch = (float) Math.toDegrees(-Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
 
-                if (player instanceof ServerPlayer serverPlayer) {
-                    EnderniumNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
-                }
+                EnderniumNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
 
                 if (level instanceof ServerLevel serverLevel) {
                     serverLevel.sendParticles(ParticleTypes.PORTAL,
@@ -163,15 +157,15 @@ public class EnderniumSword extends Item {
 
                 var attackDamage = player.getAttribute(Attributes.ATTACK_DAMAGE);
                 double baseAttack = attackDamage != null ? attackDamage.getValue() : 1.0D;
-                mob.hurt(player.damageSources().playerAttack(player), (float) (baseAttack * 3.0D));
+                target.hurt(player.damageSources().playerAttack(player), (float) (baseAttack * 3.0D));
                 player.swing(hand, true);
                 mobsHit.incrementAndGet();
 
                 if (level instanceof ServerLevel serverLevel) {
                     serverLevel.sendParticles(EnderniumParticles.ENDERNIUM_SWEEP.get(),
-                            mob.getX(), mob.getY() + mob.getBbHeight() / 2.0D, mob.getZ(),
+                            target.getX(), target.getY() + target.getBbHeight() / 2.0D, target.getZ(),
                             1, 0.0D, 0.0D, 0.0D, 0.0D);
-                    serverLevel.playSound(null, mob.getX(), mob.getY(), mob.getZ(),
+                    serverLevel.playSound(null, target.getX(), target.getY(), target.getZ(),
                             SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
                 }
             }, delay);
@@ -182,11 +176,9 @@ public class EnderniumSword extends Item {
         int endTaskId = EnderniumTickScheduler.schedule(() -> {
             addConfiguredCooldown(player, player.getItemInHand(hand), mobsHit.get());
 
-            if (player instanceof ServerPlayer serverPlayer) {
-                int hitCount = mobsHit.get();
-                if (hitCount >= 15) {
-                    EnderniumSwordSweepTrigger.INSTANCE.trigger(serverPlayer, hitCount);
-                }
+            int hitCount = mobsHit.get();
+            if (hitCount >= 15) {
+                EnderniumSwordSweepTrigger.INSTANCE.trigger(serverPlayer, hitCount);
             }
 
             ACTIVE_TASKS.remove(uuid);
