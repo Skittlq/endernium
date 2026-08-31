@@ -54,51 +54,84 @@ public class ClientEvents {
                 player,
                 Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean()
         )) {
+            EnderniumClientBehavior.resetArmorCooldownHud();
             return;
         }
 
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         float cooldownRemaining = player.getCooldowns().getCooldownPercent(chestStack, 0.0F);
-        if (cooldownRemaining <= 0.0F) {
+        EnderniumClientBehavior.ArmorCooldownHudFrame frame =
+                EnderniumClientBehavior.armorCooldownHudFrame(cooldownRemaining);
+        if (!frame.visible()) {
             return;
         }
+        if (frame.playReadySound()) {
+            EnderniumClientBehavior.playArmorCooldownReadySound(mc);
+        }
 
-        float cooldownProgress = 1.0F - cooldownRemaining;
         var gui = event.getGuiGraphics();
         EnderniumClientBehavior.HudIconPosition position = EnderniumClientBehavior.armorCooldownPosition(
                 gui.guiWidth(),
-                gui.guiHeight()
+                gui.guiHeight(),
+                player.getMainArm()
+        );
+        int iconX = position.x() + EnderniumClientBehavior.ARMOR_SPRITE_OFFSET_X;
+        int iconY = position.y() + EnderniumClientBehavior.ARMOR_SPRITE_OFFSET_Y;
+        int backgroundColor = EnderniumClientBehavior.hudColorWithOpacity(
+                EnderniumClientBehavior.ARMOR_COOLDOWN_BACKGROUND_COLOR,
+                frame.opacity()
+        );
+        int foregroundColor = EnderniumClientBehavior.hudColorWithOpacity(
+                EnderniumClientBehavior.ARMOR_COOLDOWN_FOREGROUND_COLOR,
+                frame.opacity()
         );
 
         gui.blit(
                 RenderPipelines.GUI_TEXTURED,
                 EnderniumClientBehavior.ARMOR_COOLDOWN_ICON,
-                position.x(),
-                position.y(),
+                iconX,
+                iconY,
                 0,
                 0,
-                EnderniumClientBehavior.ARMOR_ICON_SIZE,
-                EnderniumClientBehavior.ARMOR_ICON_SIZE,
-                EnderniumClientBehavior.ARMOR_ICON_SIZE,
-                EnderniumClientBehavior.ARMOR_ICON_SIZE,
-                EnderniumClientBehavior.ARMOR_COOLDOWN_BACKGROUND_COLOR
+                EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
+                EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
+                EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
+                EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
+                backgroundColor
         );
 
-        int fillHeight = EnderniumClientBehavior.cooldownFillHeight(cooldownProgress);
+        int fillHeight = EnderniumClientBehavior.cooldownFillHeight(frame.cooldownProgress());
         if (fillHeight > 0) {
-            int sourceY = EnderniumClientBehavior.ARMOR_ICON_SIZE - fillHeight;
+            int sourceY = EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT - fillHeight;
             gui.blit(
                     RenderPipelines.GUI_TEXTURED,
                     EnderniumClientBehavior.ARMOR_COOLDOWN_ICON,
-                    position.x(),
-                    position.y() + sourceY,
+                    iconX,
+                    iconY + sourceY,
                     0,
                     sourceY,
-                    EnderniumClientBehavior.ARMOR_ICON_SIZE,
+                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
                     fillHeight,
-                    EnderniumClientBehavior.ARMOR_ICON_SIZE,
-                    EnderniumClientBehavior.ARMOR_ICON_SIZE,
-                    EnderniumClientBehavior.ARMOR_COOLDOWN_FOREGROUND_COLOR
+                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
+                    EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
+                    foregroundColor
+            );
+        }
+
+        int flashColor = EnderniumClientBehavior.hudColorWithOpacity(-1, frame.flashOpacity());
+        if (frame.flashOpacity() > 0.0F) {
+            gui.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    EnderniumClientBehavior.ARMOR_COOLDOWN_READY_ICON,
+                    iconX,
+                    iconY,
+                    0,
+                    0,
+                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
+                    EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
+                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
+                    EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
+                    flashColor
             );
         }
     }
