@@ -3,10 +3,13 @@ package com.skittlq.endernium.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.skittlq.endernium.Config;
 import com.skittlq.endernium.Endernium;
+import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
+import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ModNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.commands.Commands;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -14,9 +17,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(value = Dist.CLIENT)
@@ -36,6 +44,47 @@ public class ClientEvents {
         Minecraft client = Minecraft.getInstance();
         EnderniumClientBehavior.tickClient(client);
         handleAbilityKey(client);
+    }
+
+    @SubscribeEvent
+    public static void extractVfx(ExtractLevelRenderStateEvent event) {
+        EnderniumVfxManager.extract(Minecraft.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void renderVfx(RenderLevelStageEvent.AfterTranslucentBlocks event) {
+        Minecraft client = Minecraft.getInstance();
+        EnderniumShaderRenderer.instance().render(event.getModelViewMatrix(), client.gameRenderer.mainCamera().position());
+    }
+
+    @SubscribeEvent
+    public static void renderVfxPost(RenderLevelStageEvent.AfterLevel event) {
+        Minecraft client = Minecraft.getInstance();
+        EnderniumShaderRenderer.instance().renderPost(client.gameRenderer.mainCamera().position());
+    }
+
+    @SubscribeEvent
+    public static void clearVfx(ClientPlayerNetworkEvent.LoggingOut event) {
+        EnderniumVfxManager.clear();
+    }
+
+    @SubscribeEvent
+    public static void registerVfxCommands(RegisterClientCommandsEvent event) {
+        if (FMLEnvironment.isProduction()) {
+            return;
+        }
+        event.getDispatcher().register(
+                Commands.literal("enderniumvfx")
+                        .then(Commands.literal("dragon")
+                                .then(Commands.literal("buildup").executes(context -> {
+                                    EnderniumVfxManager.debugBuildup(Minecraft.getInstance());
+                                    return 1;
+                                }))
+                                .then(Commands.literal("burst").executes(context -> {
+                                    EnderniumVfxManager.debugBurst(Minecraft.getInstance());
+                                    return 1;
+                                })))
+        );
     }
 
     private static void handleAbilityKey(Minecraft client) {

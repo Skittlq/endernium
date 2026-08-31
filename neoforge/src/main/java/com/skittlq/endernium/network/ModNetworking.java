@@ -2,10 +2,12 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.CameraLerpHandler;
+import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
+import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
@@ -33,6 +35,11 @@ public class ModNetworking {
                 (payload, context) -> context.enqueueWork(() ->
                         EnderniumTargeting.replaceClientCombatOpponents(payload.opponentIds()))
         );
+        registrar.playToClient(
+                DragonDeathVfxPayload.TYPE,
+                DragonDeathVfxPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> EnderniumVfxManager.onDragonDeathVfx(payload))
+        );
         registrar.playToServer(
                 EnderniumAbilityPayload.TYPE,
                 EnderniumAbilityPayload.STREAM_CODEC,
@@ -44,6 +51,7 @@ public class ModNetworking {
         EnderniumNetworking.bindCombatOpponentsSender((player, opponentIds) ->
                 PacketDistributor.sendToPlayer(player,
                         new CombatOpponentsPayload(new ArrayList<>(opponentIds))));
+        EnderniumNetworking.bindDragonDeathVfxSender(PacketDistributor::sendToPlayer);
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

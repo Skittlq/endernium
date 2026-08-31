@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @Mod(value = Endernium.MODID, dist = Dist.CLIENT)
 public class EnderniumClient {
     public EnderniumClient(ModContainer container) {
+        Config.bindVisualConfig();
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
         // Do not forget to add translations for your config options to the en_us.json file.

@@ -66,6 +66,9 @@ public final class EnderniumConfigManager {
         sanitized.enderniumArmorAbilityCooldown = Math.max(1L, sanitized.enderniumArmorAbilityCooldown);
         sanitized.enderniumSwordAbilityBaseCooldown = Math.max(0, sanitized.enderniumSwordAbilityBaseCooldown);
         sanitized.enderniumSwordAbilityPerMobCooldown = Math.max(0, sanitized.enderniumSwordAbilityPerMobCooldown);
+        if (sanitized.enderniumEffectQuality == null) {
+            sanitized.enderniumEffectQuality = EnderniumVisualConfig.EffectQuality.CINEMATIC;
+        }
         return sanitized;
     }
 }

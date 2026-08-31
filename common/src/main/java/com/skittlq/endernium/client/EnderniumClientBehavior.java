@@ -1,6 +1,7 @@
 package com.skittlq.endernium.client;
 
 import com.skittlq.endernium.EnderniumConstants;
+import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.item.EnderniumItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorUtil;
 import com.skittlq.endernium.item.tools.EnderniumSword;
@@ -46,6 +47,7 @@ public final class EnderniumClientBehavior {
 
     public static void tickClient(Minecraft client) {
         CameraLerpHandler.clientTick(client);
+        EnderniumVfxManager.tick(client);
         if (client.player == null) {
             EnderniumTargeting.clearClientCombatOpponents();
         }

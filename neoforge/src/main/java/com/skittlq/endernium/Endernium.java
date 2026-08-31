@@ -14,6 +14,7 @@ import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
+import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.worldgen.ModFeatures;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -26,6 +27,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -50,6 +56,7 @@ public class Endernium {
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
         Config.bindGameplayConfig();
     }
 
@@ -77,6 +84,20 @@ public class Endernium {
             event.registerSpriteSet(EnderniumParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);
             event.registerSpriteSet(EnderniumParticles.ENDERNIUM_BIT.get(), EnderniumBit.Provider::new);
             event.registerSpriteSet(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(), ReverseEnderniumBit.Provider::new);
+        }
+
+        @SubscribeEvent
+        public static void registerRenderPipelines(RegisterRenderPipelinesEvent event) {
+            EnderniumShaderRenderer.pipelines().forEach(event::registerPipeline);
+        }
+
+        @SubscribeEvent
+        public static void registerReloadListeners(AddClientReloadListenersEvent event) {
+            event.addListener(Identifier.fromNamespaceAndPath(MODID, "shader_framework_reload"),
+                    (ResourceManagerReloadListener) manager -> {
+                        EnderniumVfxManager.clear();
+                        EnderniumShaderRenderer.instance().resetBuffers();
+                    });
         }
     }
 }

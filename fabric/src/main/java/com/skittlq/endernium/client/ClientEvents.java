@@ -3,9 +3,19 @@ package com.skittlq.endernium.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.config.EnderniumConfigManager;
+import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
+import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ModNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.DeltaTracker;
@@ -14,6 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +56,41 @@ public final class ClientEvents {
         EnderniumKeyBindings.bindAbilityKeyName(ENDERNIUM_ABILITY_KEY::getTranslatedKeyMessage);
         ClientTickEvents.END_CLIENT_TICK.register(EnderniumClientBehavior::tickClient);
         ClientTickEvents.END_CLIENT_TICK.register(ClientEvents::handleAbilityKey);
+        LevelExtractionEvents.END_EXTRACTION.register(context -> EnderniumVfxManager.extract(Minecraft.getInstance()));
+        LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> EnderniumShaderRenderer.instance().render(
+                context.levelState().cameraRenderState.viewRotationMatrix,
+                Minecraft.getInstance().gameRenderer.mainCamera().position()));
+        LevelRenderEvents.END_MAIN.register(context -> EnderniumShaderRenderer.instance().renderPost(
+                Minecraft.getInstance().gameRenderer.mainCamera().position()));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> EnderniumVfxManager.clear());
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            public Identifier getFabricId() {
+                return Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "shader_framework_reload");
+            }
+            public void onResourceManagerReload(ResourceManager manager) {
+                EnderniumVfxManager.clear();
+                EnderniumShaderRenderer.instance().resetBuffers();
+            }
+        });
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            registerVfxCommands();
+        }
         HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, ARMOR_COOLDOWN_HUD, ClientEvents::renderArmorCooldownHud);
+    }
+
+    private static void registerVfxCommands() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
+                ClientCommands.literal("enderniumvfx")
+                        .then(ClientCommands.literal("dragon")
+                                .then(ClientCommands.literal("buildup").executes(context -> {
+                                    EnderniumVfxManager.debugBuildup(Minecraft.getInstance());
+                                    return 1;
+                                }))
+                                .then(ClientCommands.literal("burst").executes(context -> {
+                                    EnderniumVfxManager.debugBurst(Minecraft.getInstance());
+                                    return 1;
+                                })))
+        ));
     }
 
     private static void handleAbilityKey(Minecraft client) {
