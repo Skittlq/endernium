@@ -17,12 +17,6 @@ public class EnderniumClient implements ClientModInitializer {
             public EnderniumVisualConfig.EffectQuality quality() {
                 return EnderniumConfigManager.getConfig().enderniumEffectQuality;
             }
-            public boolean screenDistortion() {
-                return EnderniumConfigManager.getConfig().enderniumScreenDistortion;
-            }
-            public boolean observerScreenEffects() {
-                return EnderniumConfigManager.getConfig().enderniumObserverScreenEffects;
-            }
         });
         EnderniumShaderRenderer.pipelines().forEach(RenderPipelines::register);
         ModParticles.registerClient();

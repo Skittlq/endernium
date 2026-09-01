@@ -89,23 +89,9 @@ public final class EnderniumConfigScreen {
                         Component.translatable("endernium.config.effect_quality"),
                         EnderniumVisualConfig.EffectQuality.class,
                         config.enderniumEffectQuality)
-                .setDefaultValue(EnderniumVisualConfig.EffectQuality.CINEMATIC)
+                .setDefaultValue(EnderniumVisualConfig.EffectQuality.FANCY)
                 .setTooltip(Component.translatable("endernium.config.effect_quality.tooltip"))
                 .setSaveConsumer(value -> config.enderniumEffectQuality = value)
-                .build());
-        visuals.addEntry(entries.startBooleanToggle(
-                        Component.translatable("endernium.config.screen_distortion"),
-                        config.enderniumScreenDistortion)
-                .setDefaultValue(true)
-                .setTooltip(Component.translatable("endernium.config.screen_distortion.tooltip"))
-                .setSaveConsumer(value -> config.enderniumScreenDistortion = value)
-                .build());
-        visuals.addEntry(entries.startBooleanToggle(
-                        Component.translatable("endernium.config.observer_screen_effects"),
-                        config.enderniumObserverScreenEffects)
-                .setDefaultValue(true)
-                .setTooltip(Component.translatable("endernium.config.observer_screen_effects.tooltip"))
-                .setSaveConsumer(value -> config.enderniumObserverScreenEffects = value)
                 .build());
         builder.setSavingRunnable(() -> {
             EnderniumConfigManager.setConfig(config);

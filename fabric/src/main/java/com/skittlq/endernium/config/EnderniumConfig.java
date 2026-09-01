@@ -9,9 +9,7 @@ public class EnderniumConfig {
     public int enderniumSwordAbilityPerMobCooldown = EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_PER_MOB_COOLDOWN_SECONDS;
     public boolean enderniumToolsVeinMining = true;
     public EnderniumVisualConfig.EffectQuality enderniumEffectQuality =
-            EnderniumVisualConfig.EffectQuality.CINEMATIC;
-    public boolean enderniumScreenDistortion = true;
-    public boolean enderniumObserverScreenEffects = true;
+            EnderniumVisualConfig.EffectQuality.FANCY;
 
     public EnderniumConfig copy() {
         EnderniumConfig copy = new EnderniumConfig();
@@ -23,8 +21,6 @@ public class EnderniumConfig {
         copy.enderniumSwordAbilityPerMobCooldown = this.enderniumSwordAbilityPerMobCooldown;
         copy.enderniumToolsVeinMining = this.enderniumToolsVeinMining;
         copy.enderniumEffectQuality = this.enderniumEffectQuality;
-        copy.enderniumScreenDistortion = this.enderniumScreenDistortion;
-        copy.enderniumObserverScreenEffects = this.enderniumObserverScreenEffects;
         return copy;
     }
 }

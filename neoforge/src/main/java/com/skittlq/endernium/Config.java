@@ -38,14 +38,8 @@ public class Config {
                 .define("enderniumToolsVeinMining", true);
 
     public static final ModConfigSpec.EnumValue<EnderniumVisualConfig.EffectQuality> ENDERNIUM_EFFECT_QUALITY = CLIENT_BUILDER
-            .comment("Endernium shader quality. Performance is reserved for reduced geometry; Off disables custom shader effects.")
-            .defineEnum("enderniumEffectQuality", EnderniumVisualConfig.EffectQuality.CINEMATIC);
-    public static final ModConfigSpec.BooleanValue ENDERNIUM_SCREEN_DISTORTION = CLIENT_BUILDER
-            .comment("Allow future Endernium screen-space shader effects for the local player.")
-            .define("enderniumScreenDistortion", true);
-    public static final ModConfigSpec.BooleanValue ENDERNIUM_OBSERVER_SCREEN_EFFECTS = CLIENT_BUILDER
-            .comment("Allow future distance-scaled screen effects when observing another player's ability.")
-            .define("enderniumObserverScreenEffects", true);
+            .comment("Endernium shader quality. Fast uses reduced geometry; Off disables custom shader effects.")
+            .defineEnum("enderniumEffectQuality", EnderniumVisualConfig.EffectQuality.FANCY);
 
     static final ModConfigSpec SPEC = BUILDER.build();
     static final ModConfigSpec CLIENT_SPEC = CLIENT_BUILDER.build();
@@ -54,12 +48,6 @@ public class Config {
         EnderniumVisualConfig.bind(new EnderniumVisualConfig.Settings() {
             public EnderniumVisualConfig.EffectQuality quality() {
                 return ENDERNIUM_EFFECT_QUALITY.get();
-            }
-            public boolean screenDistortion() {
-                return ENDERNIUM_SCREEN_DISTORTION.getAsBoolean();
-            }
-            public boolean observerScreenEffects() {
-                return ENDERNIUM_OBSERVER_SCREEN_EFFECTS.getAsBoolean();
             }
         });
     }
