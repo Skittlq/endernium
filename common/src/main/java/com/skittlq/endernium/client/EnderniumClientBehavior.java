@@ -21,11 +21,11 @@ import net.minecraft.world.phys.AABB;
 public final class EnderniumClientBehavior {
     public static final Identifier ARMOR_COOLDOWN_ICON = Identifier.fromNamespaceAndPath(
             EnderniumConstants.MOD_ID,
-            "textures/item/endernium_chestplate_hud.png"
+            "textures/item/endernium_armor_hud.png"
     );
     public static final Identifier ARMOR_COOLDOWN_READY_ICON = Identifier.fromNamespaceAndPath(
             EnderniumConstants.MOD_ID,
-            "textures/item/endernium_chestplate_ready.png"
+            "textures/item/endernium_armor_ready.png"
     );
     public static final int ARMOR_ICON_SIZE = 16;
     public static final int ARMOR_SPRITE_WIDTH = 14;

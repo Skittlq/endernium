@@ -481,6 +481,8 @@ public final class DragonDeathVfxTracker {
             Vec3 movement = enderman.getDeltaMovement();
             enderman.setDeltaMovement(0.0, movement.y, 0.0);
             enderman.setPos(anchor.x, enderman.getY(), anchor.z);
+            enderman.xo = anchor.x;
+            enderman.zo = anchor.z;
             enderman.getLookControl().setLookAt(focus.x, focus.y, focus.z, 180.0F, 180.0F);
             double dx = focus.x - enderman.getX();
             double dy = focus.y - enderman.getEyeY();
@@ -488,12 +490,17 @@ public final class DragonDeathVfxTracker {
             double horizontal = Math.sqrt(dx * dx + dz * dz);
             float yaw = (float)(Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0F;
             float pitch = (float)(-Math.atan2(dy, horizontal) * 180.0 / Math.PI);
-            float smoothedYaw = Mth.approachDegrees(enderman.getYRot(), yaw, 14.0F);
-            float smoothedPitch = Mth.approach(enderman.getXRot(), pitch, 10.0F);
-            enderman.setYRot(smoothedYaw);
-            enderman.setYHeadRot(smoothedYaw);
-            enderman.setYBodyRot(smoothedYaw);
-            enderman.setXRot(smoothedPitch);
+            enderman.setYRot(yaw);
+            enderman.setYHeadRot(yaw);
+            enderman.setYBodyRot(yaw);
+            enderman.setXRot(pitch);
+
+            // AI look goals already ran this tick. Match the interpolation origins as well as the
+            // current pose so the client never blends from the discarded "look away" rotation.
+            enderman.yRotO = yaw;
+            enderman.yHeadRotO = yaw;
+            enderman.yBodyRotO = yaw;
+            enderman.xRotO = pitch;
         }
     }
 
