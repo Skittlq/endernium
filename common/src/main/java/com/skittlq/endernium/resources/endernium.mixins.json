@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.skittlq.endernium.mixin",
+  "mixins": [
+    "AbstractFurnaceBlockEntityMixin",
+    "SingleItemRecipeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

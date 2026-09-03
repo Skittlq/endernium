@@ -15,7 +15,7 @@ Once the Ender Dragon is defeated, you will be able to start finding Endernium O
 
 - Acquire an **Endernium Upgrade Smithing Template** from End City Chests. End City Chests can also contain Endernium Dust and Endernium Shards after the dragon has been defeated.
 - Mine **Endernium Ore** from the End islands. When broken, Endernium Ore drops **Endernium Dust**.
-- Combine four Endernium Dust to craft an **Endernium Shard**.
+- Smelt four Endernium Dust together in a furnace to produce one **Endernium Shard**.
 - Surround a Netherite Ingot with eight Endernium Shards to create an **Endernium Ingot**.
 - Duplicate Endernium Upgrade Smithing Templates with End Stone and a Netherite Ingot.
 

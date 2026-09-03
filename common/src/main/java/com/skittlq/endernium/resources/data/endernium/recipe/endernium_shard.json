@@ -1,15 +1,8 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "#": "endernium:endernium_dust"
-  },
-  "pattern": [
-    "##",
-    "##"
-  ],
+  "type": "minecraft:smelting",
+  "experience": 0.7,
+  "ingredient": "endernium:endernium_dust",
   "result": {
-    "count": 1,
     "id": "endernium:endernium_shard"
   }
 }
