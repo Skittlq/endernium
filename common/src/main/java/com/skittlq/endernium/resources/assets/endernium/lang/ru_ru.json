@@ -72,5 +72,16 @@
   "endernium.tooltip.armor_ability.title": "Способность отталкивания Энда",
   "endernium.tooltip.armor_ability.trigger": "Срабатывает, когда ваше здоровье ниже %s HP и на вас надет полный комплект брони.",
   "endernium.tooltip.armor_ability.cooldown": "Перезарядка: %s секунд.",
-  "endernium.tooltip.armor_ability.description": "Отталкивает ближайших враждебных мобов и даёт регенерацию."
+  "endernium.tooltip.armor_ability.description": "Отталкивает ближайших враждебных мобов и даёт регенерацию.",
+  "endernium.config.category.visuals": "Visuals",
+  "endernium.config.effect_quality": "Effect Quality",
+  "endernium.config.effect_quality.tooltip": "Quality level reserved for Endernium shader effects.",
+  "endernium.config.observer_screen_effects": "Observer Screen Effects",
+  "endernium.config.observer_screen_effects.tooltip": "Allows future observer screen-space shader effects.",
+  "endernium.config.screen_distortion": "Screen Distortion",
+  "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
+  "endernium.configuration.enderniumEffectQuality": "Effect Quality",
+  "endernium.configuration.section.endernium-client.toml": "Shader Effects",
+  "tag.item.minecraft.trim_materials": "Trim Materials",
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

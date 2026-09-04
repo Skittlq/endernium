@@ -72,5 +72,16 @@
   "endernium.tooltip.armor_ability.title": "Habilidade de Repulsão do Ender",
   "endernium.tooltip.armor_ability.trigger": "Ativa quando sua vida fica abaixo de %s HP e você está com o conjunto completo equipado.",
   "endernium.tooltip.armor_ability.cooldown": "Recarga: %s segundos.",
-  "endernium.tooltip.armor_ability.description": "Empurra mobs hostis próximos para longe e concede regeneração."
+  "endernium.tooltip.armor_ability.description": "Empurra mobs hostis próximos para longe e concede regeneração.",
+  "endernium.config.category.visuals": "Visuals",
+  "endernium.config.effect_quality": "Effect Quality",
+  "endernium.config.effect_quality.tooltip": "Quality level reserved for Endernium shader effects.",
+  "endernium.config.observer_screen_effects": "Observer Screen Effects",
+  "endernium.config.observer_screen_effects.tooltip": "Allows future observer screen-space shader effects.",
+  "endernium.config.screen_distortion": "Screen Distortion",
+  "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
+  "endernium.configuration.enderniumEffectQuality": "Effect Quality",
+  "endernium.configuration.section.endernium-client.toml": "Shader Effects",
+  "tag.item.minecraft.trim_materials": "Trim Materials",
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

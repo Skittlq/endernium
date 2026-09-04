@@ -1,6 +1,5 @@
 package com.skittlq.endernium.item.armor;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +33,7 @@ public final class EnderniumArmorUtil {
             }
         } catch (ReflectiveOperationException ignored) {
         }
-        return Minecraft.getInstance().player;
+        return null;
     }
 
     public static boolean hasFullEnderniumSet(LivingEntity entity) {

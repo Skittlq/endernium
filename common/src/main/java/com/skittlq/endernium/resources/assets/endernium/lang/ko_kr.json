@@ -72,5 +72,16 @@
   "endernium.tooltip.armor_ability.title": "엔더 반발 능력",
   "endernium.tooltip.armor_ability.trigger": "체력이 %s HP 아래로 떨어지고 전체 방어구 세트를 착용 중일 때 발동합니다.",
   "endernium.tooltip.armor_ability.cooldown": "재사용 대기시간: %s초.",
-  "endernium.tooltip.armor_ability.description": "주변의 적대적인 몹을 밀쳐내고 재생 효과를 부여합니다."
+  "endernium.tooltip.armor_ability.description": "주변의 적대적인 몹을 밀쳐내고 재생 효과를 부여합니다.",
+  "endernium.config.category.visuals": "Visuals",
+  "endernium.config.effect_quality": "Effect Quality",
+  "endernium.config.effect_quality.tooltip": "Quality level reserved for Endernium shader effects.",
+  "endernium.config.observer_screen_effects": "Observer Screen Effects",
+  "endernium.config.observer_screen_effects.tooltip": "Allows future observer screen-space shader effects.",
+  "endernium.config.screen_distortion": "Screen Distortion",
+  "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
+  "endernium.configuration.enderniumEffectQuality": "Effect Quality",
+  "endernium.configuration.section.endernium-client.toml": "Shader Effects",
+  "tag.item.minecraft.trim_materials": "Trim Materials",
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

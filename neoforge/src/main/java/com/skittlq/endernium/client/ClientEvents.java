@@ -5,6 +5,7 @@ import com.skittlq.endernium.Config;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
+import com.skittlq.endernium.network.ClientModNetworking;
 import com.skittlq.endernium.network.ModNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -68,7 +69,7 @@ public class ClientEvents {
     private static void handleAbilityKey(Minecraft client) {
         while (ENDERNIUM_ABILITY_KEY.consumeClick()) {
             if (client.player != null && client.getConnection() != null) {
-                ModNetworking.sendAbilityActivation();
+                ClientModNetworking.sendAbilityActivation();
             }
         }
     }

@@ -8,6 +8,9 @@
   "block.endernium.endernium_block": "Block of Endernium",
   "block.endernium.endernium_ore": "Endernium Ore",
 
+  "tag.item.minecraft.trim_materials": "Trim Materials",
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+
   "item.endernium.endernium_pickaxe": "\u00A7dEndernium Pickaxe",
   "item.endernium.endernium_axe": "\u00A7dEndernium Axe",
   "item.endernium.endernium_shovel": "\u00A7dEndernium Shovel",

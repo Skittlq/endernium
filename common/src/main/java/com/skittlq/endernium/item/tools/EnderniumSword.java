@@ -9,7 +9,6 @@ import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +24,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -77,7 +75,6 @@ public class EnderniumSword extends Item {
         }
 
         double range = EnderniumTargeting.SWORD_RANGE;
-        double arc = EnderniumTargeting.SWORD_ARC;
         Vec3 lookVec = player.getLookAngle();
         Vec3 playerPos = EnderniumTargeting.eyePosition(player);
 
@@ -194,11 +191,6 @@ public class EnderniumSword extends Item {
         if (cooldownTicks > 0) {
             player.getCooldowns().addCooldown(stack, cooldownTicks);
         }
-    }
-
-    @Override
-    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        return super.mineBlock(stack, level, state, pos, entity);
     }
 
     @Override

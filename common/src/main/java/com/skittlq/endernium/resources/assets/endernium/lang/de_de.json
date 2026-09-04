@@ -72,5 +72,16 @@
   "endernium.tooltip.armor_ability.title": "Ender-Abstoßungsfähigkeit",
   "endernium.tooltip.armor_ability.trigger": "Wird ausgelöst, wenn deine Gesundheit unter %s HP liegt und du das vollständige Rüstungsset trägst.",
   "endernium.tooltip.armor_ability.cooldown": "Abklingzeit: %s Sekunden.",
-  "endernium.tooltip.armor_ability.description": "Stoßt nahe feindliche Mobs zurück und gewährt Regeneration."
+  "endernium.tooltip.armor_ability.description": "Stoßt nahe feindliche Mobs zurück und gewährt Regeneration.",
+  "endernium.config.category.visuals": "Visuals",
+  "endernium.config.effect_quality": "Effect Quality",
+  "endernium.config.effect_quality.tooltip": "Quality level reserved for Endernium shader effects.",
+  "endernium.config.observer_screen_effects": "Observer Screen Effects",
+  "endernium.config.observer_screen_effects.tooltip": "Allows future observer screen-space shader effects.",
+  "endernium.config.screen_distortion": "Screen Distortion",
+  "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
+  "endernium.configuration.enderniumEffectQuality": "Effect Quality",
+  "endernium.configuration.section.endernium-client.toml": "Shader Effects",
+  "tag.item.minecraft.trim_materials": "Trim Materials",
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }
