@@ -15,8 +15,10 @@ import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
+import com.skittlq.endernium.vfx.DragonDeathVfxDebugCommand;
 import com.skittlq.endernium.worldgen.ModFeatures;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
+import net.minecraft.SharedConstants;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -34,6 +36,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 @Mod(Endernium.MODID)
@@ -71,6 +74,13 @@ public class Endernium {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
+    }
+
+    @SubscribeEvent
+    public void registerDevelopmentCommands(RegisterCommandsEvent event) {
+        if (SharedConstants.IS_RUNNING_IN_IDE) {
+            DragonDeathVfxDebugCommand.register(event.getDispatcher());
+        }
     }
 
     @EventBusSubscriber(value = Dist.CLIENT, modid = MODID)

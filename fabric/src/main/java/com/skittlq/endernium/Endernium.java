@@ -15,10 +15,13 @@ import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.util.EnderniumTickSchedulerEvents;
 import com.skittlq.endernium.util.EnderniumUtilsEvents;
+import com.skittlq.endernium.vfx.DragonDeathVfxDebugCommand;
 import com.skittlq.endernium.worldgen.ModFeatures;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import com.skittlq.endernium.worldgen.ModWorldgen;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,10 @@ public class Endernium implements ModInitializer {
         EnderniumTickSchedulerEvents.register();
         EnderniumUtilsEvents.register();
         EnderniumArmorAbilityHandler.register();
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                    DragonDeathVfxDebugCommand.register(dispatcher));
+        }
     }
     private static void bindGameplayConfig() {
         EnderniumGameplayConfig.bind(new EnderniumGameplayConfig.Settings() {

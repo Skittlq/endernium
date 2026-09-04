@@ -2,7 +2,6 @@ package com.skittlq.endernium.vfx;
 
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
-import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
@@ -38,13 +37,11 @@ public final class DragonDeathVfxTracker {
     private static final int MAX_REACTING_ENDERMEN = 100;
     private static Session active;
     private static MinecraftServer activeServer;
-    private static MinecraftServer debugCommandServer;
 
     private DragonDeathVfxTracker() {
     }
 
     public static void tick(MinecraftServer server) {
-        registerDebugCommand(server);
         if (server != activeServer) {
             active = null;
             activeServer = server;
@@ -125,18 +122,6 @@ public final class DragonDeathVfxTracker {
     public static void clear() {
         active = null;
         activeServer = null;
-        debugCommandServer = null;
-    }
-
-    private static void registerDebugCommand(MinecraftServer server) {
-        if (!SharedConstants.IS_RUNNING_IN_IDE || debugCommandServer == server) {
-            return;
-        }
-        DragonDeathVfxDebugCommand.register(server.getCommands().getDispatcher());
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            server.getCommands().sendCommands(player);
-        }
-        debugCommandServer = server;
     }
 
     static boolean startSimulation(ServerLevel end, Vec3 origin) {
