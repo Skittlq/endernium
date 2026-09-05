@@ -2,6 +2,7 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
+import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
@@ -50,6 +51,15 @@ public class ModNetworking {
                                         }
                                 })
         );
+        registrar.playToClient(
+                AbilityCooldownSyncPayload.TYPE,
+                AbilityCooldownSyncPayload.STREAM_CODEC,
+                                (payload, context) -> context.enqueueWork(() -> {
+                                            if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+                                                ClientModNetworking.handleAbilityCooldownSync(payload);
+                                        }
+                                })
+        );
         registrar.playToServer(
                 EnderniumAbilityPayload.TYPE,
                 EnderniumAbilityPayload.STREAM_CODEC,
@@ -62,6 +72,7 @@ public class ModNetworking {
                 PacketDistributor.sendToPlayer(player,
                         new CombatOpponentsPayload(new ArrayList<>(opponentIds))));
         EnderniumNetworking.bindDragonDeathVfxSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindAbilityCooldownSyncSender(PacketDistributor::sendToPlayer);
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

@@ -14,7 +14,7 @@ import java.util.WeakHashMap;
 public final class EnderniumCombatTags {
     public static final int DURATION_TICKS = 200;
 
-    private static final Map<MinecraftServer, Map<PlayerPair, Long>> TAGS_BY_SERVER = new WeakHashMap<>();
+    private static final Map<MinecraftServer, Map<TargetingPermission, Long>> TAGS_BY_SERVER = new WeakHashMap<>();
 
     private EnderniumCombatTags() {
     }
@@ -26,18 +26,17 @@ public final class EnderniumCombatTags {
 
         MinecraftServer server = attacker.level().getServer();
         long expiresAtTick = currentTick(server) + DURATION_TICKS;
-        tags(server).put(PlayerPair.of(attacker.getUUID(), victim.getUUID()), expiresAtTick);
-        sync(attacker);
+        tags(server).put(new TargetingPermission(victim.getUUID(), attacker.getUUID()), expiresAtTick);
         sync(victim);
     }
 
-    public static boolean areTagged(ServerPlayer first, ServerPlayer second) {
-        if (first == second || first.level().getServer() != second.level().getServer()) {
+    public static boolean canTarget(ServerPlayer player, ServerPlayer attacker) {
+        if (player == attacker || player.level().getServer() != attacker.level().getServer()) {
             return false;
         }
 
-        MinecraftServer server = first.level().getServer();
-        Long expiresAtTick = tags(server).get(PlayerPair.of(first.getUUID(), second.getUUID()));
+        MinecraftServer server = player.level().getServer();
+        Long expiresAtTick = tags(server).get(new TargetingPermission(player.getUUID(), attacker.getUUID()));
         return expiresAtTick != null && expiresAtTick > currentTick(server);
     }
 
@@ -55,7 +54,7 @@ public final class EnderniumCombatTags {
 
     private static void removePlayer(ServerPlayer player, boolean syncRemovedPlayer) {
         MinecraftServer server = player.level().getServer();
-        Map<PlayerPair, Long> serverTags = TAGS_BY_SERVER.get(server);
+        Map<TargetingPermission, Long> serverTags = TAGS_BY_SERVER.get(server);
         if (serverTags == null) {
             if (syncRemovedPlayer) {
                 EnderniumNetworking.sendCombatOpponents(player, Set.of());
@@ -65,11 +64,13 @@ public final class EnderniumCombatTags {
 
         Set<UUID> affectedPlayers = new HashSet<>();
         UUID playerId = player.getUUID();
-        serverTags.keySet().removeIf(pair -> {
-            if (!pair.contains(playerId)) {
+        serverTags.keySet().removeIf(permission -> {
+            if (!permission.contains(playerId)) {
                 return false;
             }
-            affectedPlayers.add(pair.other(playerId));
+            if (!permission.player().equals(playerId)) {
+                affectedPlayers.add(permission.player());
+            }
             return true;
         });
 
@@ -80,7 +81,7 @@ public final class EnderniumCombatTags {
     }
 
     public static void tick(MinecraftServer server) {
-        Map<PlayerPair, Long> serverTags = TAGS_BY_SERVER.get(server);
+        Map<TargetingPermission, Long> serverTags = TAGS_BY_SERVER.get(server);
         if (serverTags == null || serverTags.isEmpty()) {
             return;
         }
@@ -91,8 +92,7 @@ public final class EnderniumCombatTags {
             if (entry.getValue() > currentTick) {
                 return false;
             }
-            affectedPlayers.add(entry.getKey().first());
-            affectedPlayers.add(entry.getKey().second());
+            affectedPlayers.add(entry.getKey().player());
             return true;
         });
         syncOnlinePlayers(server, affectedPlayers);
@@ -104,7 +104,7 @@ public final class EnderniumCombatTags {
 
     private static void sync(ServerPlayer player) {
         MinecraftServer server = player.level().getServer();
-        Map<PlayerPair, Long> serverTags = TAGS_BY_SERVER.get(server);
+        Map<TargetingPermission, Long> serverTags = TAGS_BY_SERVER.get(server);
         if (serverTags == null || serverTags.isEmpty()) {
             EnderniumNetworking.sendCombatOpponents(player, Set.of());
             return;
@@ -113,10 +113,10 @@ public final class EnderniumCombatTags {
         long currentTick = currentTick(server);
         UUID playerId = player.getUUID();
         Set<UUID> opponents = new HashSet<>();
-        for (Map.Entry<PlayerPair, Long> entry : serverTags.entrySet()) {
-            PlayerPair pair = entry.getKey();
-            if (entry.getValue() > currentTick && pair.contains(playerId)) {
-                opponents.add(pair.other(playerId));
+        for (Map.Entry<TargetingPermission, Long> entry : serverTags.entrySet()) {
+            TargetingPermission permission = entry.getKey();
+            if (entry.getValue() > currentTick && permission.player().equals(playerId)) {
+                opponents.add(permission.attacker());
             }
         }
         EnderniumNetworking.sendCombatOpponents(player, opponents);
@@ -131,7 +131,7 @@ public final class EnderniumCombatTags {
         }
     }
 
-    private static Map<PlayerPair, Long> tags(MinecraftServer server) {
+    private static Map<TargetingPermission, Long> tags(MinecraftServer server) {
         return TAGS_BY_SERVER.computeIfAbsent(server, ignored -> new HashMap<>());
     }
 
@@ -139,19 +139,9 @@ public final class EnderniumCombatTags {
         return Integer.toUnsignedLong(server.getTickCount());
     }
 
-    private record PlayerPair(UUID first, UUID second) {
-        private static PlayerPair of(UUID first, UUID second) {
-            return first.compareTo(second) <= 0
-                    ? new PlayerPair(first, second)
-                    : new PlayerPair(second, first);
-        }
-
+    private record TargetingPermission(UUID player, UUID attacker) {
         private boolean contains(UUID playerId) {
-            return first.equals(playerId) || second.equals(playerId);
-        }
-
-        private UUID other(UUID playerId) {
-            return first.equals(playerId) ? second : first;
+            return player.equals(playerId) || attacker.equals(playerId);
         }
     }
 }

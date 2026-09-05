@@ -1,8 +1,10 @@
 package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.Config;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class EnderniumArmorAbilityHandler {
@@ -48,10 +50,17 @@ public final class EnderniumArmorAbilityHandler {
         }
         registered = true;
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onServerTick);
+        NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerJoin);
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
         EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE);
         EnderniumArmorAbility.tickMobs(event.getServer().getAllLevels(), SETTINGS, COOLDOWN_STORE);
+    }
+
+    private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            EnderniumArmorAbility.syncCooldownOnLogin(player, SETTINGS, COOLDOWN_STORE);
+        }
     }
 }

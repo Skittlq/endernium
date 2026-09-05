@@ -1,7 +1,9 @@
 package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.client.CameraLerpHandler;
+import com.skittlq.endernium.client.EnderniumClientCooldowns;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
+import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
@@ -22,6 +24,14 @@ public final class ClientModNetworking {
 
     public static void handleDragonDeathVfx(DragonDeathVfxPayload payload) {
         EnderniumVfxManager.onDragonDeathVfx(payload);
+    }
+
+    public static void handleAbilityCooldownSync(AbilityCooldownSyncPayload payload) {
+        if (payload.ability() == AbilityCooldownSyncPayload.Ability.ARMOR) {
+            EnderniumClientCooldowns.setArmorCooldown(payload.endGameTime(), payload.durationTicks());
+        } else {
+            EnderniumClientCooldowns.setSwordCooldown(payload.endGameTime(), payload.durationTicks());
+        }
     }
 
     public static void sendAbilityActivation() {

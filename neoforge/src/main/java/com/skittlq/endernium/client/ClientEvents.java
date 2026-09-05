@@ -6,14 +6,9 @@ import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ClientModNetworking;
-import com.skittlq.endernium.network.ModNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -76,92 +71,12 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
-        Minecraft mc = Minecraft.getInstance();
-        Player player = mc.player;
-        if (!EnderniumClientBehavior.shouldRenderArmorCooldown(
-                player,
-                Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean()
-        )) {
-            EnderniumClientBehavior.resetArmorCooldownHud();
-            return;
-        }
-
-        ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
-        float cooldownRemaining = player.getCooldowns().getCooldownPercent(chestStack, 0.0F);
-        EnderniumClientBehavior.ArmorCooldownHudFrame frame =
-                EnderniumClientBehavior.armorCooldownHudFrame(cooldownRemaining);
-        if (!frame.visible()) {
-            return;
-        }
-        if (frame.playReadySound()) {
-            EnderniumClientBehavior.playArmorCooldownReadySound(mc);
-        }
-
-        var gui = event.getGuiGraphics();
-        EnderniumClientBehavior.HudIconPosition position = EnderniumClientBehavior.armorCooldownPosition(
-                gui.guiWidth(),
-                gui.guiHeight(),
-                player.getMainArm()
+        EnderniumClientBehavior.renderCooldownHuds(
+                Minecraft.getInstance(),
+                event.getGuiGraphics(),
+                Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean(),
+                Config.ENDERNIUM_SWORD_ABILITY.getAsBoolean()
         );
-        int iconX = position.x() + EnderniumClientBehavior.ARMOR_SPRITE_OFFSET_X;
-        int iconY = position.y() + EnderniumClientBehavior.ARMOR_SPRITE_OFFSET_Y;
-        int backgroundColor = EnderniumClientBehavior.hudColorWithOpacity(
-                EnderniumClientBehavior.ARMOR_COOLDOWN_BACKGROUND_COLOR,
-                frame.opacity()
-        );
-        int foregroundColor = EnderniumClientBehavior.hudColorWithOpacity(
-                EnderniumClientBehavior.ARMOR_COOLDOWN_FOREGROUND_COLOR,
-                frame.opacity()
-        );
-
-        gui.blit(
-                RenderPipelines.GUI_TEXTURED,
-                EnderniumClientBehavior.ARMOR_COOLDOWN_ICON,
-                iconX,
-                iconY,
-                0,
-                0,
-                EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
-                EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
-                EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
-                EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
-                backgroundColor
-        );
-
-        int fillHeight = EnderniumClientBehavior.cooldownFillHeight(frame.cooldownProgress());
-        if (fillHeight > 0) {
-            int sourceY = EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT - fillHeight;
-            gui.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    EnderniumClientBehavior.ARMOR_COOLDOWN_ICON,
-                    iconX,
-                    iconY + sourceY,
-                    0,
-                    sourceY,
-                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
-                    fillHeight,
-                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
-                    EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
-                    foregroundColor
-            );
-        }
-
-        int flashColor = EnderniumClientBehavior.hudColorWithOpacity(-1, frame.flashOpacity());
-        if (frame.flashOpacity() > 0.0F) {
-            gui.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    EnderniumClientBehavior.ARMOR_COOLDOWN_READY_ICON,
-                    iconX,
-                    iconY,
-                    0,
-                    0,
-                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
-                    EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
-                    EnderniumClientBehavior.ARMOR_SPRITE_WIDTH,
-                    EnderniumClientBehavior.ARMOR_SPRITE_HEIGHT,
-                    flashColor
-            );
-        }
     }
 
     @SubscribeEvent

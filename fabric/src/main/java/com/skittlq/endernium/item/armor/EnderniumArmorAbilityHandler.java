@@ -4,6 +4,7 @@ import com.skittlq.endernium.attachment.ModAttachments;
 import com.skittlq.endernium.config.EnderniumConfig;
 import com.skittlq.endernium.config.EnderniumConfigManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class EnderniumArmorAbilityHandler {
@@ -54,5 +55,7 @@ public final class EnderniumArmorAbilityHandler {
             EnderniumArmorAbility.tickPlayers(server.getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE);
             EnderniumArmorAbility.tickMobs(server.getAllLevels(), SETTINGS, COOLDOWN_STORE);
         });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+                EnderniumArmorAbility.syncCooldownOnLogin(handler.getPlayer(), SETTINGS, COOLDOWN_STORE));
     }
 }

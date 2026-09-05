@@ -7,6 +7,7 @@ import com.skittlq.endernium.item.EnderniumCreativeTabContents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
+import com.skittlq.endernium.item.tools.EnderniumSwordCooldownHandler;
 import com.skittlq.endernium.loot.ModLootConditions;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.particles.EnderniumParticles;
@@ -55,6 +56,7 @@ public class Endernium {
         ModFeatures.register(modEventBus);
         ModPlacementModifiers.register(modEventBus);
         EnderniumArmorAbilityHandler.register();
+        EnderniumSwordCooldownHandler.register();
         EnderniumCombatEvents.register();
 
         modEventBus.addListener(this::addCreative);

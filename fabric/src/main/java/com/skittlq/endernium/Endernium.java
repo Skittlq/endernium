@@ -9,6 +9,7 @@ import com.skittlq.endernium.combat.EnderniumCombatEvents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
+import com.skittlq.endernium.item.tools.EnderniumSwordCooldownHandler;
 import com.skittlq.endernium.loot.ModLootConditions;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.network.ModNetworking;
@@ -50,6 +51,7 @@ public class Endernium implements ModInitializer {
         EnderniumTickSchedulerEvents.register();
         EnderniumUtilsEvents.register();
         EnderniumArmorAbilityHandler.register();
+        EnderniumSwordCooldownHandler.register();
         if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
             CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                     DragonDeathVfxDebugCommand.register(dispatcher));

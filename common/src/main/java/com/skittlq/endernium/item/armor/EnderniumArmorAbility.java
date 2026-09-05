@@ -1,5 +1,6 @@
 package com.skittlq.endernium.item.armor;
 
+import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.server.level.ServerLevel;
@@ -8,10 +9,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -62,9 +61,6 @@ public final class EnderniumArmorAbility {
         long cooldownTicks = 20L * settings.cooldownSeconds();
         long lastUsed = cooldownStore.getLastUsedTick(wearer);
         long elapsedTicks = currentTime - lastUsed;
-        if (wearer instanceof ServerPlayer player) {
-            syncCooldownIndicator(player, cooldownTicks, elapsedTicks);
-        }
 
         float health = wearer.getHealth();
         float maxHealth = wearer.getMaxHealth();
@@ -106,8 +102,9 @@ public final class EnderniumArmorAbility {
         wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));
         cooldownStore.setLastUsedTick(wearer, currentTime);
         if (wearer instanceof ServerPlayer player) {
+            long endGameTime = currentTime + cooldownTicks;
             int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
-            player.getCooldowns().addCooldown(player.getItemBySlot(EquipmentSlot.CHEST), cooldownTicksInt);
+            EnderniumNetworking.sendArmorCooldownSync(player, endGameTime, cooldownTicksInt);
         }
 
         level.playSound(null, wearer.getX(), wearer.getY(), wearer.getZ(),
@@ -128,20 +125,18 @@ public final class EnderniumArmorAbility {
         );
     }
 
-    private static void syncCooldownIndicator(ServerPlayer player, long cooldownTicks, long elapsedTicks) {
-        if (elapsedTicks < 0L || elapsedTicks >= cooldownTicks) {
+    // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
+    public static void syncCooldownOnLogin(ServerPlayer player, Settings settings, CooldownStore cooldownStore) {
+        if (!settings.enabled()) {
             return;
         }
 
-        ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
-        if (chestStack.isEmpty() || player.getCooldowns().isOnCooldown(chestStack)) {
-            return;
-        }
-
-        long remainingTicks = cooldownTicks - elapsedTicks;
-        int remainingTicksInt = (int) Math.min(Integer.MAX_VALUE, remainingTicks);
-        if (remainingTicksInt > 0) {
-            player.getCooldowns().addCooldown(chestStack, remainingTicksInt);
+        long cooldownTicks = 20L * settings.cooldownSeconds();
+        long currentTime = player.level().getGameTime();
+        long endGameTime = cooldownStore.getLastUsedTick(player) + cooldownTicks;
+        if (endGameTime > currentTime) {
+            int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
+            EnderniumNetworking.sendArmorCooldownSync(player, endGameTime, cooldownTicksInt);
         }
     }
 

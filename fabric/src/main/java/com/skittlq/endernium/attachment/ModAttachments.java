@@ -15,6 +15,20 @@ public final class ModAttachments {
             .copyOnDeath()
     );
 
+    public static final AttachmentType<Long> ENDERNIUM_SWORD_COOLDOWN_END_TICK = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_sword_cooldown_end_tick"),
+        builder -> builder
+            .persistent(Codec.LONG)
+            .initializer(() -> 0L)
+    );
+
+    public static final AttachmentType<Integer> ENDERNIUM_SWORD_COOLDOWN_DURATION_TICKS = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_sword_cooldown_duration_ticks"),
+        builder -> builder
+            .persistent(Codec.INT)
+            .initializer(() -> 0)
+    );
+
     private ModAttachments() {
     }
 

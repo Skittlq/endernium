@@ -1,5 +1,6 @@
 package com.skittlq.endernium.network;
 
+import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -16,6 +17,9 @@ public final class EnderniumNetworking {
     };
     private static DragonDeathVfxSender dragonDeathVfxSender = (player, payload) -> {
         throw new IllegalStateException("Endernium dragon VFX sender has not been bound to a loader network API yet");
+    };
+    private static AbilityCooldownSyncSender abilityCooldownSyncSender = (player, payload) -> {
+        throw new IllegalStateException("Endernium ability cooldown sync sender has not been bound to a loader network API yet");
     };
 
     private EnderniumNetworking() {
@@ -45,6 +49,20 @@ public final class EnderniumNetworking {
         dragonDeathVfxSender.send(player, payload);
     }
 
+    public static void bindAbilityCooldownSyncSender(AbilityCooldownSyncSender sender) {
+        abilityCooldownSyncSender = Objects.requireNonNull(sender);
+    }
+
+    public static void sendArmorCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
+        abilityCooldownSyncSender.send(player,
+                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.ARMOR, endGameTime, durationTicks));
+    }
+
+    public static void sendSwordCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
+        abilityCooldownSyncSender.send(player,
+                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.SWORD, endGameTime, durationTicks));
+    }
+
     @FunctionalInterface
     public interface CameraLerpSender {
         void send(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks);
@@ -58,5 +76,10 @@ public final class EnderniumNetworking {
     @FunctionalInterface
     public interface DragonDeathVfxSender {
         void send(ServerPlayer player, DragonDeathVfxPayload payload);
+    }
+
+    @FunctionalInterface
+    public interface AbilityCooldownSyncSender {
+        void send(ServerPlayer player, AbilityCooldownSyncPayload payload);
     }
 }

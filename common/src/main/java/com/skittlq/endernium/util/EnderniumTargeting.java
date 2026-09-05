@@ -22,6 +22,7 @@ import java.util.UUID;
 public final class EnderniumTargeting {
     public static final double SWORD_RANGE = 10.0D;
     public static final double SWORD_ARC = Math.PI / 1.5D;
+    public static final double SWORD_INNER_RADIUS = 2.0D;
     public static final int MOB_RETALIATION_TICKS = 200;
 
     private static final Set<Identifier> EXTRA_HOSTILES = new HashSet<>(Set.of(
@@ -80,13 +81,13 @@ public final class EnderniumTargeting {
     public static boolean isValidSwordTarget(ServerPlayer player, LivingEntity target, Vec3 playerPosition,
                                              Vec3 lookVector, double range, double arc) {
         return isValidPlayerAbilityTarget(player, target)
-                && isWithinSwordArc(target, playerPosition, lookVector, range, arc);
+                && isWithinSwordTargetingArea(player, target, playerPosition, lookVector, range, arc);
     }
 
     public static boolean isValidSwordPreviewTarget(Player player, LivingEntity target, Vec3 playerPosition,
                                                     Vec3 lookVector, double range, double arc) {
         return isValidClientPreviewTarget(player, target)
-                && isWithinSwordArc(target, playerPosition, lookVector, range, arc);
+                && isWithinSwordTargetingArea(player, target, playerPosition, lookVector, range, arc);
     }
 
     public static boolean isValidPlayerAbilityTarget(ServerPlayer player, LivingEntity target) {
@@ -99,7 +100,7 @@ public final class EnderniumTargeting {
                     && !otherPlayer.isSpectator()
                     && player.level().isPvpAllowed()
                     && player.canHarmPlayer(otherPlayer)
-                    && EnderniumCombatTags.areTagged(player, otherPlayer);
+                    && EnderniumCombatTags.canTarget(player, otherPlayer);
         }
 
         if (player.isAlliedTo(target)) {
@@ -178,8 +179,12 @@ public final class EnderniumTargeting {
         return false;
     }
 
-    private static boolean isWithinSwordArc(LivingEntity target, Vec3 playerPosition, Vec3 lookVector,
-                                            double range, double arc) {
+    private static boolean isWithinSwordTargetingArea(Player player, LivingEntity target, Vec3 playerPosition,
+                                                      Vec3 lookVector, double range, double arc) {
+        if (player.distanceTo(target) <= SWORD_INNER_RADIUS) {
+            return true;
+        }
+
         Vec3 toTarget = target.position()
                 .add(0.0D, target.getBbHeight() / 2.0D, 0.0D)
                 .subtract(playerPosition);

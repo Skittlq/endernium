@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,6 +33,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -38,6 +41,41 @@ import java.util.function.Consumer;
 public class EnderniumSword extends Item {
     private static final Map<UUID, List<Integer>> ACTIVE_TASKS = new HashMap<>();
     private static final Map<UUID, AtomicInteger> MOBS_HIT_MAP = new HashMap<>();
+
+    private static CooldownStore cooldownStore = new CooldownStore() {
+        @Override
+        public long getCooldownEndGameTime(Player player) {
+            return 0L;
+        }
+
+        @Override
+        public void setCooldownEndGameTime(Player player, long gameTime) {
+            // no-op until a platform-specific store is bound
+        }
+
+        @Override
+        public int getCooldownDurationTicks(Player player) {
+            return 0;
+        }
+
+        @Override
+        public void setCooldownDurationTicks(Player player, int durationTicks) {
+            // no-op until a platform-specific store is bound
+        }
+    };
+
+    public static void bindCooldownStore(CooldownStore store) {
+        cooldownStore = Objects.requireNonNull(store);
+    }
+
+    // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
+    public static void syncCooldownOnLogin(ServerPlayer player) {
+        long endGameTime = cooldownStore.getCooldownEndGameTime(player);
+        if (endGameTime > player.level().getGameTime()) {
+            int durationTicks = cooldownStore.getCooldownDurationTicks(player);
+            EnderniumNetworking.sendSwordCooldownSync(player, endGameTime, durationTicks);
+        }
+    }
 
     public EnderniumSword(Properties properties) {
         super(properties.sword(ModToolTiers.ENDERNIUM, 3.0F, -2.4F));
@@ -61,12 +99,12 @@ public class EnderniumSword extends Item {
             ACTIVE_TASKS.get(uuid).clear();
 
             int mobsHit = MOBS_HIT_MAP.getOrDefault(uuid, new AtomicInteger(0)).get();
-            addConfiguredCooldown(player, player.getItemInHand(hand), mobsHit);
+            addConfiguredCooldown(player, mobsHit);
             MOBS_HIT_MAP.remove(uuid);
             return InteractionResult.SUCCESS;
         }
 
-        if (player.getCooldowns().isOnCooldown(player.getItemInHand(hand))) {
+        if (cooldownStore.getCooldownEndGameTime(player) > player.level().getGameTime()) {
             return InteractionResult.SUCCESS;
         }
 
@@ -152,9 +190,26 @@ public class EnderniumSword extends Item {
                 player.setDeltaMovement(player.getDeltaMovement().x, 0.42D, player.getDeltaMovement().z);
                 player.hurtMarked = true;
 
-                var attackDamage = player.getAttribute(Attributes.ATTACK_DAMAGE);
-                double baseAttack = attackDamage != null ? attackDamage.getValue() : 1.0D;
-                target.hurt(player.damageSources().playerAttack(player), (float) (baseAttack * 3.0D));
+                ItemStack weapon = player.getItemInHand(hand);
+                DamageSource attackSource = weapon.getDamageSource(player);
+                float baseAttackDamage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                float normalAttackDamage = EnchantmentHelper.modifyDamage(
+                        serverPlayer.level(),
+                        weapon,
+                        target,
+                        attackSource,
+                        baseAttackDamage
+                );
+                normalAttackDamage += weapon.getItem().getAttackDamageBonus(target, baseAttackDamage, attackSource);
+                float abilityDamageMultiplier = target instanceof Player ? 2.0F : 3.0F;
+                if (target.hurtOrSimulate(attackSource, normalAttackDamage * abilityDamageMultiplier)) {
+                    EnchantmentHelper.doPostAttackEffectsWithItemSource(
+                            serverPlayer.level(),
+                            target,
+                            attackSource,
+                            weapon
+                    );
+                }
                 player.swing(hand, true);
                 mobsHit.incrementAndGet();
 
@@ -171,7 +226,7 @@ public class EnderniumSword extends Item {
 
         int totalDuration = sortedTargets.size() * ticksBetweenHits + 5;
         int endTaskId = EnderniumTickScheduler.schedule(() -> {
-            addConfiguredCooldown(player, player.getItemInHand(hand), mobsHit.get());
+            addConfiguredCooldown(player, mobsHit.get());
 
             int hitCount = mobsHit.get();
             if (hitCount >= 15) {
@@ -186,11 +241,24 @@ public class EnderniumSword extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private static void addConfiguredCooldown(Player player, ItemStack stack, int mobsHit) {
+    private static void addConfiguredCooldown(Player player, int mobsHit) {
         int cooldownTicks = EnderniumGameplayConfig.swordAbilityCooldownTicks(mobsHit);
-        if (cooldownTicks > 0) {
-            player.getCooldowns().addCooldown(stack, cooldownTicks);
+        if (cooldownTicks > 0 && player instanceof ServerPlayer serverPlayer) {
+            long endGameTime = player.level().getGameTime() + cooldownTicks;
+            cooldownStore.setCooldownEndGameTime(player, endGameTime);
+            cooldownStore.setCooldownDurationTicks(player, cooldownTicks);
+            EnderniumNetworking.sendSwordCooldownSync(serverPlayer, endGameTime, cooldownTicks);
         }
+    }
+
+    public interface CooldownStore {
+        long getCooldownEndGameTime(Player player);
+
+        void setCooldownEndGameTime(Player player, long gameTime);
+
+        int getCooldownDurationTicks(Player player);
+
+        void setCooldownDurationTicks(Player player, int durationTicks);
     }
 
     @Override
