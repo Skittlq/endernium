@@ -47,7 +47,7 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 - **Endernium Sword**
   - Features a _Teleportation Barrage_ attack.
   - Press **`R`** to automatically teleport to each hostile mob in front of you and slice them.
-  - Deals **triple damage** to each mob hit.
+  - Deals **double damage** to players, and **triple damage** to each mob.
   - Base cooldown: **10 seconds**.
   - Additional **5 seconds** cooldown per mob hit.
 
