@@ -2,6 +2,7 @@ package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.client.EnderniumKeyBindings;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -57,6 +58,10 @@ public final class EnderniumVeinMiningToolHelper {
             return InteractionResult.PASS;
         }
 
+        if (!EnderniumAwakening.isAwakened(player)) {
+            return InteractionResult.SUCCESS;
+        }
+
         ItemStack stack = player.getItemInHand(hand);
 
         if (player.isShiftKeyDown()) {
@@ -93,7 +98,11 @@ public final class EnderniumVeinMiningToolHelper {
     }
 
     static boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (!level.isClientSide() && isVeinMiningEnabled(stack) && entity instanceof Player player && !player.isCreative()) {
+        if (!level.isClientSide()
+                && isVeinMiningEnabled(stack)
+                && entity instanceof Player player
+                && EnderniumAwakening.isAwakened(player)
+                && !player.isCreative()) {
             EnderniumUtils.veinMineBlocks(stack, level, pos, state, player, EnderniumUtils.DEFAULT_MAX_BLOCKS);
         }
         return false;
@@ -102,6 +111,12 @@ public final class EnderniumVeinMiningToolHelper {
     static void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
+            return;
+        }
+
+        if (!EnderniumAwakening.isClientAwakened()) {
+            tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
+                    .withStyle(ChatFormatting.GRAY));
             return;
         }
 
@@ -121,7 +136,9 @@ public final class EnderniumVeinMiningToolHelper {
     }
 
     static void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
-        if (level.isClientSide() || !(entity instanceof Player player)) {
+        if (level.isClientSide()
+                || !(entity instanceof Player player)
+                || !EnderniumAwakening.isAwakened(player)) {
             return;
         }
 

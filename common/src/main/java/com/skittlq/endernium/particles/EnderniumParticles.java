@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 public enum EnderniumParticles {
     ENDERNIUM_SWEEP("endernium_sweep"),
     ENDERNIUM_BIT("endernium_bit"),
+    ENDERNIUM_BLESSING_BIT("endernium_blessing_bit"),
     REVERSE_ENDERNIUM_BIT("reverse_endernium_bit");
 
     private final String id;

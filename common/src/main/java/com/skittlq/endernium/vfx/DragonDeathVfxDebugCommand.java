@@ -1,11 +1,14 @@
 package com.skittlq.endernium.vfx;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.skittlq.endernium.progression.DragonAwakeningTracker;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -26,7 +29,20 @@ public final class DragonDeathVfxDebugCommand {
                                 .executes(context -> simulate(
                                         context.getSource(),
                                         Vec3Argument.getVec3(context, "origin")
-                                )))));
+                                ))))
+                .then(Commands.literal("blessing")
+                        .then(Commands.argument("origin", Vec3Argument.vec3())
+                                .executes(context -> simulateBlessing(
+                                        context.getSource(),
+                                        context.getSource().getPlayerOrException(),
+                                        Vec3Argument.getVec3(context, "origin")
+                                ))
+                                .then(Commands.argument("target", EntityArgument.player())
+                                        .executes(context -> simulateBlessing(
+                                                context.getSource(),
+                                                EntityArgument.getPlayer(context, "target"),
+                                                Vec3Argument.getVec3(context, "origin")
+                                        ))))));
     }
 
     private static int simulate(CommandSourceStack source, Vec3 origin) {
@@ -42,6 +58,21 @@ public final class DragonDeathVfxDebugCommand {
                 "Simulating the complete Endernium eruption at %.1f %.1f %.1f",
                 origin.x, origin.y, origin.z
         )), true);
+        return 1;
+    }
+
+    private static int simulateBlessing(CommandSourceStack source, ServerPlayer target, Vec3 origin) {
+        if (!DragonAwakeningTracker.startBlessingSimulation(target, origin)) {
+            source.sendFailure(Component.literal("The blessing target must be a non-spectating player in The End."));
+            return 0;
+        }
+        source.sendSuccess(() -> Component.literal(String.format(
+                "Previewing the Endernium blessing for %s from %.1f %.1f %.1f",
+                target.getScoreboardName(),
+                origin.x,
+                origin.y,
+                origin.z
+        )), false);
         return 1;
     }
 }

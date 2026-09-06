@@ -13,8 +13,11 @@ import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.particles.ModParticles;
 import com.skittlq.endernium.particles.custom.EnderniumBit;
+import com.skittlq.endernium.particles.custom.EnderniumBlessingBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
+import com.skittlq.endernium.progression.EnderniumAwakeningHandler;
+import com.skittlq.endernium.progression.EnderniumAwakeningCommand;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.vfx.DragonDeathVfxDebugCommand;
 import com.skittlq.endernium.worldgen.ModFeatures;
@@ -58,6 +61,7 @@ public class Endernium {
         EnderniumArmorAbilityHandler.register();
         EnderniumSwordCooldownHandler.register();
         EnderniumCombatEvents.register();
+        EnderniumAwakeningHandler.register();
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
@@ -80,6 +84,7 @@ public class Endernium {
 
     @SubscribeEvent
     public void registerDevelopmentCommands(RegisterCommandsEvent event) {
+        EnderniumAwakeningCommand.register(event.getDispatcher());
         if (SharedConstants.IS_RUNNING_IN_IDE) {
             DragonDeathVfxDebugCommand.register(event.getDispatcher());
         }
@@ -95,6 +100,7 @@ public class Endernium {
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(EnderniumParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);
             event.registerSpriteSet(EnderniumParticles.ENDERNIUM_BIT.get(), EnderniumBit.Provider::new);
+            event.registerSpriteSet(EnderniumParticles.ENDERNIUM_BLESSING_BIT.get(), EnderniumBlessingBit.Provider::new);
             event.registerSpriteSet(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(), ReverseEnderniumBit.Provider::new);
         }
 

@@ -23,6 +23,7 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.BuildupState;
+import com.skittlq.endernium.client.vfx.EnderniumVfxManager.BlessingState;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.BurstState;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.CometPath;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.CrackState;
@@ -32,6 +33,7 @@ import com.skittlq.endernium.client.vfx.EnderniumVfxManager.DistantWaveState;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.ExtractedFrame;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.PillarPulse;
 import com.skittlq.endernium.config.EnderniumVisualConfig;
+import com.skittlq.endernium.progression.DragonBlessingVfxMath;
 import com.skittlq.endernium.vfx.DragonDeathVfxTiming;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BindGroupLayouts;
@@ -51,7 +53,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Random;
 
-/** Blaze3D-only renderer for the first-dragon-death Endernium eruption. */
+/** Blaze3D-only renderer for Endernium world effects. */
 public final class EnderniumShaderRenderer implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger("endernium/dragon_vfx");
     private static final Identifier ENERGY_SHADER = Identifier.fromNamespaceAndPath("endernium", "core/dragon_energy");
@@ -142,7 +144,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
     public void render(Matrix4fc modelViewMatrix, Vec3 camera) {
         ExtractedFrame frame = EnderniumVfxManager.frame();
-        if (!worldPipelineEnabled || frame.empty() || (frame.buildup() == null && frame.burst() == null)) {
+        if (!worldPipelineEnabled || frame.empty()) {
             return;
         }
 
@@ -310,7 +312,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
     }
 
     private BuiltMesh buildEnergyMesh(ExtractedFrame frame, Vec3 camera) {
-        try (ByteBufferBuilder bytes = new ByteBufferBuilder(256 * 1024)) {
+        try (ByteBufferBuilder bytes = new ByteBufferBuilder(320 * 1024)) {
             BufferBuilder builder = new BufferBuilder(bytes, PrimitiveTopology.TRIANGLES, DefaultVertexFormat.POSITION_TEX_COLOR);
             if (frame.buildup() != null) {
                 addBuildup(builder, frame.buildup(), camera);
@@ -321,6 +323,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 addPillarPulses(builder, frame.pillars(), frame.burst(), camera);
             }
             addDistantImpactFlashes(builder, frame.distantImpacts(), camera);
+            addBlessings(builder, frame.blessings(), camera);
             MeshData mesh = builder.build();
             return upload(mesh, "Endernium dragon energy vertices");
         }
@@ -577,6 +580,110 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     head,
                     comet.width() * 2.45,
                     cometHeadColor(comet.headVariant(), clampColor((int)(255 * fade))),
+                    camera
+            );
+        }
+    }
+
+    private void addBlessings(BufferBuilder builder, List<BlessingState> blessings, Vec3 camera) {
+        for (BlessingState blessing : blessings) {
+            float age = blessing.age();
+            if (age >= 3.0F && age < DragonBlessingVfxMath.BLESSING_END_TICK) {
+                float fadeIn = Mth.clamp((age - 3.0F) / 5.0F, 0.0F, 1.0F);
+                float fadeOut = Mth.clamp(
+                        (DragonBlessingVfxMath.BLESSING_END_TICK - age) / 5.0F,
+                        0.0F,
+                        1.0F
+                );
+                float fade = fadeIn * fadeOut;
+                float shimmer = 0.88F + 0.12F * (float)Math.sin(age * 0.93F + blessing.seed() * 0.0017);
+                double width = (0.074 + 0.012 * Math.sin(age * 0.54F + blessing.recipientIndex())) * shimmer;
+                int samples = EnderniumVisualConfig.cinematic() ? 8 : 5;
+                float sampleStep = age < DragonBlessingVfxMath.SEEKING_END_TICK ? 0.72F : 0.52F;
+                Vec3 previous = blessing.corePosition(age);
+
+                for (int sample = 1; sample <= samples; sample++) {
+                    float sampleAge = age - sample * sampleStep;
+                    if (sampleAge < 3.0F) {
+                        break;
+                    }
+                    Vec3 next = blessing.corePosition(sampleAge);
+                    float taper = 1.0F - sample / (float)(samples + 1);
+                    int alpha = clampColor((int)(230 * fade * taper));
+                    int color = sample <= 2
+                            ? cometHeadColor(Math.floorMod(blessing.recipientIndex(), 3), alpha)
+                            : argb(alpha, 224, 82, 255);
+                    addRibbon(
+                            builder,
+                            next,
+                            previous,
+                            width * taper,
+                            color,
+                            camera,
+                            blessing.recipientIndex() * 0.091F + sample * 0.14F
+                    );
+                    previous = next;
+                }
+
+                Vec3 head = blessing.corePosition(age);
+                int headAlpha = clampColor((int)(255 * fade));
+                addBillboardCore(
+                        builder,
+                        head,
+                        width * 4.8,
+                        argb(clampColor((int)(58 * fade)), 224, 82, 255),
+                        camera
+                );
+                addFacetedCore(builder, head, width * 1.45, age * 0.22, headAlpha, camera);
+                addBillboardCore(
+                        builder,
+                        head,
+                        width * 1.85,
+                        cometHeadColor(Math.floorMod(blessing.recipientIndex(), 3), headAlpha),
+                        camera
+                );
+            }
+
+            float pulse = blessing.pulse();
+            if (pulse <= 0.001F) {
+                continue;
+            }
+
+            Vec3 feet = blessing.playerFeet();
+            double height = blessing.playerHeight();
+            double swell = 1.0 + pulse * 0.14;
+            double[] relativeHeights = {0.16, 0.38, 0.61, 0.82};
+            double[] radii = {0.25, 0.37, 0.35, 0.24};
+            for (int slice = 0; slice < relativeHeights.length; slice++) {
+                Vec3 center = feet.add(0.0, height * relativeHeights[slice], 0.0);
+                int alpha = clampColor((int)((44 + slice * 6) * pulse));
+                addFacetedCore(
+                        builder,
+                        center,
+                        radii[slice] * swell,
+                        age * (slice % 2 == 0 ? 0.12 : -0.10) + slice * 0.83,
+                        alpha,
+                        camera
+                );
+            }
+
+            int auraAlpha = clampColor((int)(105 * pulse));
+            addBrokenCoreRing(
+                    builder,
+                    blessing.chest(),
+                    0.47 + pulse * 0.18,
+                    0.025 + pulse * 0.012,
+                    age * 0.24,
+                    0.28,
+                    blessing.seed() ^ 0xB1E551A6L,
+                    argb(auraAlpha, 224, 82, 255),
+                    camera
+            );
+            addBillboardCore(
+                    builder,
+                    blessing.chest(),
+                    0.48 + pulse * 0.12,
+                    argb(clampColor((int)(34 * pulse)), 116, 39, 255),
                     camera
             );
         }

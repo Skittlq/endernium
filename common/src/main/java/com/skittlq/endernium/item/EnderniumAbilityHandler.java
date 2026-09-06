@@ -7,6 +7,7 @@ import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -31,6 +32,9 @@ public final class EnderniumAbilityHandler {
             if (!EnderniumGameplayConfig.swordAbilityEnabled()) {
                 return false;
             }
+            if (!EnderniumAwakening.isAwakened(player)) {
+                return true;
+            }
             sword.activateAbility(level, player, hand);
             return true;
         }
@@ -41,6 +45,9 @@ public final class EnderniumAbilityHandler {
                 || item instanceof EnderniumHoe) {
             if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
                 return false;
+            }
+            if (!EnderniumAwakening.isAwakened(player)) {
+                return true;
             }
             EnderniumVeinMiningToolHelper.activate(level, player, hand);
             return true;

@@ -17,7 +17,7 @@ public class EnderniumHelmet extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        EnderniumArmorTooltipHelper.appendFullSetAbilityTooltip(context, tooltipAdder);
+        EnderniumArmorTooltipHelper.appendFullSetAbilityTooltip(tooltipAdder);
         super.appendHoverText(stack, context, display, tooltipAdder, flag);
     }
 }

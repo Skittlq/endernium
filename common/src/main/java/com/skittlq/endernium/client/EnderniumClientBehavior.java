@@ -6,6 +6,7 @@ import com.skittlq.endernium.item.EnderniumItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorUtil;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.particles.EnderniumParticles;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -60,12 +61,13 @@ public final class EnderniumClientBehavior {
         EnderniumVfxManager.tick(client);
         if (client.player == null) {
             EnderniumTargeting.clearClientCombatOpponents();
+            EnderniumAwakening.clearClientState();
         }
         renderSwordPreviewParticles(client.player);
     }
 
     public static boolean shouldRenderArmorCooldown(Player player, boolean armorAbilityEnabled) {
-        if (player == null || !armorAbilityEnabled) {
+        if (player == null || !armorAbilityEnabled || !EnderniumAwakening.isAwakened(player)) {
             return false;
         }
 
@@ -74,7 +76,7 @@ public final class EnderniumClientBehavior {
     }
 
     public static boolean shouldRenderSwordCooldown(Player player, boolean swordAbilityEnabled) {
-        if (player == null || !swordAbilityEnabled) {
+        if (player == null || !swordAbilityEnabled || !EnderniumAwakening.isAwakened(player)) {
             return false;
         }
 
@@ -116,6 +118,11 @@ public final class EnderniumClientBehavior {
         SWORD_HUD_TRACKER.reset();
     }
 
+    public static void triggerAwakeningReadyHud() {
+        ARMOR_HUD_TRACKER.triggerReady();
+        SWORD_HUD_TRACKER.triggerReady();
+    }
+
     public static void playCooldownReadySound(Minecraft client) {
         client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ENDER_EYE_DEATH, 2.0F));
     }
@@ -134,7 +141,7 @@ public final class EnderniumClientBehavior {
             boolean swordAbilityEnabled
     ) {
         Player player = client.player;
-        if (player == null) {
+        if (player == null || !EnderniumAwakening.isAwakened(player)) {
             return;
         }
 
@@ -308,6 +315,11 @@ public final class EnderniumClientBehavior {
         void reset() {
             wasActive = false;
             readyAtNanos = -1L;
+        }
+
+        void triggerReady() {
+            wasActive = false;
+            readyAtNanos = System.nanoTime();
         }
     }
 }

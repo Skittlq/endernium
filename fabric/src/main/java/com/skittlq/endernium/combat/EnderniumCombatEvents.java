@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import com.skittlq.endernium.progression.DragonAwakeningTracker;
 
 public final class EnderniumCombatEvents {
     private EnderniumCombatEvents() {
@@ -12,6 +14,12 @@ public final class EnderniumCombatEvents {
 
     public static void register() {
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {
+            if (!blocked
+                    && damageTaken > 0.0F
+                    && entity instanceof EnderDragon dragon
+                    && source.getEntity() instanceof ServerPlayer attacker) {
+                DragonAwakeningTracker.recordDragonDamage(attacker, dragon);
+            }
             if (!blocked
                     && damageTaken > 0.0F
                     && entity instanceof ServerPlayer victim

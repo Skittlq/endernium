@@ -2,7 +2,9 @@ package com.skittlq.endernium.client.vfx;
 
 import com.skittlq.endernium.config.EnderniumVisualConfig;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
+import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.particles.EnderniumParticles;
+import com.skittlq.endernium.progression.DragonBlessingVfxMath;
 import com.skittlq.endernium.vfx.DragonDeathVfxTiming;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -15,6 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -24,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -42,6 +47,7 @@ public final class EnderniumVfxManager {
 
     private static ClientLevel lastLevel;
     private static DragonTimeline dragonTimeline;
+    private static final Map<UUID, BlessingTimeline> BLESSING_TIMELINES = new LinkedHashMap<>();
     private static ExtractedFrame extractedFrame = ExtractedFrame.EMPTY;
 
     private EnderniumVfxManager() {
@@ -75,6 +81,13 @@ public final class EnderniumVfxManager {
         }
     }
 
+    public static void onBlessingVfx(BlessingVfxPayload payload) {
+        if (!EnderniumVisualConfig.enabled()) {
+            return;
+        }
+        BLESSING_TIMELINES.put(payload.recipientId(), new BlessingTimeline(payload));
+    }
+
     public static void tick(Minecraft client) {
         if (client.level != lastLevel) {
             clear();
@@ -83,23 +96,31 @@ public final class EnderniumVfxManager {
         if (client.level == null || client.player == null || !EnderniumVisualConfig.enabled()) {
             if (!EnderniumVisualConfig.enabled()) {
                 dragonTimeline = null;
+                BLESSING_TIMELINES.clear();
                 extractedFrame = ExtractedFrame.EMPTY;
             }
             return;
         }
+        BLESSING_TIMELINES.values().removeIf(timeline -> !timeline.tick(client));
         if (dragonTimeline != null && !dragonTimeline.tick(client)) {
             dragonTimeline = null;
-            extractedFrame = ExtractedFrame.EMPTY;
         }
     }
 
     public static void extract(Minecraft client) {
-        if (dragonTimeline == null || client.level == null || !EnderniumVisualConfig.enabled()) {
+        if (client.level == null || !EnderniumVisualConfig.enabled()) {
             extractedFrame = ExtractedFrame.EMPTY;
             return;
         }
         float partialTick = client.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        extractedFrame = dragonTimeline.extract(client, partialTick);
+        ExtractedFrame dragonFrame = dragonTimeline == null
+                ? ExtractedFrame.EMPTY
+                : dragonTimeline.extract(client, partialTick);
+        List<BlessingState> blessings = BLESSING_TIMELINES.values().stream()
+                .map(timeline -> timeline.extract(client, partialTick))
+                .filter(java.util.Objects::nonNull)
+                .toList();
+        extractedFrame = dragonFrame.withBlessings(blessings);
     }
 
     public static ExtractedFrame frame() {
@@ -108,8 +129,79 @@ public final class EnderniumVfxManager {
 
     public static void clear() {
         dragonTimeline = null;
+        BLESSING_TIMELINES.clear();
         extractedFrame = ExtractedFrame.EMPTY;
         lastLevel = null;
+    }
+
+    private static final class BlessingTimeline {
+        private final UUID recipientId;
+        private final int entityId;
+        private final Vec3 origin;
+        private final long seed;
+        private final int recipientIndex;
+        private final int recipientCount;
+        private float previousFacingYaw;
+        private float smoothedFacingYaw;
+        private boolean facingInitialized;
+        private int age;
+
+        private BlessingTimeline(BlessingVfxPayload payload) {
+            this.recipientId = payload.recipientId();
+            this.entityId = payload.entityId();
+            this.origin = payload.origin();
+            this.seed = payload.seed();
+            this.recipientIndex = payload.recipientIndex();
+            this.recipientCount = Math.max(1, payload.recipientCount());
+        }
+
+        private boolean tick(Minecraft client) {
+            Entity entity = client.level.getEntity(entityId);
+            if (!(entity instanceof Player player) || !player.getUUID().equals(recipientId)) {
+                return false;
+            }
+            if (!facingInitialized) {
+                previousFacingYaw = player.getYRot();
+                smoothedFacingYaw = player.getYRot();
+                facingInitialized = true;
+            } else {
+                previousFacingYaw = smoothedFacingYaw;
+                smoothedFacingYaw = DragonBlessingVfxMath.followFacingYaw(
+                        smoothedFacingYaw,
+                        player.getYRot()
+                );
+            }
+            age++;
+            return age <= DragonBlessingVfxMath.PULSE_END_TICK;
+        }
+
+        private BlessingState extract(Minecraft client, float partialTick) {
+            Entity entity = client.level.getEntity(entityId);
+            if (!(entity instanceof Player player) || !player.getUUID().equals(recipientId)) {
+                return null;
+            }
+            Vec3 feet = new Vec3(
+                    Mth.lerp(partialTick, player.xo, player.getX()),
+                    Mth.lerp(partialTick, player.yo, player.getY()),
+                    Mth.lerp(partialTick, player.zo, player.getZ())
+            );
+            Vec3 chest = feet.add(0.0, player.getBbHeight() * 0.62, 0.0);
+            float facingYaw = facingInitialized
+                    ? Mth.rotLerp(partialTick, previousFacingYaw, smoothedFacingYaw)
+                    : player.getYRot();
+            Vec3 front = DragonBlessingVfxMath.frontTarget(chest, facingYaw);
+            return new BlessingState(
+                    origin,
+                    feet,
+                    player.getBbHeight(),
+                    chest,
+                    front,
+                    age + partialTick,
+                    seed,
+                    recipientIndex,
+                    recipientCount
+            );
+        }
     }
 
     private static final class DragonTimeline {
@@ -727,7 +819,8 @@ public final class EnderniumVfxManager {
                     atmosphereIntensity,
                     impactIntensity,
                     impactPhase,
-                    detonationShakeIntensity
+                    detonationShakeIntensity,
+                    List.of()
             );
         }
 
@@ -872,12 +965,31 @@ public final class EnderniumVfxManager {
             float atmosphereIntensity,
             float impactIntensity,
             float impactPhase,
-            float detonationShakeIntensity
+            float detonationShakeIntensity,
+            List<BlessingState> blessings
     ) {
         public static final ExtractedFrame EMPTY = new ExtractedFrame(
                 null, null, List.of(), List.of(), List.of(),
-                0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F
+                0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, List.of()
         );
+
+        public ExtractedFrame withBlessings(List<BlessingState> states) {
+            return new ExtractedFrame(
+                    buildup,
+                    burst,
+                    cracks,
+                    pillars,
+                    distantImpacts,
+                    postIntensity,
+                    postPhase,
+                    atmosphereIntensity,
+                    impactIntensity,
+                    impactPhase,
+                    detonationShakeIntensity,
+                    List.copyOf(states)
+            );
+        }
+
         public boolean empty() {
             return buildup == null
                     && burst == null
@@ -887,7 +999,36 @@ public final class EnderniumVfxManager {
                     && postIntensity <= 0.0F
                     && atmosphereIntensity <= 0.0F
                     && impactIntensity <= 0.0F
-                    && detonationShakeIntensity <= 0.0F;
+                    && detonationShakeIntensity <= 0.0F
+                    && blessings.isEmpty();
+        }
+    }
+
+    public record BlessingState(
+            Vec3 origin,
+            Vec3 playerFeet,
+            double playerHeight,
+            Vec3 chest,
+            Vec3 front,
+            float age,
+            long seed,
+            int recipientIndex,
+            int recipientCount
+    ) {
+        public Vec3 corePosition(float sampleAge) {
+            return DragonBlessingVfxMath.corePosition(
+                    origin,
+                    chest,
+                    front,
+                    seed,
+                    recipientIndex,
+                    recipientCount,
+                    sampleAge
+            );
+        }
+
+        public float pulse() {
+            return DragonBlessingVfxMath.playerPulse(age);
         }
     }
 

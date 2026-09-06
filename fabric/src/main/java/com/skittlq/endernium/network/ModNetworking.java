@@ -2,14 +2,18 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.client.CameraLerpHandler;
 import com.skittlq.endernium.client.EnderniumClientCooldowns;
+import com.skittlq.endernium.client.EnderniumClientBehavior;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
+import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.util.EnderniumTargeting;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -25,7 +29,9 @@ public final class ModNetworking {
         PayloadTypeRegistry.clientboundPlay().register(CameraLerpPayload.TYPE, CameraLerpPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(CombatOpponentsPayload.TYPE, CombatOpponentsPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(DragonDeathVfxPayload.TYPE, DragonDeathVfxPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(BlessingVfxPayload.TYPE, BlessingVfxPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AbilityCooldownSyncPayload.TYPE, AbilityCooldownSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(AwakeningStatePayload.TYPE, AwakeningStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(EnderniumAbilityPayload.TYPE, EnderniumAbilityPayload.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(EnderniumAbilityPayload.TYPE,
                 (payload, context) -> context.server().execute(() ->
@@ -35,7 +41,9 @@ public final class ModNetworking {
         EnderniumNetworking.bindCombatOpponentsSender((player, opponentIds) ->
                 ServerPlayNetworking.send(player, new CombatOpponentsPayload(new ArrayList<>(opponentIds))));
         EnderniumNetworking.bindDragonDeathVfxSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindBlessingVfxSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindAbilityCooldownSyncSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindAwakeningStateSender(ServerPlayNetworking::send);
     }
 
     public static void registerClient() {
@@ -47,12 +55,22 @@ public final class ModNetworking {
         ClientPlayNetworking.registerGlobalReceiver(DragonDeathVfxPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         EnderniumVfxManager.onDragonDeathVfx(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(BlessingVfxPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumVfxManager.onBlessingVfx(payload)));
         ClientPlayNetworking.registerGlobalReceiver(AbilityCooldownSyncPayload.TYPE,
                 (payload, context) -> context.client().execute(() -> {
                     if (payload.ability() == AbilityCooldownSyncPayload.Ability.ARMOR) {
                         EnderniumClientCooldowns.setArmorCooldown(payload.endGameTime(), payload.durationTicks());
                     } else {
                         EnderniumClientCooldowns.setSwordCooldown(payload.endGameTime(), payload.durationTicks());
+                    }
+                }));
+        ClientPlayNetworking.registerGlobalReceiver(AwakeningStatePayload.TYPE,
+                (payload, context) -> context.client().execute(() -> {
+                    EnderniumAwakening.setClientAwakened(payload.awakened());
+                    if (payload.playReadyEffect()) {
+                        EnderniumClientBehavior.triggerAwakeningReadyHud();
                     }
                 }));
     }

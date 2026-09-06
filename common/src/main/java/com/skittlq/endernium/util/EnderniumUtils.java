@@ -7,6 +7,7 @@ import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
 import com.skittlq.endernium.particles.EnderniumParticles;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -47,7 +48,7 @@ public final class EnderniumUtils {
     }
 
     public static void onAutoCollectToolBlockBreak(Level level, Player player, BlockPos pos, BlockState state, boolean allowVeinMiningFallback) {
-        if (level.isClientSide() || player.isCreative()) {
+        if (level.isClientSide() || player.isCreative() || !EnderniumAwakening.isAwakened(player)) {
             return;
         }
 
@@ -73,7 +74,12 @@ public final class EnderniumUtils {
 
     public static void handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
         Player player = entity instanceof Player foundPlayer ? foundPlayer : null;
-        if (level.isClientSide() || player == null || player.isCreative() || !(player instanceof ServerPlayer serverPlayer) || state.isAir()) {
+        if (level.isClientSide()
+                || player == null
+                || player.isCreative()
+                || !(player instanceof ServerPlayer serverPlayer)
+                || !EnderniumAwakening.isAwakened(serverPlayer)
+                || state.isAir()) {
             return;
         }
 
@@ -96,7 +102,7 @@ public final class EnderniumUtils {
     }
 
     public static void veinMineBlocks(ItemStack stack, Level level, BlockPos origin, BlockState originState, Player player, int maxBlocks) {
-        if (!canVeinMineBlock(stack, originState)) {
+        if (!EnderniumAwakening.isAwakened(player) || !canVeinMineBlock(stack, originState)) {
             return;
         }
 
@@ -153,7 +159,8 @@ public final class EnderniumUtils {
         task[0] = () -> {
             CompoundTag checkTag = getOrCreateCustomDataTag(stack);
             int currentSession = checkTag.getIntOr(VEIN_MINING_SESSION_ID_KEY, 0);
-            if (currentSession != sessionId) {
+            if (currentSession != sessionId || !EnderniumAwakening.isAwakened(player)) {
+                cancelVeinMining(stack);
                 clearVeinMiningBlockProgress(level, origin, player);
                 return;
             }

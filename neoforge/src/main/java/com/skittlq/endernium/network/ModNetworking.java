@@ -3,6 +3,8 @@ package com.skittlq.endernium.network;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
+import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
@@ -52,6 +54,15 @@ public class ModNetworking {
                                 })
         );
         registrar.playToClient(
+                BlessingVfxPayload.TYPE,
+                BlessingVfxPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+                        ClientModNetworking.handleBlessingVfx(payload);
+                    }
+                })
+        );
+        registrar.playToClient(
                 AbilityCooldownSyncPayload.TYPE,
                 AbilityCooldownSyncPayload.STREAM_CODEC,
                                 (payload, context) -> context.enqueueWork(() -> {
@@ -59,6 +70,15 @@ public class ModNetworking {
                                                 ClientModNetworking.handleAbilityCooldownSync(payload);
                                         }
                                 })
+        );
+        registrar.playToClient(
+                AwakeningStatePayload.TYPE,
+                AwakeningStatePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+                        ClientModNetworking.handleAwakeningState(payload);
+                    }
+                })
         );
         registrar.playToServer(
                 EnderniumAbilityPayload.TYPE,
@@ -72,7 +92,9 @@ public class ModNetworking {
                 PacketDistributor.sendToPlayer(player,
                         new CombatOpponentsPayload(new ArrayList<>(opponentIds))));
         EnderniumNetworking.bindDragonDeathVfxSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindBlessingVfxSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindAbilityCooldownSyncSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindAwakeningStateSender(PacketDistributor::sendToPlayer);
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

@@ -1,6 +1,8 @@
 package com.skittlq.endernium.combat;
 
+import com.skittlq.endernium.progression.DragonAwakeningTracker;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -22,6 +24,11 @@ public final class EnderniumCombatEvents {
     }
 
     private static void onDamage(LivingDamageEvent.Post event) {
+        if (event.getInflictedDamage() > 0.0F
+                && event.getEntity() instanceof EnderDragon dragon
+                && event.getSource().getEntity() instanceof ServerPlayer attacker) {
+            DragonAwakeningTracker.recordDragonDamage(attacker, dragon);
+        }
         if (event.getBlockedDamage() <= 0.0F
                 && event.getInflictedDamage() > 0.0F
                 && event.getEntity() instanceof ServerPlayer victim

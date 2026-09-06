@@ -79,6 +79,7 @@
   "endernium.config.observer_screen_effects.tooltip": "Allows future observer screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.configuration.enderniumEffectQuality": "Effect Quality",
+  "endernium.tooltip.ability.locked": "Defeat the Ender Dragon to unlock the full potential of Endernium.",
   "endernium.tooltip.sword.activate": "[%s] to activate ability.",
   "endernium.tooltip.sword.cooldown": "Cooldown: %s seconds + %s seconds per mob attacked.",
   "endernium.tooltip.sword.description": "Works best against a group of enemies.",

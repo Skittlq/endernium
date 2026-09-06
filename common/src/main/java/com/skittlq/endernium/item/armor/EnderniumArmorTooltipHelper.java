@@ -1,8 +1,8 @@
 package com.skittlq.endernium.item.armor;
 
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,13 +15,14 @@ final class EnderniumArmorTooltipHelper {
     private EnderniumArmorTooltipHelper() {
     }
 
-    static void appendFullSetAbilityTooltip(Item.TooltipContext context, Consumer<Component> tooltipAdder) {
+    static void appendFullSetAbilityTooltip(Consumer<Component> tooltipAdder) {
         if (!isArmorAbilityEnabled()) {
             return;
         }
 
-        var player = EnderniumArmorUtil.getTooltipPlayer(context);
-        if (player == null || !EnderniumArmorUtil.hasFullEnderniumSet(player)) {
+        if (!EnderniumAwakening.isClientAwakened()) {
+            tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
+                    .withStyle(ChatFormatting.GRAY));
             return;
         }
 

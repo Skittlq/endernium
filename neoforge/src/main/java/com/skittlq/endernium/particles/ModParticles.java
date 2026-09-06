@@ -15,6 +15,7 @@ public class ModParticles {
 
     public static final Supplier<SimpleParticleType> ENDERNIUM_SWEEP = register(EnderniumParticles.ENDERNIUM_SWEEP);
     public static final Supplier<SimpleParticleType> ENDERNIUM_BIT = register(EnderniumParticles.ENDERNIUM_BIT);
+    public static final Supplier<SimpleParticleType> ENDERNIUM_BLESSING_BIT = register(EnderniumParticles.ENDERNIUM_BLESSING_BIT);
     public static final Supplier<SimpleParticleType> REVERSE_ENDERNIUM_BIT = register(EnderniumParticles.REVERSE_ENDERNIUM_BIT);
 
     private static Supplier<SimpleParticleType> register(EnderniumParticles definition) {

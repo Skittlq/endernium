@@ -6,6 +6,7 @@ import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.ChatFormatting;
@@ -265,16 +266,21 @@ public class EnderniumSword extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         if (EnderniumGameplayConfig.swordAbilityEnabled()) {
-            tooltipAdder.accept(Component.translatable(
-                    "endernium.tooltip.sword.activate",
-                    EnderniumKeyBindings.abilityKeyName()
-            ).withStyle(ChatFormatting.LIGHT_PURPLE));
-            tooltipAdder.accept(Component.translatable(
-                    "endernium.tooltip.sword.cooldown",
-                    EnderniumGameplayConfig.swordAbilityBaseCooldownSeconds(),
-                    EnderniumGameplayConfig.swordAbilityPerMobCooldownSeconds()
-            ).withStyle(ChatFormatting.LIGHT_PURPLE));
-            tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
+            if (!EnderniumAwakening.isClientAwakened()) {
+                tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
+                        .withStyle(ChatFormatting.GRAY));
+            } else {
+                tooltipAdder.accept(Component.translatable(
+                        "endernium.tooltip.sword.activate",
+                        EnderniumKeyBindings.abilityKeyName()
+                ).withStyle(ChatFormatting.LIGHT_PURPLE));
+                tooltipAdder.accept(Component.translatable(
+                        "endernium.tooltip.sword.cooldown",
+                        EnderniumGameplayConfig.swordAbilityBaseCooldownSeconds(),
+                        EnderniumGameplayConfig.swordAbilityPerMobCooldownSeconds()
+                ).withStyle(ChatFormatting.LIGHT_PURPLE));
+                tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
+            }
         }
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }

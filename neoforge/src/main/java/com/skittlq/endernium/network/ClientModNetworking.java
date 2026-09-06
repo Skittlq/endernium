@@ -2,8 +2,12 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.client.CameraLerpHandler;
 import com.skittlq.endernium.client.EnderniumClientCooldowns;
+import com.skittlq.endernium.client.EnderniumClientBehavior;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
+import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
@@ -26,11 +30,22 @@ public final class ClientModNetworking {
         EnderniumVfxManager.onDragonDeathVfx(payload);
     }
 
+    public static void handleBlessingVfx(BlessingVfxPayload payload) {
+        EnderniumVfxManager.onBlessingVfx(payload);
+    }
+
     public static void handleAbilityCooldownSync(AbilityCooldownSyncPayload payload) {
         if (payload.ability() == AbilityCooldownSyncPayload.Ability.ARMOR) {
             EnderniumClientCooldowns.setArmorCooldown(payload.endGameTime(), payload.durationTicks());
         } else {
             EnderniumClientCooldowns.setSwordCooldown(payload.endGameTime(), payload.durationTicks());
+        }
+    }
+
+    public static void handleAwakeningState(AwakeningStatePayload payload) {
+        EnderniumAwakening.setClientAwakened(payload.awakened());
+        if (payload.playReadyEffect()) {
+            EnderniumClientBehavior.triggerAwakeningReadyHud();
         }
     }
 
