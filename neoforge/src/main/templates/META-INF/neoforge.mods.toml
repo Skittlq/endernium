@@ -32,6 +32,10 @@ displayName="${mod_name}" #mandatory
 # A file name (in the root of the mod JAR) containing a wide banner for display
 bannerFile="endernium-titlecard.png" #optional
 
+# A square icon displayed beside the mod in the mod list
+iconFile="assets/endernium/icon.png" #optional
+iconBlur=true #optional
+
 # A text field displayed in the mod UI
 #credits="" #optional
 
