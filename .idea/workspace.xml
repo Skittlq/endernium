@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="629918e8-cb06-4900-88f0-d96302fa8133" name="Changes" comment="Add Endernium items and update Minecraft version to 26.2" />
+    <list default="true" id="629918e8-cb06-4900-88f0-d96302fa8133" name="Changes" comment="Add Endernium items and update Minecraft version to 26.2">
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/com.skittlq.endernium.endernium.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/com.skittlq.endernium.endernium.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/com.skittlq.endernium.endernium.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/com.skittlq.endernium.endernium.test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/neoforge.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/neoforge.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabric/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/fabric/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neoforge/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/neoforge/gradle.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -133,6 +141,27 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="endernium" type="f1a62948:ProjectNode" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="neoforge" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="neoforge" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="neoforge" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="neoforge" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="mod development" type="c8890929:TasksNode$1" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -188,32 +217,33 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build neoforge.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runClient].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runDatagen].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [:net.neoforged.devlaunch.Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;26.2&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/skitt/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build neoforge.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [build].executor": "Run",
+    "Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runClient].executor": "Run",
+    "Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runDatagen].executor": "Run",
+    "Gradle.neoforge [runClient].executor": "Run",
+    "Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [:net.neoforged.devlaunch.Main.main()].executor": "Run",
+    "Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build].executor": "Run",
+    "Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "26.2",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/skitt/Nextcloud/Documents/Minecraft Mods/endernium/fabric/src/main/resources/assets/endernium",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\skitt\Nextcloud\Documents\Minecraft Mods\endernium\fabric\src\main\resources\assets\endernium" />
@@ -330,6 +360,28 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="neoforge [runClient]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/neoforge" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="runClient" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -352,35 +404,21 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/neoforge" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="runData" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-Dfml.junit.argsfile=../moddev/junit/programArgs.txt @../moddev/junit/vmArgs.txt @../moddev/junit/intellijVmArgs.txt" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$/build/minecraft-junit" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [build]" />
+        <item itemvalue="Gradle.neoforge [runClient]" />
         <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [build]" />
         <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runClient]" />
         <item itemvalue="Gradle.fabric::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:fabric [runDatagen]" />
-        <item itemvalue="Gradle.neoforge::Users:skitt:Nextcloud:Documents:Minecraft Mods:endernium:neoforge [runData]" />
       </list>
     </recent_temporary>
   </component>

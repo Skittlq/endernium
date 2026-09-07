@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.skittlq.endernium.endernium.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.skittlq.endernium.endernium.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/endernium.iml" filepath="$PROJECT_DIR$/.idea/endernium.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/neoforge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/neoforge.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/neoforge.test.iml" filepath="$PROJECT_DIR$/.idea/modules/neoforge.test.iml" />
     </modules>
   </component>
 </project>
