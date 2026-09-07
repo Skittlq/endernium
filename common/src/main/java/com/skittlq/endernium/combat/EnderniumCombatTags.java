@@ -25,9 +25,13 @@ public final class EnderniumCombatTags {
         }
 
         MinecraftServer server = attacker.level().getServer();
-        long expiresAtTick = currentTick(server) + DURATION_TICKS;
-        tags(server).put(new TargetingPermission(victim.getUUID(), attacker.getUUID()), expiresAtTick);
-        sync(victim);
+        long now = currentTick(server);
+        long expiresAtTick = now + DURATION_TICKS;
+        TargetingPermission permission = new TargetingPermission(victim.getUUID(), attacker.getUUID());
+        Long previousExpiry = tags(server).put(permission, expiresAtTick);
+        if (previousExpiry == null || previousExpiry <= now) {
+            sync(victim);
+        }
     }
 
     public static boolean canTarget(ServerPlayer player, ServerPlayer attacker) {
@@ -136,7 +140,7 @@ public final class EnderniumCombatTags {
     }
 
     private static long currentTick(MinecraftServer server) {
-        return Integer.toUnsignedLong(server.getTickCount());
+        return server.overworld().getGameTime();
     }
 
     private record TargetingPermission(UUID player, UUID attacker) {

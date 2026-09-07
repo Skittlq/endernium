@@ -18,6 +18,7 @@ import com.skittlq.endernium.progression.EnderniumAwakeningHandler;
 import com.skittlq.endernium.progression.EnderniumAwakeningCommand;
 import com.skittlq.endernium.util.EnderniumTickSchedulerEvents;
 import com.skittlq.endernium.util.EnderniumUtilsEvents;
+import com.skittlq.endernium.util.EnderniumUtils;
 import com.skittlq.endernium.vfx.DragonDeathVfxDebugCommand;
 import com.skittlq.endernium.worldgen.ModFeatures;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
@@ -37,6 +38,7 @@ public class Endernium implements ModInitializer {
     public void onInitialize() {
         EnderniumConfigManager.load();
         bindGameplayConfig();
+        EnderniumUtils.bindSafeBlockBreaker((player, pos) -> player.gameMode.destroyBlock(pos));
         ModAttachments.initialize();
         ModCreativeModeTabs.registerModCreativeModeTabs();
         ModBlocks.register();
@@ -82,6 +84,21 @@ public class Endernium implements ModInitializer {
             @Override
             public boolean toolsVeinMiningEnabled() {
                 return EnderniumConfigManager.getConfig().enderniumToolsVeinMining;
+            }
+
+            @Override
+            public boolean armorAbilityEnabled() {
+                return EnderniumConfigManager.getConfig().enderniumArmorAbility;
+            }
+
+            @Override
+            public int armorAbilityThreshold() {
+                return EnderniumConfigManager.getConfig().enderniumArmorAbilityThreshold;
+            }
+
+            @Override
+            public long armorAbilityCooldownSeconds() {
+                return EnderniumConfigManager.getConfig().enderniumArmorAbilityCooldown;
             }
         });
     }

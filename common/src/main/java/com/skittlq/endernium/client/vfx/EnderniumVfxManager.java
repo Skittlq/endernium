@@ -1,6 +1,5 @@
 package com.skittlq.endernium.client.vfx;
 
-import com.skittlq.endernium.config.EnderniumVisualConfig;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.particles.EnderniumParticles;
@@ -54,9 +53,6 @@ public final class EnderniumVfxManager {
     }
 
     public static void onDragonDeathVfx(DragonDeathVfxPayload payload) {
-        if (!EnderniumVisualConfig.enabled()) {
-            return;
-        }
 
         switch (payload.action()) {
             case START -> {
@@ -82,9 +78,6 @@ public final class EnderniumVfxManager {
     }
 
     public static void onBlessingVfx(BlessingVfxPayload payload) {
-        if (!EnderniumVisualConfig.enabled()) {
-            return;
-        }
         BLESSING_TIMELINES.put(payload.recipientId(), new BlessingTimeline(payload));
     }
 
@@ -93,12 +86,7 @@ public final class EnderniumVfxManager {
             clear();
             lastLevel = client.level;
         }
-        if (client.level == null || client.player == null || !EnderniumVisualConfig.enabled()) {
-            if (!EnderniumVisualConfig.enabled()) {
-                dragonTimeline = null;
-                BLESSING_TIMELINES.clear();
-                extractedFrame = ExtractedFrame.EMPTY;
-            }
+        if (client.level == null || client.player == null) {
             return;
         }
         BLESSING_TIMELINES.values().removeIf(timeline -> !timeline.tick(client));
@@ -108,7 +96,7 @@ public final class EnderniumVfxManager {
     }
 
     public static void extract(Minecraft client) {
-        if (client.level == null || !EnderniumVisualConfig.enabled()) {
+        if (client.level == null) {
             extractedFrame = ExtractedFrame.EMPTY;
             return;
         }
@@ -382,9 +370,9 @@ public final class EnderniumVfxManager {
             if (client.level == null || client.player == null || arrivalAge < 0 || arrivalAge >= 4) {
                 return;
             }
-            int patchLimit = EnderniumVisualConfig.cinematic() ? MAX_CRACK_PATCHES : MAX_CRACK_PATCHES / 2;
-            int perTick = EnderniumVisualConfig.cinematic() ? 32 : 16;
-            int stride = EnderniumVisualConfig.cinematic() ? 2 : 3;
+            int patchLimit = MAX_CRACK_PATCHES;
+            int perTick = 32;
+            int stride = 2;
             int radius = 64;
             int centerX = Mth.floor(client.player.getX());
             int centerZ = Mth.floor(client.player.getZ());
@@ -457,7 +445,7 @@ public final class EnderniumVfxManager {
                 int arrivalAge
         ) {
             Random random = new Random(seed ^ (arrivalAge * 0x9E3779B97F4A7C15L));
-            int dustCount = EnderniumVisualConfig.cinematic() ? 2 : 1;
+            int dustCount = 2;
             for (int i = 0; i < dustCount; i++) {
                 double x = surface.getX() + 0.2 + random.nextDouble() * 0.6;
                 double y = surface.getY() + 1.04;
@@ -494,8 +482,8 @@ public final class EnderniumVfxManager {
                 Vec3 direction,
                 int arrivalTick
         ) {
-            int landingTarget = EnderniumVisualConfig.cinematic() ? 10 : 4;
-            int flybyTarget = EnderniumVisualConfig.cinematic() ? 14 : 8;
+            int landingTarget = 10;
+            int flybyTarget = 14;
             int regionX = Mth.floor(anchor.x / 32.0);
             int regionZ = Mth.floor(anchor.z / 32.0);
             long localSeed = mixSeed(sequenceSeed ^ BlockPos.asLong(regionX, 0, regionZ));
@@ -742,24 +730,18 @@ public final class EnderniumVfxManager {
             float impactIntensity = 0.0F;
             float impactPhase = 0.0F;
             float detonationShakeIntensity = 0.0F;
-            if (waveHitAge >= 0
-                    && waveHitAge < 6
-                    && EnderniumVisualConfig.cinematic()) {
+            if (waveHitAge >= 0 && waveHitAge < 6) {
                 postPhase = waveHitAge + partialTick;
                 float normalized = postPhase / 6.0F;
                 postIntensity = (float)Math.sin(normalized * Math.PI) * 0.85F;
             }
-            if (waveHitAge >= 0
-                    && waveHitAge < 18
-                    && EnderniumVisualConfig.cinematic()) {
+            if (waveHitAge >= 0 && waveHitAge < 18) {
                 postPhase = waveHitAge + partialTick;
                 float attack = Math.min(1.0F, postPhase / 2.0F);
                 float recovery = Math.max(0.0F, 1.0F - Math.max(0.0F, postPhase - 2.0F) / 16.0F);
                 atmosphereIntensity = attack * recovery * recovery * 0.62F;
             }
-            if (burstAge >= 0
-                    && EnderniumVisualConfig.cinematic()
-                    && isOnMainEndIsland(client.player.position())) {
+            if (burstAge >= 0 && isOnMainEndIsland(client.player.position())) {
                 impactPhase = burstAge + partialTick;
                 if (impactPhase < IMPACT_END_AGE) {
                     impactIntensity = impactPhase < IMPACT_FULL_INTENSITY_END_AGE
@@ -768,9 +750,7 @@ public final class EnderniumVfxManager {
                                     / (IMPACT_END_AGE - IMPACT_FULL_INTENSITY_END_AGE));
                 }
             }
-            if (burstAge >= 0
-                    && EnderniumVisualConfig.cinematic()
-                    && isOnMainEndIsland(client.player.position())) {
+            if (burstAge >= 0 && isOnMainEndIsland(client.player.position())) {
                 float shakeAge = burstAge + partialTick;
                 if (shakeAge < DETONATION_SHAKE_DURATION) {
                     float remaining = 1.0F - shakeAge / DETONATION_SHAKE_DURATION;

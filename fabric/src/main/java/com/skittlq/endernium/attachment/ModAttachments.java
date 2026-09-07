@@ -13,6 +13,7 @@ public final class ModAttachments {
             .persistent(Codec.LONG)
             .initializer(() -> 0L)
             .copyOnDeath()
+            .copyOnDeath()
     );
 
     public static final AttachmentType<Long> ENDERNIUM_SWORD_COOLDOWN_END_TICK = AttachmentRegistry.create(
@@ -27,6 +28,7 @@ public final class ModAttachments {
         builder -> builder
             .persistent(Codec.INT)
             .initializer(() -> 0)
+            .copyOnDeath()
     );
 
     public static final AttachmentType<Boolean> ENDERNIUM_ABILITIES_AWAKENED = AttachmentRegistry.create(

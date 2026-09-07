@@ -1,6 +1,7 @@
 package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumUtils;
@@ -42,6 +43,10 @@ public final class EnderniumVeinMiningToolHelper {
             return false;
         }
 
+        return isVeinMiningPreferenceEnabled(stack);
+    }
+
+    private static boolean isVeinMiningPreferenceEnabled(ItemStack stack) {
         CompoundTag tag = getOrCreateCustomDataTag(stack);
         return tag.getBooleanOr(VEIN_MINING_KEY, false);
     }
@@ -65,7 +70,7 @@ public final class EnderniumVeinMiningToolHelper {
         ItemStack stack = player.getItemInHand(hand);
 
         if (player.isShiftKeyDown()) {
-            boolean enabled = !isVeinMiningEnabled(stack);
+            boolean enabled = !isVeinMiningPreferenceEnabled(stack);
             setVeinMiningEnabled(stack, enabled);
 
             if (!level.isClientSide()) {
@@ -79,8 +84,8 @@ public final class EnderniumVeinMiningToolHelper {
             return InteractionResult.SUCCESS;
         }
 
-        boolean hadActiveOperation = EnderniumUtils.hasActiveVeinMiningOperation(stack);
-        EnderniumUtils.cancelVeinMining(stack);
+        boolean hadActiveOperation = EnderniumUtils.hasActiveVeinMiningOperation(player, stack);
+        EnderniumUtils.cancelVeinMining(player, stack);
 
         if (!level.isClientSide()) {
             if (hadActiveOperation) {
@@ -110,7 +115,7 @@ public final class EnderniumVeinMiningToolHelper {
 
     static void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        if (!EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
+        if (!EnderniumClientGameplaySettings.get().toolsVeinMiningEnabled()) {
             return;
         }
 
@@ -120,12 +125,13 @@ public final class EnderniumVeinMiningToolHelper {
             return;
         }
 
-        boolean enabled = isVeinMiningEnabled(stack);
+        boolean enabled = isVeinMiningPreferenceEnabled(stack);
         tooltipAdder.accept(veinMiningStatus(enabled)
-                .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY));
+                .withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.empty());
         tooltipAdder.accept(Component.translatable(
                 "endernium.tooltip.vein_mining.toggle",
+                EnderniumKeyBindings.sneakKeyName(),
                 EnderniumKeyBindings.abilityKeyName()
         ).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable(
@@ -146,7 +152,7 @@ public final class EnderniumVeinMiningToolHelper {
         CompoundTag tag = getOrCreateCustomDataTag(stack);
         boolean notified = tag.getBooleanOr(VEIN_MINING_NOTIFIED_KEY, false);
 
-        if (!inHand || !isVeinMiningEnabled(stack)) {
+        if (!inHand || !EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
             if (notified) {
                 tag.remove(VEIN_MINING_NOTIFIED_KEY);
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -155,9 +161,10 @@ public final class EnderniumVeinMiningToolHelper {
         }
 
         if (!notified) {
+            boolean enabled = isVeinMiningPreferenceEnabled(stack);
             player.sendOverlayMessage(
-                    Component.translatable("endernium.message.vein_mining.enabled_overlay")
-                            .withStyle(ChatFormatting.LIGHT_PURPLE)
+                    veinMiningStatus(enabled)
+                            .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY)
             );
             tag.putByte(VEIN_MINING_NOTIFIED_KEY, (byte) 1);
             stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));

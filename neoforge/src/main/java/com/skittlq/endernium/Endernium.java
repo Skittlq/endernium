@@ -20,6 +20,7 @@ import com.skittlq.endernium.progression.EnderniumAwakeningHandler;
 import com.skittlq.endernium.progression.EnderniumAwakeningCommand;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.vfx.DragonDeathVfxDebugCommand;
+import com.skittlq.endernium.util.EnderniumUtils;
 import com.skittlq.endernium.worldgen.ModFeatures;
 import com.skittlq.endernium.worldgen.ModPlacementModifiers;
 import net.minecraft.SharedConstants;
@@ -31,7 +32,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
@@ -41,13 +41,13 @@ import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 @Mod(Endernium.MODID)
 public class Endernium {
     public static final String MODID = "endernium";
     public Endernium(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
+        EnderniumUtils.bindSafeBlockBreaker((player, pos) -> player.gameMode.destroyBlock(pos));
 
         ModCreativeModeTabs.register(modEventBus);
         ModItems.register(modEventBus);
@@ -65,7 +65,6 @@ public class Endernium {
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
-        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
         Config.bindGameplayConfig();
     }
 
@@ -79,10 +78,6 @@ public class Endernium {
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-    }
-
-    @SubscribeEvent
     public void registerDevelopmentCommands(RegisterCommandsEvent event) {
         EnderniumAwakeningCommand.register(event.getDispatcher());
         if (SharedConstants.IS_RUNNING_IN_IDE) {
@@ -92,10 +87,6 @@ public class Endernium {
 
     @EventBusSubscriber(value = Dist.CLIENT, modid = MODID)
     public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-        }
-
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(EnderniumParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);

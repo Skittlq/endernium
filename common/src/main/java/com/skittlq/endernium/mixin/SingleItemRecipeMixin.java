@@ -26,6 +26,8 @@ public abstract class SingleItemRecipeMixin {
     ) {
         if ((Object) this instanceof AbstractCookingRecipe
                 && input.item().is(EnderniumItems.ENDERNIUM_DUST.get())
+                && ((AbstractCookingRecipe) (Object) this).assemble(input)
+                .is(EnderniumItems.ENDERNIUM_SHARD.get())
                 && input.item().getCount() < ENDERNIUM_DUST_PER_SHARD) {
             callbackInfo.setReturnValue(false);
         }

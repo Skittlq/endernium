@@ -2,6 +2,7 @@ package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
 import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.EnderniumNetworking;
@@ -9,11 +10,14 @@ import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumTargeting;
+import com.skittlq.endernium.util.EnderniumCooldowns;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -36,12 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class EnderniumSword extends Item {
-    private static final Map<UUID, List<Integer>> ACTIVE_TASKS = new HashMap<>();
-    private static final Map<UUID, AtomicInteger> MOBS_HIT_MAP = new HashMap<>();
+    private static final int TARGET_BUFFER_TICKS = 10;
+    private static final Map<MinecraftServer, Map<UUID, AbilitySequence>> ACTIVE_SEQUENCES = new HashMap<>();
 
     private static CooldownStore cooldownStore = new CooldownStore() {
         @Override
@@ -72,10 +75,10 @@ public class EnderniumSword extends Item {
     // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
     public static void syncCooldownOnLogin(ServerPlayer player) {
         long endGameTime = cooldownStore.getCooldownEndGameTime(player);
-        if (endGameTime > player.level().getGameTime()) {
-            int durationTicks = cooldownStore.getCooldownDurationTicks(player);
-            EnderniumNetworking.sendSwordCooldownSync(player, endGameTime, durationTicks);
-        }
+        int storedDuration = Math.max(0, cooldownStore.getCooldownDurationTicks(player));
+        int durationTicks = EnderniumCooldowns.isDeadlineActive(
+                player.level().getGameTime(), endGameTime, storedDuration) ? storedDuration : 0;
+        EnderniumNetworking.sendSwordCooldownSync(player, durationTicks == 0 ? 0L : endGameTime, durationTicks);
     }
 
     public EnderniumSword(Properties properties) {
@@ -92,40 +95,45 @@ public class EnderniumSword extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        UUID uuid = player.getUUID();
-        if (ACTIVE_TASKS.containsKey(uuid) && !ACTIVE_TASKS.get(uuid).isEmpty()) {
-            for (int taskId : ACTIVE_TASKS.get(uuid)) {
-                EnderniumTickScheduler.cancel(taskId);
-            }
-            ACTIVE_TASKS.get(uuid).clear();
-
-            int mobsHit = MOBS_HIT_MAP.getOrDefault(uuid, new AtomicInteger(0)).get();
-            addConfiguredCooldown(player, mobsHit);
-            MOBS_HIT_MAP.remove(uuid);
-            return InteractionResult.SUCCESS;
-        }
-
-        if (cooldownStore.getCooldownEndGameTime(player) > player.level().getGameTime()) {
-            return InteractionResult.SUCCESS;
-        }
-
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer) || !(level instanceof ServerLevel serverLevel)) {
             return InteractionResult.PASS;
+        }
+
+        MinecraftServer server = serverPlayer.level().getServer();
+        UUID uuid = player.getUUID();
+        Map<UUID, AbilitySequence> serverSequences =
+                ACTIVE_SEQUENCES.computeIfAbsent(server, ignored -> new HashMap<>());
+        AbilitySequence activeSequence = serverSequences.remove(uuid);
+        if (activeSequence != null) {
+            for (int taskId : activeSequence.taskIds) {
+                EnderniumTickScheduler.cancel(server, taskId);
+            }
+            if (activeSequence.barrageStarted) {
+                addConfiguredCooldown(player, activeSequence.mobsHit);
+            }
+            if (serverSequences.isEmpty()) {
+                ACTIVE_SEQUENCES.remove(server);
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        int storedDuration = Math.max(0, cooldownStore.getCooldownDurationTicks(player));
+        if (EnderniumCooldowns.isDeadlineActive(player.level().getGameTime(),
+                cooldownStore.getCooldownEndGameTime(player), storedDuration)) {
+            return InteractionResult.SUCCESS;
         }
 
         double range = EnderniumTargeting.SWORD_RANGE;
         Vec3 lookVec = player.getLookAngle();
         Vec3 playerPos = EnderniumTargeting.eyePosition(player);
 
-        level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENCHANTMENT_TABLE_USE, player.getSoundSource(), 0.6F, 1.0F);
-
         List<LivingEntity> targets = EnderniumTargeting.findSwordTargets(serverPlayer);
 
         List<LivingEntity> sortedTargets = targets.stream()
                 .sorted(Comparator.comparingDouble(target -> {
                     Vec3 toTarget = target.position().add(0.0D, target.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
-                    double angle = lookVec.normalize().dot(toTarget.normalize());
+                    double angle = Math.max(-1.0D, Math.min(1.0D,
+                            lookVec.normalize().dot(toTarget.normalize())));
                     double theta = Math.acos(angle);
                     double dist = toTarget.length();
                     return theta * 2.0D + dist / range;
@@ -133,26 +141,38 @@ public class EnderniumSword extends Item {
                 .toList();
 
         int ticksBetweenHits = 4;
-        List<Integer> taskIds = new ArrayList<>();
-        AtomicInteger mobsHit = new AtomicInteger(0);
-        ACTIVE_TASKS.put(uuid, taskIds);
-        MOBS_HIT_MAP.put(uuid, mobsHit);
+        ItemStack activatedWeapon = player.getItemInHand(hand);
+        AbilitySequence sequence = new AbilitySequence();
+        serverSequences.put(uuid, sequence);
+        if (sortedTargets.isEmpty()) {
+            scheduleTargetScan(serverPlayer, serverLevel, hand, activatedWeapon,
+                    serverSequences, sequence, TARGET_BUFFER_TICKS);
+            return InteractionResult.SUCCESS;
+        }
+
+        sequence.barrageStarted = true;
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.ENCHANTMENT_TABLE_USE, player.getSoundSource(), 0.6F, 1.0F);
 
         for (int index = 0; index < sortedTargets.size(); index++) {
             LivingEntity target = sortedTargets.get(index);
             int delay = index * ticksBetweenHits;
 
-            int taskId = EnderniumTickScheduler.schedule(() -> {
+            int taskId = EnderniumTickScheduler.schedule(server, uuid, () -> {
+                if (!canContinueSequence(serverPlayer, serverLevel, hand, activatedWeapon)) {
+                    cancelSequence(serverPlayer, true);
+                    return;
+                }
                 if (!EnderniumTargeting.isValidPlayerAbilityTarget(serverPlayer, target)
                         || target.distanceTo(player) > range + 1.0D) {
                     return;
                 }
 
-                if (level instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(ParticleTypes.PORTAL,
+                if (level instanceof ServerLevel effectsLevel) {
+                    effectsLevel.sendParticles(ParticleTypes.PORTAL,
                             player.getX(), player.getY() + 1.0D, player.getZ(),
                             32, 0.5D, 1.0D, 0.5D, 0.2D);
-                    serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    effectsLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
                             SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 1.0F);
                 }
 
@@ -165,7 +185,11 @@ public class EnderniumSword extends Item {
                         targetCenter.z - teleportOffset.z
                 );
 
-                if (!level.noCollision(player, player.getBoundingBox().move(teleportPos.subtract(player.position())))) {
+                BlockPos teleportBlock = BlockPos.containing(teleportPos);
+                if (!serverLevel.hasChunkAt(teleportBlock)
+                        || !serverLevel.getWorldBorder().isWithinBounds(teleportBlock)
+                        || !serverLevel.noCollision(player,
+                        player.getBoundingBox().move(teleportPos.subtract(player.position())))) {
                     return;
                 }
 
@@ -180,76 +204,160 @@ public class EnderniumSword extends Item {
 
                 EnderniumNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
 
-                if (level instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(ParticleTypes.PORTAL,
+                if (level instanceof ServerLevel effectsLevel) {
+                    effectsLevel.sendParticles(ParticleTypes.PORTAL,
                             teleportPos.x, teleportPos.y + 1.0D, teleportPos.z,
                             32, 0.5D, 1.0D, 0.5D, 0.2D);
-                    serverLevel.playSound(null, teleportPos.x, teleportPos.y, teleportPos.z,
+                    effectsLevel.playSound(null, teleportPos.x, teleportPos.y, teleportPos.z,
                             SoundEvents.ENDERMAN_TELEPORT, player.getSoundSource(), 1.0F, 0.85F + 0.3F * level.getRandom().nextFloat());
                 }
 
                 player.setDeltaMovement(player.getDeltaMovement().x, 0.42D, player.getDeltaMovement().z);
                 player.hurtMarked = true;
 
-                ItemStack weapon = player.getItemInHand(hand);
-                DamageSource attackSource = weapon.getDamageSource(player);
+                DamageSource attackSource = activatedWeapon.getDamageSource(player);
                 float baseAttackDamage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
                 float normalAttackDamage = EnchantmentHelper.modifyDamage(
                         serverPlayer.level(),
-                        weapon,
+                        activatedWeapon,
                         target,
                         attackSource,
                         baseAttackDamage
                 );
-                normalAttackDamage += weapon.getItem().getAttackDamageBonus(target, baseAttackDamage, attackSource);
+                normalAttackDamage += activatedWeapon.getItem().getAttackDamageBonus(
+                        target, baseAttackDamage, attackSource);
                 float abilityDamageMultiplier = target instanceof Player ? 2.0F : 3.0F;
                 if (target.hurtOrSimulate(attackSource, normalAttackDamage * abilityDamageMultiplier)) {
                     EnchantmentHelper.doPostAttackEffectsWithItemSource(
                             serverPlayer.level(),
                             target,
                             attackSource,
-                            weapon
+                            activatedWeapon
                     );
+                    sequence.mobsHit++;
                 }
                 player.swing(hand, true);
-                mobsHit.incrementAndGet();
 
-                if (level instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(EnderniumParticles.ENDERNIUM_SWEEP.get(),
+                if (level instanceof ServerLevel effectsLevel) {
+                    effectsLevel.sendParticles(EnderniumParticles.ENDERNIUM_SWEEP.get(),
                             target.getX(), target.getY() + target.getBbHeight() / 2.0D, target.getZ(),
                             1, 0.0D, 0.0D, 0.0D, 0.0D);
-                    serverLevel.playSound(null, target.getX(), target.getY(), target.getZ(),
+                    effectsLevel.playSound(null, target.getX(), target.getY(), target.getZ(),
                             SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
                 }
             }, delay);
-            taskIds.add(taskId);
+            sequence.taskIds.add(taskId);
         }
 
         int totalDuration = sortedTargets.size() * ticksBetweenHits + 5;
-        int endTaskId = EnderniumTickScheduler.schedule(() -> {
-            addConfiguredCooldown(player, mobsHit.get());
+        int endTaskId = EnderniumTickScheduler.schedule(server, uuid, () -> {
+            if (serverSequences.remove(uuid) != sequence) {
+                return;
+            }
+            addConfiguredCooldown(player, sequence.mobsHit);
 
-            int hitCount = mobsHit.get();
+            int hitCount = sequence.mobsHit;
             if (hitCount >= 15) {
                 EnderniumSwordSweepTrigger.INSTANCE.trigger(serverPlayer, hitCount);
             }
 
-            ACTIVE_TASKS.remove(uuid);
-            MOBS_HIT_MAP.remove(uuid);
+            if (serverSequences.isEmpty()) {
+                ACTIVE_SEQUENCES.remove(server);
+            }
         }, totalDuration);
-        taskIds.add(endTaskId);
+        sequence.taskIds.add(endTaskId);
 
         return InteractionResult.SUCCESS;
+    }
+
+    private void scheduleTargetScan(ServerPlayer player, ServerLevel originLevel,
+                                    InteractionHand hand, ItemStack activatedWeapon,
+                                    Map<UUID, AbilitySequence> serverSequences,
+                                    AbilitySequence sequence, int ticksRemaining) {
+        MinecraftServer server = player.level().getServer();
+        UUID playerId = player.getUUID();
+        int taskId = EnderniumTickScheduler.schedule(server, playerId, () -> {
+            if (serverSequences.get(playerId) != sequence) {
+                return;
+            }
+            if (!canContinueSequence(player, originLevel, hand, activatedWeapon)) {
+                removeSequence(server, serverSequences, playerId, sequence);
+                return;
+            }
+            if (!EnderniumTargeting.findSwordTargets(player).isEmpty()) {
+                removeSequence(server, serverSequences, playerId, sequence);
+                activateAbility(originLevel, player, hand);
+                return;
+            }
+            if (ticksRemaining <= 1) {
+                removeSequence(server, serverSequences, playerId, sequence);
+                return;
+            }
+            scheduleTargetScan(player, originLevel, hand, activatedWeapon,
+                    serverSequences, sequence, ticksRemaining - 1);
+        }, 1);
+        sequence.taskIds.add(taskId);
+    }
+
+    private static void removeSequence(MinecraftServer server,
+                                       Map<UUID, AbilitySequence> serverSequences,
+                                       UUID playerId, AbilitySequence expected) {
+        if (serverSequences.remove(playerId, expected) && serverSequences.isEmpty()) {
+            ACTIVE_SEQUENCES.remove(server);
+        }
     }
 
     private static void addConfiguredCooldown(Player player, int mobsHit) {
         int cooldownTicks = EnderniumGameplayConfig.swordAbilityCooldownTicks(mobsHit);
         if (cooldownTicks > 0 && player instanceof ServerPlayer serverPlayer) {
-            long endGameTime = player.level().getGameTime() + cooldownTicks;
+            long endGameTime = EnderniumCooldowns.deadline(player.level().getGameTime(), cooldownTicks);
             cooldownStore.setCooldownEndGameTime(player, endGameTime);
             cooldownStore.setCooldownDurationTicks(player, cooldownTicks);
             EnderniumNetworking.sendSwordCooldownSync(serverPlayer, endGameTime, cooldownTicks);
         }
+    }
+
+    private static boolean canContinueSequence(ServerPlayer player, ServerLevel originLevel,
+                                               InteractionHand hand, ItemStack activatedWeapon) {
+        return player.isAlive()
+                && !player.isRemoved()
+                && !player.isSpectator()
+                && player.level() == originLevel
+                && player.getItemInHand(hand) == activatedWeapon
+                && activatedWeapon.getItem() instanceof EnderniumSword
+                && EnderniumAwakening.isAwakened(player)
+                && EnderniumGameplayConfig.swordAbilityEnabled();
+    }
+
+    public static void cancelSequence(ServerPlayer player, boolean applyCooldown) {
+        MinecraftServer server = player.level().getServer();
+        Map<UUID, AbilitySequence> serverSequences = ACTIVE_SEQUENCES.get(server);
+        if (serverSequences == null) {
+            return;
+        }
+        AbilitySequence sequence = serverSequences.remove(player.getUUID());
+        if (sequence == null) {
+            return;
+        }
+        for (int taskId : sequence.taskIds) {
+            EnderniumTickScheduler.cancel(server, taskId);
+        }
+        if (applyCooldown && sequence.barrageStarted) {
+            addConfiguredCooldown(player, sequence.mobsHit);
+        }
+        if (serverSequences.isEmpty()) {
+            ACTIVE_SEQUENCES.remove(server);
+        }
+    }
+
+    public static void clearServerState(MinecraftServer server) {
+        ACTIVE_SEQUENCES.remove(server);
+    }
+
+    private static final class AbilitySequence {
+        private final List<Integer> taskIds = new ArrayList<>();
+        private boolean barrageStarted;
+        private int mobsHit;
     }
 
     public interface CooldownStore {
@@ -265,19 +373,23 @@ public class EnderniumSword extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
-        if (EnderniumGameplayConfig.swordAbilityEnabled()) {
+        EnderniumGameplayConfig.Snapshot clientSettings = EnderniumClientGameplaySettings.get();
+        if (clientSettings.swordAbilityEnabled()) {
             if (!EnderniumAwakening.isClientAwakened()) {
                 tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
                         .withStyle(ChatFormatting.GRAY));
             } else {
+                tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.title")
+                        .withStyle(ChatFormatting.LIGHT_PURPLE));
+                tooltipAdder.accept(Component.empty());
                 tooltipAdder.accept(Component.translatable(
                         "endernium.tooltip.sword.activate",
                         EnderniumKeyBindings.abilityKeyName()
                 ).withStyle(ChatFormatting.LIGHT_PURPLE));
                 tooltipAdder.accept(Component.translatable(
                         "endernium.tooltip.sword.cooldown",
-                        EnderniumGameplayConfig.swordAbilityBaseCooldownSeconds(),
-                        EnderniumGameplayConfig.swordAbilityPerMobCooldownSeconds()
+                        clientSettings.swordBaseCooldownSeconds(),
+                        clientSettings.swordPerMobCooldownSeconds()
                 ).withStyle(ChatFormatting.LIGHT_PURPLE));
                 tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
             }

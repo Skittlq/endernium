@@ -1,11 +1,12 @@
 package com.skittlq.endernium.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.skittlq.endernium.Config;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ClientModNetworking;
+import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -13,6 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.lifecycle.ClientStoppingEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
@@ -31,6 +33,7 @@ public class ClientEvents {
             GLFW.GLFW_KEY_R,
             ENDERNIUM_CATEGORY
     );
+    private static boolean abilityHandledForCurrentHold;
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -58,13 +61,27 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void clearVfx(ClientPlayerNetworkEvent.LoggingOut event) {
-        EnderniumVfxManager.clear();
+        EnderniumClientBehavior.resetSessionState();
+    }
+
+    @SubscribeEvent
+    public static void closeRenderer(ClientStoppingEvent event) {
+        EnderniumShaderRenderer.instance().close();
     }
 
     private static void handleAbilityKey(Minecraft client) {
+        if (!ENDERNIUM_ABILITY_KEY.isDown()) {
+            abilityHandledForCurrentHold = false;
+        }
         while (ENDERNIUM_ABILITY_KEY.consumeClick()) {
-            if (client.player != null && client.getConnection() != null) {
-                ClientModNetworking.sendAbilityActivation();
+            if (!abilityHandledForCurrentHold
+                    && client.player != null && client.getConnection() != null) {
+                if (EnderniumAwakening.isClientAwakened()) {
+                    ClientModNetworking.sendAbilityActivation();
+                } else {
+                    EnderniumClientBehavior.playLockedAbilityCue(client);
+                }
+                abilityHandledForCurrentHold = true;
             }
         }
     }
@@ -74,8 +91,8 @@ public class ClientEvents {
         EnderniumClientBehavior.renderCooldownHuds(
                 Minecraft.getInstance(),
                 event.getGuiGraphics(),
-                Config.ENDERNIUM_ARMOR_ABILITY.getAsBoolean(),
-                Config.ENDERNIUM_SWORD_ABILITY.getAsBoolean()
+                EnderniumClientGameplaySettings.get().armorAbilityEnabled(),
+                EnderniumClientGameplaySettings.get().swordAbilityEnabled()
         );
     }
 
@@ -83,5 +100,7 @@ public class ClientEvents {
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(ENDERNIUM_ABILITY_KEY);
         EnderniumKeyBindings.bindAbilityKeyName(ENDERNIUM_ABILITY_KEY::getTranslatedKeyMessage);
+        EnderniumKeyBindings.bindSneakKeyName(
+                () -> Minecraft.getInstance().options.keyShift.getTranslatedKeyMessage());
     }
 }

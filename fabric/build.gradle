@@ -15,10 +15,12 @@ sourceSets {
 		}
 		resources {
 			srcDir "../common/src/main/resources"
-			srcDir "../common/src/main/java/com/skittlq/endernium/resources"
 			srcDir "src/generated/resources"
 			exclude ".cache/**"
 		}
+	}
+	test {
+		java.srcDir "../common/src/test/java"
 	}
 }
 
@@ -55,7 +57,14 @@ dependencies {
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	implementation "maven.modrinth:cloth-config:${project.cloth_config_version}"
 	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	testImplementation platform("org.junit:junit-bom:5.11.4")
+	testImplementation "org.junit.jupiter:junit-jupiter"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 	
+}
+
+tasks.named("test") {
+	useJUnitPlatform()
 }
 
 processResources {

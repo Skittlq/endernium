@@ -41,9 +41,24 @@ public final class EnderniumSwordCooldownHandler {
             }
         });
         NeoForge.EVENT_BUS.addListener(EnderniumSwordCooldownHandler::onPlayerJoin);
+        NeoForge.EVENT_BUS.addListener(EnderniumSwordCooldownHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(EnderniumSwordCooldownHandler::onPlayerRespawn);
     }
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            EnderniumSword.syncCooldownOnLogin(player);
+        }
+    }
+
+    private static void onPlayerClone(PlayerEvent.Clone event) {
+        long endTick = event.getOriginal().getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
+        int duration = event.getOriginal().getPersistentData().getInt(DURATION_KEY).orElse(0);
+        event.getEntity().getPersistentData().putLong(COOLDOWN_KEY, endTick);
+        event.getEntity().getPersistentData().putInt(DURATION_KEY, duration);
+    }
+
+    private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             EnderniumSword.syncCooldownOnLogin(player);
         }

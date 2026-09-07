@@ -108,8 +108,12 @@ public final class DragonAwakeningTracker {
         var dragonFight = end.getDragonFight();
         UUID authoritativeDragon = dragonFight == null ? null : dragonFight.dragonUUID();
         if (authoritativeDragon == null) {
-            if (activeFight != null && !activeFight.deathStarted) {
-                activeFight = null;
+            if (activeFight != null) {
+                if (activeFight.deathStarted) {
+                    finishFight(end, activeFight.lastDragonPosition);
+                } else {
+                    activeFight = null;
+                }
             }
             return;
         }

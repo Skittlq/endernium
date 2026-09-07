@@ -3,7 +3,6 @@ package com.skittlq.endernium.client;
 import com.skittlq.endernium.config.EnderniumConfig;
 import com.skittlq.endernium.config.EnderniumConfigManager;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
-import com.skittlq.endernium.config.EnderniumVisualConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -84,15 +83,6 @@ public final class EnderniumConfigScreen {
                 .setSaveConsumer(value -> config.enderniumToolsVeinMining = value)
                 .build());
 
-        ConfigCategory visuals = builder.getOrCreateCategory(Component.translatable("endernium.config.category.visuals"));
-        visuals.addEntry(entries.startEnumSelector(
-                        Component.translatable("endernium.config.effect_quality"),
-                        EnderniumVisualConfig.EffectQuality.class,
-                        config.enderniumEffectQuality)
-                .setDefaultValue(EnderniumVisualConfig.EffectQuality.FANCY)
-                .setTooltip(Component.translatable("endernium.config.effect_quality.tooltip"))
-                .setSaveConsumer(value -> config.enderniumEffectQuality = value)
-                .build());
         builder.setSavingRunnable(() -> {
             EnderniumConfigManager.setConfig(config);
             EnderniumConfigManager.save();

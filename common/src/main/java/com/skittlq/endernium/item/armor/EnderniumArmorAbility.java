@@ -4,6 +4,7 @@ import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumTargeting;
+import com.skittlq.endernium.util.EnderniumCooldowns;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -15,8 +16,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class EnderniumArmorAbility {
+    private static Settings boundSettings;
+    private static CooldownStore boundCooldownStore;
+
     private EnderniumArmorAbility() {
     }
 
@@ -37,20 +42,6 @@ public final class EnderniumArmorAbility {
         tickWearer(player, settings, cooldownStore);
     }
 
-    public static void tickMobs(Iterable<ServerLevel> levels, Settings settings, CooldownStore cooldownStore) {
-        if (!settings.enabled()) {
-            return;
-        }
-
-        for (ServerLevel level : levels) {
-            for (Entity entity : level.getAllEntities()) {
-                if (entity instanceof Mob mob) {
-                    tickMob(mob, settings, cooldownStore);
-                }
-            }
-        }
-    }
-
     public static void tickMob(Mob mob, Settings settings, CooldownStore cooldownStore) {
         if (!settings.enabled() || !mob.isAlive() || !EnderniumArmorUtil.hasFullEnderniumSet(mob)) {
             return;
@@ -59,18 +50,29 @@ public final class EnderniumArmorAbility {
         tickWearer(mob, settings, cooldownStore);
     }
 
+    public static void bind(Settings settings, CooldownStore cooldownStore) {
+        boundSettings = Objects.requireNonNull(settings);
+        boundCooldownStore = Objects.requireNonNull(cooldownStore);
+    }
+
+    public static void tickEquippedMob(Entity entity) {
+        if (entity instanceof Mob mob && boundSettings != null && boundCooldownStore != null) {
+            tickMob(mob, boundSettings, boundCooldownStore);
+        }
+    }
+
     private static void tickWearer(LivingEntity wearer, Settings settings, CooldownStore cooldownStore) {
         ServerLevel level = (ServerLevel) wearer.level();
         long currentTime = level.getGameTime();
-        long cooldownTicks = 20L * settings.cooldownSeconds();
+        long cooldownTicks = cooldownTicks(settings.cooldownSeconds());
         long lastUsed = cooldownStore.getLastUsedTick(wearer);
-        long elapsedTicks = currentTime - lastUsed;
+        boolean ready = !EnderniumCooldowns.isElapsedCooldownActive(currentTime, lastUsed, cooldownTicks);
 
         float health = wearer.getHealth();
         float maxHealth = wearer.getMaxHealth();
         int maxParticles = 20;
 
-        if (health < maxHealth && elapsedTicks < cooldownTicks) {
+        if (health < maxHealth && !ready) {
             float healthFraction = health / maxHealth;
             int particleCount = Math.round((1.0F - healthFraction) * maxParticles);
             if (particleCount > 0) {
@@ -80,7 +82,7 @@ public final class EnderniumArmorAbility {
             }
         }
 
-        if (health < settings.threshold() && elapsedTicks > cooldownTicks) {
+        if (health < settings.threshold() && ready) {
             triggerAbility(wearer, level, cooldownStore, cooldownTicks, currentTime);
         }
     }
@@ -106,7 +108,7 @@ public final class EnderniumArmorAbility {
         wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));
         cooldownStore.setLastUsedTick(wearer, currentTime);
         if (wearer instanceof ServerPlayer player) {
-            long endGameTime = currentTime + cooldownTicks;
+            long endGameTime = EnderniumCooldowns.deadline(currentTime, cooldownTicks);
             int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
             EnderniumNetworking.sendArmorCooldownSync(player, endGameTime, cooldownTicksInt);
         }
@@ -115,7 +117,7 @@ public final class EnderniumArmorAbility {
                 SoundEvents.DRAGON_FIREBALL_EXPLODE, wearer.getSoundSource(), 1.0F, 1.0F);
         level.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
                 wearer.getX(), wearer.getY() + 1.5D, wearer.getZ(),
-                2000, 0.0D, 0.0D, 0.0D, 1.0D);
+                256, 0.0D, 0.0D, 0.0D, 1.0D);
     }
 
     private static List<? extends LivingEntity> findTargets(LivingEntity wearer, ServerLevel level, double radius) {
@@ -132,16 +134,28 @@ public final class EnderniumArmorAbility {
     // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
     public static void syncCooldownOnLogin(ServerPlayer player, Settings settings, CooldownStore cooldownStore) {
         if (!settings.enabled() || !EnderniumAwakening.isAwakened(player)) {
+            EnderniumNetworking.sendArmorCooldownSync(player, 0L, 0);
             return;
         }
 
-        long cooldownTicks = 20L * settings.cooldownSeconds();
+        long cooldownTicks = cooldownTicks(settings.cooldownSeconds());
         long currentTime = player.level().getGameTime();
-        long endGameTime = cooldownStore.getLastUsedTick(player) + cooldownTicks;
-        if (endGameTime > currentTime) {
+        long lastUsed = cooldownStore.getLastUsedTick(player);
+        long endGameTime = EnderniumCooldowns.deadline(lastUsed, cooldownTicks);
+        if (EnderniumCooldowns.isElapsedCooldownActive(currentTime, lastUsed, cooldownTicks)) {
             int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
             EnderniumNetworking.sendArmorCooldownSync(player, endGameTime, cooldownTicksInt);
+        } else {
+            EnderniumNetworking.sendArmorCooldownSync(player, 0L, 0);
         }
+    }
+
+    public static long cooldownTicks(long seconds) {
+        if (seconds <= 0L) {
+            return 0L;
+        }
+        return Math.min(Integer.MAX_VALUE, seconds > Integer.MAX_VALUE / 20L
+                ? Integer.MAX_VALUE : seconds * 20L);
     }
 
     public interface Settings {

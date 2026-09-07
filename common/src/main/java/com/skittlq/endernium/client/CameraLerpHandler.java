@@ -52,6 +52,12 @@ public final class CameraLerpHandler {
         }
     }
 
+    public static void reset() {
+        lerping = false;
+        ticksElapsed = 0;
+        lerpDuration = 0;
+    }
+
     private static float lerp(float a, float b, float t) {
         return a + (b - a) * t;
     }

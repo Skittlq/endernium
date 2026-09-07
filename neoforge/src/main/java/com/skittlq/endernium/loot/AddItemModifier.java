@@ -27,8 +27,8 @@ public class AddItemModifier extends LootModifier {
     public AddItemModifier(LootItemCondition[] conditionsIn, int priority, Item item, int minCount, int maxCount) {
         super(conditionsIn, priority);
         this.item = item;
-        this.minCount = Math.max(1, minCount);
-        this.maxCount = Math.max(this.minCount, maxCount);
+        this.minCount = Math.max(1, Math.min(64, minCount));
+        this.maxCount = Math.max(this.minCount, Math.min(64, maxCount));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.skittlq.endernium.network.payloads;
 
+import com.skittlq.endernium.EnderniumConstants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -13,7 +14,7 @@ public record CombatOpponentsPayload(List<UUID> opponentIds) implements CustomPa
     private static final int MAX_OPPONENTS = 1024;
 
     public static final Type<CombatOpponentsPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath("endernium", "combat_opponents"));
+            new Type<>(Identifier.fromNamespaceAndPath(EnderniumConstants.MOD_ID, "combat_opponents"));
     public static final StreamCodec<RegistryFriendlyByteBuf, CombatOpponentsPayload> STREAM_CODEC =
             new StreamCodec<>() {
                 @Override
@@ -40,7 +41,11 @@ public record CombatOpponentsPayload(List<UUID> opponentIds) implements CustomPa
             };
 
     public CombatOpponentsPayload {
-        opponentIds = List.copyOf(opponentIds);
+        if (opponentIds == null) {
+            opponentIds = List.of();
+        } else {
+            opponentIds = opponentIds.stream().filter(java.util.Objects::nonNull).limit(MAX_OPPONENTS).toList();
+        }
     }
 
     @Override

@@ -6,11 +6,10 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
 
 public class ReverseEnderniumBit extends EnderniumBit {
-    protected ReverseEnderniumBit(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, Player player, SpriteSet sprites) {
-        super(level, x, y, z, xSpeed, ySpeed, zSpeed, player, sprites);
+    protected ReverseEnderniumBit(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, SpriteSet sprites) {
+        super(level, x, y, z, xSpeed, ySpeed, zSpeed, null, sprites);
         this.xStart = x;
         this.yStart = y;
         this.zStart = z;
@@ -57,8 +56,7 @@ public class ReverseEnderniumBit extends EnderniumBit {
 
         @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
-            Player player = level.getNearestPlayer(x, y, z, 32.0, false);
-            return new ReverseEnderniumBit(level, x, y, z, xSpeed, ySpeed, zSpeed, player, this.sprites);
+            return new ReverseEnderniumBit(level, x, y, z, xSpeed, ySpeed, zSpeed, this.sprites);
         }
     }
 }

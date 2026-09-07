@@ -2,6 +2,7 @@ package com.skittlq.endernium.progression;
 
 import com.skittlq.endernium.attachment.ModAttachments;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 
 public final class EnderniumAwakeningHandler {
     private static boolean registered;
@@ -27,5 +28,7 @@ public final class EnderniumAwakeningHandler {
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 EnderniumAwakening.syncOnLogin(handler.getPlayer()));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
+                EnderniumAwakening.syncOnLogin(newPlayer));
     }
 }

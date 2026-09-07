@@ -12,6 +12,8 @@ import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
+import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import com.skittlq.endernium.progression.EnderniumAwakening;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -32,6 +34,7 @@ public final class ModNetworking {
         PayloadTypeRegistry.clientboundPlay().register(BlessingVfxPayload.TYPE, BlessingVfxPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AbilityCooldownSyncPayload.TYPE, AbilityCooldownSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AwakeningStatePayload.TYPE, AwakeningStatePayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(GameplaySettingsPayload.TYPE, GameplaySettingsPayload.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(EnderniumAbilityPayload.TYPE, EnderniumAbilityPayload.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(EnderniumAbilityPayload.TYPE,
                 (payload, context) -> context.server().execute(() ->
@@ -44,6 +47,7 @@ public final class ModNetworking {
         EnderniumNetworking.bindBlessingVfxSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindAbilityCooldownSyncSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindAwakeningStateSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindGameplaySettingsSender(ServerPlayNetworking::send);
     }
 
     public static void registerClient() {
@@ -73,6 +77,9 @@ public final class ModNetworking {
                         EnderniumClientBehavior.triggerAwakeningReadyHud();
                     }
                 }));
+        ClientPlayNetworking.registerGlobalReceiver(GameplaySettingsPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientGameplaySettings.apply(payload)));
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

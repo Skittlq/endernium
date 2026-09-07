@@ -2,9 +2,14 @@ package com.skittlq.endernium.client;
 
 import com.skittlq.endernium.EnderniumConstants;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.EnderniumItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorUtil;
 import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.EnderniumPickaxe;
+import com.skittlq.endernium.item.tools.EnderniumShovel;
+import com.skittlq.endernium.item.tools.EnderniumAxe;
+import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumTargeting;
@@ -60,10 +65,48 @@ public final class EnderniumClientBehavior {
         CameraLerpHandler.clientTick(client);
         EnderniumVfxManager.tick(client);
         if (client.player == null) {
-            EnderniumTargeting.clearClientCombatOpponents();
-            EnderniumAwakening.clearClientState();
+            resetSessionState();
+            return;
         }
+        EnderniumClientEquipmentState.setFullEnderniumSetEquipped(
+                EnderniumArmorUtil.hasFullEnderniumSet(client.player));
         renderSwordPreviewParticles(client.player);
+    }
+
+    public static void resetSessionState() {
+        EnderniumTargeting.clearClientCombatOpponents();
+        EnderniumAwakening.clearClientState();
+        EnderniumClientCooldowns.clear();
+        EnderniumClientGameplaySettings.reset();
+        EnderniumClientEquipmentState.reset();
+        CameraLerpHandler.reset();
+        ARMOR_HUD_TRACKER.reset();
+        SWORD_HUD_TRACKER.reset();
+        EnderniumVfxManager.clear();
+    }
+
+    public static void playLockedAbilityCue(Minecraft client) {
+        if (client.player == null || !hasEnabledAbilityItem(client.player)) {
+            return;
+        }
+        client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.SHIELD_BLOCK.value(), 0.0F, 0.08F));
+    }
+
+    private static boolean hasEnabledAbilityItem(Player player) {
+        EnderniumGameplayConfig.Snapshot settings = EnderniumClientGameplaySettings.get();
+        return hasEnabledAbilityItem(player.getMainHandItem(), settings)
+                || hasEnabledAbilityItem(player.getOffhandItem(), settings);
+    }
+
+    private static boolean hasEnabledAbilityItem(ItemStack stack, EnderniumGameplayConfig.Snapshot settings) {
+        if (stack.getItem() instanceof EnderniumSword) {
+            return settings.swordAbilityEnabled();
+        }
+        return settings.toolsVeinMiningEnabled()
+                && (stack.getItem() instanceof EnderniumPickaxe
+                || stack.getItem() instanceof EnderniumShovel
+                || stack.getItem() instanceof EnderniumAxe
+                || stack.getItem() instanceof EnderniumHoe);
     }
 
     public static boolean shouldRenderArmorCooldown(Player player, boolean armorAbilityEnabled) {
@@ -233,7 +276,8 @@ public final class EnderniumClientBehavior {
     }
 
     private static void renderSwordPreviewParticles(Player player) {
-        if (player == null) {
+        if (player == null || !EnderniumAwakening.isClientAwakened()
+                || !EnderniumClientGameplaySettings.get().swordAbilityEnabled()) {
             return;
         }
 
@@ -248,7 +292,7 @@ public final class EnderniumClientBehavior {
 
         for (LivingEntity target : EnderniumTargeting.findSwordPreviewTargets(player)) {
             AABB box = target.getBoundingBox();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 2; i++) {
                 double px = box.minX + target.level().getRandom().nextDouble() * (box.maxX - box.minX);
                 double py = box.minY + target.level().getRandom().nextDouble() * (box.maxY - box.minY);
                 double pz = box.minZ + target.level().getRandom().nextDouble() * (box.maxZ - box.minZ);

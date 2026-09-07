@@ -3,10 +3,12 @@ package com.skittlq.endernium.network;
 import com.skittlq.endernium.client.CameraLerpHandler;
 import com.skittlq.endernium.client.EnderniumClientCooldowns;
 import com.skittlq.endernium.client.EnderniumClientBehavior;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
+import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
@@ -47,6 +49,10 @@ public final class ClientModNetworking {
         if (payload.playReadyEffect()) {
             EnderniumClientBehavior.triggerAwakeningReadyHud();
         }
+    }
+
+    public static void handleGameplaySettings(GameplaySettingsPayload payload) {
+        EnderniumClientGameplaySettings.apply(payload);
     }
 
     public static void sendAbilityActivation() {

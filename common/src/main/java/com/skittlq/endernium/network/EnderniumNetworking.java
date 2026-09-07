@@ -4,6 +4,7 @@ import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
+import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -28,6 +29,9 @@ public final class EnderniumNetworking {
     };
     private static BlessingVfxSender blessingVfxSender = (player, payload) -> {
         throw new IllegalStateException("Endernium blessing VFX sender has not been bound to a loader network API yet");
+    };
+    private static GameplaySettingsSender gameplaySettingsSender = (player, payload) -> {
+        throw new IllegalStateException("Endernium gameplay settings sender has not been bound yet");
     };
 
     private EnderniumNetworking() {
@@ -87,6 +91,14 @@ public final class EnderniumNetworking {
         blessingVfxSender.send(player, payload);
     }
 
+    public static void bindGameplaySettingsSender(GameplaySettingsSender sender) {
+        gameplaySettingsSender = Objects.requireNonNull(sender);
+    }
+
+    public static void sendGameplaySettings(ServerPlayer player) {
+        gameplaySettingsSender.send(player, GameplaySettingsPayload.current());
+    }
+
     @FunctionalInterface
     public interface CameraLerpSender {
         void send(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks);
@@ -115,5 +127,10 @@ public final class EnderniumNetworking {
     @FunctionalInterface
     public interface BlessingVfxSender {
         void send(ServerPlayer player, BlessingVfxPayload payload);
+    }
+
+    @FunctionalInterface
+    public interface GameplaySettingsSender {
+        void send(ServerPlayer player, GameplaySettingsPayload payload);
     }
 }

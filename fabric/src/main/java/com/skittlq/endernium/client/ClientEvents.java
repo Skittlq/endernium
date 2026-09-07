@@ -2,16 +2,18 @@ package com.skittlq.endernium.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.skittlq.endernium.Endernium;
-import com.skittlq.endernium.config.EnderniumConfigManager;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ModNetworking;
+import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -36,6 +38,7 @@ public final class ClientEvents {
             ENDERNIUM_CATEGORY
     );
     private static boolean registered;
+    private static boolean abilityHandledForCurrentHold;
 
     private ClientEvents() {
     }
@@ -47,7 +50,11 @@ public final class ClientEvents {
         registered = true;
         KeyMappingHelper.registerKeyMapping(ENDERNIUM_ABILITY_KEY);
         EnderniumKeyBindings.bindAbilityKeyName(ENDERNIUM_ABILITY_KEY::getTranslatedKeyMessage);
+        EnderniumKeyBindings.bindSneakKeyName(
+                () -> Minecraft.getInstance().options.keyShift.getTranslatedKeyMessage());
         ClientTickEvents.END_CLIENT_TICK.register(EnderniumClientBehavior::tickClient);
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client ->
+                EnderniumShaderRenderer.instance().close());
         ClientTickEvents.END_CLIENT_TICK.register(ClientEvents::handleAbilityKey);
         LevelExtractionEvents.END_EXTRACTION.register(context -> EnderniumVfxManager.extract(Minecraft.getInstance()));
         LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> EnderniumShaderRenderer.instance().render(
@@ -55,7 +62,8 @@ public final class ClientEvents {
                 Minecraft.getInstance().gameRenderer.mainCamera().position()));
         LevelRenderEvents.END_MAIN.register(context -> EnderniumShaderRenderer.instance().renderPost(
                 Minecraft.getInstance().gameRenderer.mainCamera().position()));
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> EnderniumVfxManager.clear());
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
+                EnderniumClientBehavior.resetSessionState());
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             public Identifier getFabricId() {
                 return Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "shader_framework_reload");
@@ -69,9 +77,18 @@ public final class ClientEvents {
     }
 
     private static void handleAbilityKey(Minecraft client) {
+        if (!ENDERNIUM_ABILITY_KEY.isDown()) {
+            abilityHandledForCurrentHold = false;
+        }
         while (ENDERNIUM_ABILITY_KEY.consumeClick()) {
-            if (client.player != null && client.getConnection() != null) {
-                ModNetworking.sendAbilityActivation();
+            if (!abilityHandledForCurrentHold
+                    && client.player != null && client.getConnection() != null) {
+                if (EnderniumAwakening.isClientAwakened()) {
+                    ModNetworking.sendAbilityActivation();
+                } else {
+                    EnderniumClientBehavior.playLockedAbilityCue(client);
+                }
+                abilityHandledForCurrentHold = true;
             }
         }
     }
@@ -80,8 +97,8 @@ public final class ClientEvents {
         EnderniumClientBehavior.renderCooldownHuds(
                 Minecraft.getInstance(),
                 gui,
-                EnderniumConfigManager.getConfig().enderniumArmorAbility,
-                EnderniumConfigManager.getConfig().enderniumSwordAbility
+                EnderniumClientGameplaySettings.get().armorAbilityEnabled(),
+                EnderniumClientGameplaySettings.get().swordAbilityEnabled()
         );
     }
 }

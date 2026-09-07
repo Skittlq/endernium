@@ -1,4 +1,4 @@
-﻿{
+{
   "creativetab.endernium": "Endernium",
 
   "item.endernium.endernium_dust": "Endernium Dust",
@@ -70,32 +70,29 @@
   "endernium.config.sword_ability_per_mob_cooldown.tooltip": "Additional cooldown in seconds for each mob hit by the Endernium Sword ability.",
   "endernium.config.tools_vein_mining": "Enable Endernium Tools Vein Mining",
   "endernium.config.tools_vein_mining.tooltip": "Allows Endernium pickaxes, shovels, axes, and hoes to use vein mining.",
-  "endernium.config.category.visuals": "Shader Effects",
-  "endernium.config.effect_quality": "Effect Quality",
-  "endernium.config.effect_quality.tooltip": "Quality level reserved for Endernium shader effects.",
   "endernium.config.screen_distortion": "Screen Distortion",
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.config.observer_screen_effects": "Observer Screen Effects",
   "endernium.config.observer_screen_effects.tooltip": "Allows future observer screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
-  "endernium.configuration.enderniumEffectQuality": "Effect Quality",
   "endernium.tooltip.ability.locked": "Defeat the Ender Dragon to unlock the full potential of Endernium.",
-  "endernium.tooltip.sword.activate": "[%s] to activate ability.",
+  "endernium.tooltip.sword.title": "Ender Barrage",
+  "endernium.tooltip.sword.activate": "[%s] to activate.",
   "endernium.tooltip.sword.cooldown": "Cooldown: %s seconds + %s seconds per mob attacked.",
-  "endernium.tooltip.sword.description": "Works best against a group of enemies.",
+  "endernium.tooltip.sword.description": "Rapidly teleports between nearby enemies, striking each one.",
 
   "endernium.tooltip.vein_mining.status": "Vein Mining: %s",
   "endernium.tooltip.vein_mining.enabled": "Enabled",
   "endernium.tooltip.vein_mining.disabled": "Disabled",
-  "endernium.tooltip.vein_mining.toggle": "Sneak + [%s] to toggle vein mining.",
-  "endernium.tooltip.vein_mining.cancel": "[%s] to cancel all vein mining.",
-  "endernium.tooltip.vein_mining.works": "Works on blocks that the tool can mine.",
+  "endernium.tooltip.vein_mining.toggle": "[%s] + [%s] to toggle vein mining.",
+  "endernium.tooltip.vein_mining.cancel": "[%s] to cancel.",
+  "endernium.tooltip.vein_mining.works": "Mines connected blocks that the tool can normally mine.",
 
   "endernium.message.vein_mining.cancelled": "Cancelled all vein mining operations",
   "endernium.message.vein_mining.enabled_overlay": "Vein Mining is Enabled",
 
-  "endernium.tooltip.armor_ability.title": "Ender Repulsion Ability",
-  "endernium.tooltip.armor_ability.trigger": "Triggers when your health is below %s HP and you have the full armor set equipped.",
+  "endernium.tooltip.armor_ability.title": "Ender Repulsion",
+  "endernium.tooltip.armor_ability.trigger": "Triggers below %s HP while the full armor set is equipped.",
   "endernium.tooltip.armor_ability.cooldown": "Cooldown: %s seconds.",
   "endernium.tooltip.armor_ability.description": "Pushes nearby hostile mobs away and grants regeneration."
 }

@@ -29,6 +29,7 @@ public final class EnderniumAwakeningHandler {
         });
         NeoForge.EVENT_BUS.addListener(EnderniumAwakeningHandler::onPlayerJoin);
         NeoForge.EVENT_BUS.addListener(EnderniumAwakeningHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(EnderniumAwakeningHandler::onPlayerRespawn);
     }
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -42,6 +43,12 @@ public final class EnderniumAwakeningHandler {
                 && event.getEntity() instanceof ServerPlayer replacement
                 && original.getPersistentData().getBoolean(AWAKENED_KEY).orElse(false)) {
             replacement.getPersistentData().putBoolean(AWAKENED_KEY, true);
+        }
+    }
+
+    private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            EnderniumAwakening.syncOnLogin(player);
         }
     }
 }

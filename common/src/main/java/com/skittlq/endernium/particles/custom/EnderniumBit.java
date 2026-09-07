@@ -1,6 +1,7 @@
 package com.skittlq.endernium.particles.custom;
 
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SingleQuadParticle;
@@ -11,6 +12,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 public class EnderniumBit extends SingleQuadParticle {
+    static final float COLOR_RED = 1.0F;
+    static final float COLOR_GREEN = 1.0F;
+    static final float COLOR_BLUE = 1.0F;
+    private static final int INITIAL_ALPHA_SETTLE_TICKS = 4;
     protected static final float PLAYER_FADE_START_DISTANCE = 5.0F;
     protected static final float PLAYER_FADE_END_DISTANCE = 1F;
     protected double xStart;
@@ -36,10 +41,8 @@ public class EnderniumBit extends SingleQuadParticle {
         this.lifetime = this.random.nextInt(10) + 40;
         this.burstTicks = Math.max(1, (int) (this.lifetime * 0.1F));
         this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F) * 0.25F;
-        this.rCol = 1.0F;
-        this.gCol = 1.0F;
-        this.bCol = 1.0F;
-        this.alpha = 1.0F;
+        this.setColor(COLOR_RED, COLOR_GREEN, COLOR_BLUE);
+        this.alpha = 0.0F;
         this.hasPhysics = false;
         this.setSpriteFromAge(sprites);
     }
@@ -109,21 +112,28 @@ public class EnderniumBit extends SingleQuadParticle {
     }
 
     protected void updateAlphaForNearbyPlayer() {
-        Player player = this.level.getNearestPlayer(this.x, this.y, this.z, PLAYER_FADE_START_DISTANCE, false);
+        Player player = Minecraft.getInstance().player;
+        float targetAlpha;
         if (player == null) {
-            this.alpha = 1.0F;
-            return;
+            targetAlpha = 1.0F;
+        } else {
+            double distanceSqr = player.distanceToSqr(this.x, this.y, this.z);
+            float distance = (float) Math.sqrt(distanceSqr);
+            float fadeRange = PLAYER_FADE_START_DISTANCE - PLAYER_FADE_END_DISTANCE;
+            targetAlpha = Math.clamp(
+                    (distance - PLAYER_FADE_END_DISTANCE) / fadeRange,
+                    0.0F,
+                    1.0F
+            );
         }
 
-        double distanceSqr = player.distanceToSqr(this.x, this.y, this.z);
-        float distance = (float) Math.sqrt(distanceSqr);
-        if (distance <= PLAYER_FADE_END_DISTANCE) {
-            this.alpha = 0.0F;
-            return;
-        }
-
-        float fadeRange = PLAYER_FADE_START_DISTANCE - PLAYER_FADE_END_DISTANCE;
-        this.alpha = Math.clamp((distance - PLAYER_FADE_END_DISTANCE) / fadeRange, 0.0F, 1.0F);
+        float settleProgress = Math.clamp(
+                (float) this.age / INITIAL_ALPHA_SETTLE_TICKS,
+                0.0F,
+                1.0F
+        );
+        float smoothSettle = settleProgress * settleProgress * (3.0F - 2.0F * settleProgress);
+        this.alpha = targetAlpha * smoothSettle;
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {

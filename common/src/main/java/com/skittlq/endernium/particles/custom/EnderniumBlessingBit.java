@@ -42,14 +42,7 @@ public final class EnderniumBlessingBit extends SingleQuadParticle {
         this.alpha = 0.0F;
         this.hasPhysics = false;
 
-        int colorVariant = this.random.nextInt(5);
-        if (colorVariant == 0) {
-            this.setColor(0.58F, 0.20F, 1.0F);
-        } else if (colorVariant <= 2) {
-            this.setColor(0.88F, 0.42F, 1.0F);
-        } else {
-            this.setColor(0.96F, 0.88F, 1.0F);
-        }
+        this.setColor(EnderniumBit.COLOR_RED, EnderniumBit.COLOR_GREEN, EnderniumBit.COLOR_BLUE);
         this.setSpriteFromAge(sprites);
     }
 

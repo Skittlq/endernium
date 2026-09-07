@@ -11,13 +11,13 @@ public final class EnderniumClientCooldowns {
     }
 
     public static void setArmorCooldown(long endGameTime, int durationTicks) {
-        armorCooldownEndTick = endGameTime;
-        armorCooldownDurationTicks = durationTicks;
+        armorCooldownEndTick = Math.max(0L, endGameTime);
+        armorCooldownDurationTicks = Math.max(0, durationTicks);
     }
 
     public static void setSwordCooldown(long endGameTime, int durationTicks) {
-        swordCooldownEndTick = endGameTime;
-        swordCooldownDurationTicks = durationTicks;
+        swordCooldownEndTick = Math.max(0L, endGameTime);
+        swordCooldownDurationTicks = Math.max(0, durationTicks);
     }
 
     public static float armorCooldownRemainingFraction(long currentGameTime) {
@@ -30,6 +30,13 @@ public final class EnderniumClientCooldowns {
 
     public static boolean isSwordOnCooldown(long currentGameTime) {
         return swordCooldownEndTick > currentGameTime;
+    }
+
+    public static void clear() {
+        armorCooldownEndTick = 0L;
+        armorCooldownDurationTicks = 0;
+        swordCooldownEndTick = 0L;
+        swordCooldownDurationTicks = 0;
     }
 
     private static float remainingFraction(long endTick, int durationTicks, long currentGameTime) {

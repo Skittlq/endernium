@@ -35,6 +35,8 @@ public final class DragonDeathVfxTracker {
     private static final int LOOSE_ENTITY_TAIL_TICKS = 32;
     private static final double MAX_OCCLUSION_RAY_DISTANCE = 256.0;
     private static final int MAX_REACTING_ENDERMEN = 100;
+    private static final double MAX_REACTION_RADIUS = 512.0D;
+    private static final int MAX_AFTERMATH_TICKS = 256;
     private static Session active;
     private static MinecraftServer activeServer;
 
@@ -75,6 +77,7 @@ public final class DragonDeathVfxTracker {
             active.burstAge++;
             active.tickAftermath(end);
             if (active.burstAge >= active.aftermathEndTick) {
+                active.releaseEndermen(end);
                 active = null;
             }
             return;
@@ -115,6 +118,7 @@ public final class DragonDeathVfxTracker {
         if (action == DragonDeathVfxPayload.Action.BURST) {
             active.beginAftermath(end);
         } else {
+            active.releaseEndermen(end);
             active = null;
         }
     }
@@ -230,7 +234,8 @@ public final class DragonDeathVfxTracker {
             burstAge = 0;
             for (ServerPlayer player : end.players()) {
                 burstPlayers.add(player.getUUID());
-                int arrivalTick = DragonDeathVfxTiming.waveArrivalTick(lastOrigin, player.position());
+                int arrivalTick = Math.min(MAX_AFTERMATH_TICKS - LOOSE_ENTITY_TAIL_TICKS,
+                        DragonDeathVfxTiming.waveArrivalTick(lastOrigin, player.position()));
                 burstPlayerArrivalTicks.put(player.getUUID(), arrivalTick);
                 aftermathEndTick = Math.max(
                         aftermathEndTick,
@@ -246,7 +251,9 @@ public final class DragonDeathVfxTracker {
                 }
             }
             if (candidates.size() < MAX_REACTING_ENDERMEN) {
-                for (EnderMan enderman : end.getEntities(EntityTypes.ENDERMAN, EnderMan::isAlive)) {
+                AABB searchBounds = AABB.ofSize(lastOrigin,
+                        MAX_REACTION_RADIUS * 2.0D, 512.0D, MAX_REACTION_RADIUS * 2.0D);
+                for (EnderMan enderman : end.getEntitiesOfClass(EnderMan.class, searchBounds, EnderMan::isAlive)) {
                     if (!watchingEndermen.contains(enderman.getUUID())) {
                         candidates.add(enderman);
                     }
@@ -262,7 +269,8 @@ public final class DragonDeathVfxTracker {
                         DragonDeathVfxTiming.waveArrivalTick(lastOrigin, enderman.position())
                 );
                 int teleportAge = arrival + 6 + Math.floorMod((int)hash, 7);
-                aftermathEndTick = Math.max(aftermathEndTick, teleportAge + 1);
+                aftermathEndTick = Math.min(MAX_AFTERMATH_TICKS,
+                        Math.max(aftermathEndTick, teleportAge + 1));
                 endermanReactions.add(new EndermanReaction(
                         enderman.getUUID(),
                         hash,
@@ -288,8 +296,11 @@ public final class DragonDeathVfxTracker {
                 }
                 return remove;
             });
-            if (watchingEndermen.size() < MAX_REACTING_ENDERMEN) {
-                List<? extends EnderMan> candidates = new ArrayList<>(end.getEntities(EntityTypes.ENDERMAN, EnderMan::isAlive));
+            if (watchingEndermen.size() < MAX_REACTING_ENDERMEN && deathTicks % 10 == 0) {
+                AABB searchBounds = AABB.ofSize(lastOrigin,
+                        MAX_REACTION_RADIUS * 2.0D, 512.0D, MAX_REACTION_RADIUS * 2.0D);
+                List<? extends EnderMan> candidates = new ArrayList<>(
+                        end.getEntitiesOfClass(EnderMan.class, searchBounds, EnderMan::isAlive));
                 candidates.sort(Comparator
                         .comparingDouble((EnderMan enderman) -> horizontalDistanceSqr(enderman.position(), lastOrigin))
                         .thenComparingLong(enderman -> entityHash(sequenceSeed, enderman.getUUID())));
@@ -317,7 +328,9 @@ public final class DragonDeathVfxTracker {
 
         private void tickAftermath(ServerLevel end) {
             pushPlayers(end);
-            for (ItemEntity item : end.getEntities(EntityTypes.ITEM, ItemEntity::isAlive)) {
+            double diameter = MAX_REACTION_RADIUS * 2.0D;
+            AABB searchBounds = AABB.ofSize(lastOrigin, diameter, 512.0D, diameter);
+            for (ItemEntity item : end.getEntitiesOfClass(ItemEntity.class, searchBounds, ItemEntity::isAlive)) {
                 pushLooseEntity(end, item);
             }
             tickEndermen(end);
@@ -462,7 +475,6 @@ public final class DragonDeathVfxTracker {
 
         private void holdEnderman(EnderMan enderman, Vec3 anchor, Vec3 focus) {
             enderman.getNavigation().stop();
-            enderman.setSpeed(0.0F);
             Vec3 movement = enderman.getDeltaMovement();
             enderman.setDeltaMovement(0.0, movement.y, 0.0);
             enderman.setPos(anchor.x, enderman.getY(), anchor.z);
@@ -486,6 +498,18 @@ public final class DragonDeathVfxTracker {
             enderman.yHeadRotO = yaw;
             enderman.yBodyRotO = yaw;
             enderman.xRotO = pitch;
+        }
+
+        private void releaseEndermen(ServerLevel end) {
+            for (UUID id : watchingEndermen) {
+                Entity entity = end.getEntity(id);
+                if (entity instanceof EnderMan enderman && enderman.isAlive()) {
+                    enderman.getNavigation().stop();
+                    enderman.setDeltaMovement(enderman.getDeltaMovement().multiply(0.0D, 1.0D, 0.0D));
+                }
+            }
+            watchingEndermen.clear();
+            endermanAnchors.clear();
         }
     }
 

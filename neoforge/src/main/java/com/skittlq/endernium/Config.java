@@ -1,12 +1,10 @@
 package com.skittlq.endernium;
 
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
-import com.skittlq.endernium.config.EnderniumVisualConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
-    private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
 
         public static final ModConfigSpec.BooleanValue ENDERNIUM_ARMOR_ABILITY = BUILDER
             .comment("Whether the Endernium Armor has a special ability that triggers when the player is low on health.")
@@ -14,11 +12,12 @@ public class Config {
 
         public static final ModConfigSpec.IntValue ENDERNIUM_ARMOR_ABILITY_THRESHOLD = BUILDER
                 .comment("At what health the Endernium Armor ability should trigger.")
-                .defineInRange("enderniumArmorAbilityThreshold", 4, 1, Integer.MAX_VALUE);
+                .defineInRange("enderniumArmorAbilityThreshold", 4, 1, 2048);
 
         public static final ModConfigSpec.LongValue ENDERNIUM_ARMOR_ABILITY_COOLDOWN = BUILDER
                 .comment("How long the Endernium Armor ability should be on cooldown, in seconds.")
-                .defineInRange("enderniumArmorAbilityCooldown", 90, 1, Long.MAX_VALUE);
+                .defineInRange("enderniumArmorAbilityCooldown", 90L, 1L,
+                        (long) EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS);
 
 
         public static final ModConfigSpec.BooleanValue ENDERNIUM_SWORD_ABILITY = BUILDER
@@ -27,30 +26,18 @@ public class Config {
 
         public static final ModConfigSpec.IntValue ENDERNIUM_SWORD_ABILITY_BASE_COOLDOWN = BUILDER
                 .comment("Base cooldown for the Endernium Sword ability, in seconds.")
-                .defineInRange("enderniumSwordAbilityBaseCooldown", EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS, 0, Integer.MAX_VALUE);
+                .defineInRange("enderniumSwordAbilityBaseCooldown", EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS, 0, EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS);
 
         public static final ModConfigSpec.IntValue ENDERNIUM_SWORD_ABILITY_PER_MOB_COOLDOWN = BUILDER
                 .comment("Additional cooldown per mob hit by the Endernium Sword ability, in seconds.")
-                .defineInRange("enderniumSwordAbilityPerMobCooldown", EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_PER_MOB_COOLDOWN_SECONDS, 0, Integer.MAX_VALUE);
+                .defineInRange("enderniumSwordAbilityPerMobCooldown", EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_PER_MOB_COOLDOWN_SECONDS, 0, EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS);
 
         public static final ModConfigSpec.BooleanValue ENDERNIUM_TOOLS_VEIN_MINING = BUILDER
                 .comment("Whether Endernium tools can use vein mining.")
                 .define("enderniumToolsVeinMining", true);
 
-    public static final ModConfigSpec.EnumValue<EnderniumVisualConfig.EffectQuality> ENDERNIUM_EFFECT_QUALITY = CLIENT_BUILDER
-            .comment("Endernium shader quality. Fast uses reduced geometry; Off disables custom shader effects.")
-            .defineEnum("enderniumEffectQuality", EnderniumVisualConfig.EffectQuality.FANCY);
-
     static final ModConfigSpec SPEC = BUILDER.build();
-    static final ModConfigSpec CLIENT_SPEC = CLIENT_BUILDER.build();
 
-    public static void bindVisualConfig() {
-        EnderniumVisualConfig.bind(new EnderniumVisualConfig.Settings() {
-            public EnderniumVisualConfig.EffectQuality quality() {
-                return ENDERNIUM_EFFECT_QUALITY.get();
-            }
-        });
-    }
     public static void bindGameplayConfig() {
         EnderniumGameplayConfig.bind(new EnderniumGameplayConfig.Settings() {
             @Override
@@ -71,6 +58,21 @@ public class Config {
             @Override
             public boolean toolsVeinMiningEnabled() {
                 return ENDERNIUM_TOOLS_VEIN_MINING.getAsBoolean();
+            }
+
+            @Override
+            public boolean armorAbilityEnabled() {
+                return ENDERNIUM_ARMOR_ABILITY.getAsBoolean();
+            }
+
+            @Override
+            public int armorAbilityThreshold() {
+                return ENDERNIUM_ARMOR_ABILITY_THRESHOLD.getAsInt();
+            }
+
+            @Override
+            public long armorAbilityCooldownSeconds() {
+                return ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong();
             }
         });
     }

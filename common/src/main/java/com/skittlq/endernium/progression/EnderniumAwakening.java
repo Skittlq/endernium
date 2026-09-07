@@ -52,6 +52,7 @@ public final class EnderniumAwakening {
     }
 
     public static void syncOnLogin(ServerPlayer player) {
+        EnderniumNetworking.sendGameplaySettings(player);
         boolean awakened = unlockStore.isAwakened(player);
         boolean pending = EnderniumAwakeningSavedData.get(player.level().getServer()).contains(player.getUUID());
         if (!awakened && !pending && hasVanillaDragonAdvancement(player)) {

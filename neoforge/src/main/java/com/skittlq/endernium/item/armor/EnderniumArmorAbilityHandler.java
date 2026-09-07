@@ -49,16 +49,29 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
         registered = true;
+        EnderniumArmorAbility.bind(SETTINGS, COOLDOWN_STORE);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onServerTick);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerJoin);
+        NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerRespawn);
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
         EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE);
-        EnderniumArmorAbility.tickMobs(event.getServer().getAllLevels(), SETTINGS, COOLDOWN_STORE);
     }
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            EnderniumArmorAbility.syncCooldownOnLogin(player, SETTINGS, COOLDOWN_STORE);
+        }
+    }
+
+    private static void onPlayerClone(PlayerEvent.Clone event) {
+        long cooldown = event.getOriginal().getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
+        event.getEntity().getPersistentData().putLong(COOLDOWN_KEY, cooldown);
+    }
+
+    private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             EnderniumArmorAbility.syncCooldownOnLogin(player, SETTINGS, COOLDOWN_STORE);
         }

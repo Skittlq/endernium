@@ -18,6 +18,7 @@ public record BlessingVfxPayload(
         int recipientIndex,
         int recipientCount
 ) implements CustomPacketPayload {
+    private static final int MAX_RECIPIENTS = 128;
     public static final Type<BlessingVfxPayload> TYPE =
             new Type<>(Identifier.fromNamespaceAndPath(EnderniumConstants.MOD_ID, "blessing_vfx"));
     public static final StreamCodec<RegistryFriendlyByteBuf, BlessingVfxPayload> STREAM_CODEC = new StreamCodec<>() {
@@ -42,6 +43,15 @@ public record BlessingVfxPayload(
             buffer.writeVarInt(payload.recipientCount());
         }
     };
+
+    public BlessingVfxPayload {
+        recipientId = java.util.Objects.requireNonNull(recipientId, "recipientId");
+        entityId = Math.max(-1, entityId);
+        origin = origin != null && Double.isFinite(origin.x) && Double.isFinite(origin.y)
+                && Double.isFinite(origin.z) ? origin : Vec3.ZERO;
+        recipientCount = Math.max(1, Math.min(MAX_RECIPIENTS, recipientCount));
+        recipientIndex = Math.max(0, Math.min(recipientCount - 1, recipientIndex));
+    }
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

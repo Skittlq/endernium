@@ -7,9 +7,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.skittlq.endernium.Endernium;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -20,9 +24,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCon
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +32,8 @@ import java.util.Map;
 
 public final class ModLootModifiers {
     private static final Gson GSON = new GsonBuilder().create();
-    private static final String GLOBAL_LOOT_MODIFIERS_INDEX = "data/neoforge/loot_modifiers/global_loot_modifiers.json";
-    private static final String LOOT_MODIFIER_PATH_TEMPLATE = "data/%s/loot_modifiers/%s.json";
+    private static final Identifier GLOBAL_LOOT_MODIFIERS_INDEX =
+            Identifier.fromNamespaceAndPath("neoforge", "loot_modifiers/global_loot_modifiers.json");
     private static final Map<Identifier, List<LootModifierDefinition>> MODIFIERS_BY_TABLE = new HashMap<>();
     private static boolean registered;
 
@@ -45,19 +46,34 @@ public final class ModLootModifiers {
         }
         registered = true;
 
-        reloadModifiers();
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(
+                new SimpleSynchronousResourceReloadListener() {
+                    @Override
+                    public Identifier getFabricId() {
+                        return Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "loot_modifiers");
+                    }
+
+                    @Override
+                    public void onResourceManagerReload(ResourceManager manager) {
+                        reloadModifiers(manager);
+                    }
+                });
         LootTableEvents.MODIFY.register(ModLootModifiers::modifyLootTable);
     }
 
-    private static void reloadModifiers() {
+    private static void reloadModifiers(ResourceManager resourceManager) {
         MODIFIERS_BY_TABLE.clear();
-        try (InputStream indexStream = ModLootModifiers.class.getClassLoader().getResourceAsStream(GLOBAL_LOOT_MODIFIERS_INDEX)) {
-            if (indexStream == null) {
+        try {
+            var indexResource = resourceManager.getResource(GLOBAL_LOOT_MODIFIERS_INDEX);
+            if (indexResource.isEmpty()) {
                 Endernium.LOGGER.warn("Could not find {}", GLOBAL_LOOT_MODIFIERS_INDEX);
                 return;
             }
 
-            JsonObject indexJson = GSON.fromJson(new InputStreamReader(indexStream, StandardCharsets.UTF_8), JsonObject.class);
+            JsonObject indexJson;
+            try (var reader = indexResource.get().openAsReader()) {
+                indexJson = GSON.fromJson(reader, JsonObject.class);
+            }
             JsonArray entries = GsonHelper.getAsJsonArray(indexJson, "entries", new JsonArray());
             for (JsonElement element : entries) {
                 if (!element.isJsonPrimitive()) {
@@ -65,14 +81,19 @@ public final class ModLootModifiers {
                 }
 
                 Identifier modifierId = Identifier.parse(element.getAsString());
-                String resourcePath = LOOT_MODIFIER_PATH_TEMPLATE.formatted(modifierId.getNamespace(), modifierId.getPath());
-                try (InputStream modifierStream = ModLootModifiers.class.getClassLoader().getResourceAsStream(resourcePath)) {
-                    if (modifierStream == null) {
-                        Endernium.LOGGER.warn("Could not find loot modifier resource {}", resourcePath);
+                Identifier resourceId = Identifier.fromNamespaceAndPath(
+                        modifierId.getNamespace(), "loot_modifiers/" + modifierId.getPath() + ".json");
+                try {
+                    var modifierResource = resourceManager.getResource(resourceId);
+                    if (modifierResource.isEmpty()) {
+                        Endernium.LOGGER.warn("Could not find loot modifier resource {}", resourceId);
                         continue;
                     }
 
-                    JsonObject json = GSON.fromJson(new InputStreamReader(modifierStream, StandardCharsets.UTF_8), JsonObject.class);
+                    JsonObject json;
+                    try (var reader = modifierResource.get().openAsReader()) {
+                        json = GSON.fromJson(reader, JsonObject.class);
+                    }
                     LootModifierDefinition definition = parse(modifierId, json);
                     if (definition != null) {
                         MODIFIERS_BY_TABLE.computeIfAbsent(definition.lootTableId(), ignored -> new ArrayList<>()).add(definition);
@@ -145,6 +166,11 @@ public final class ModLootModifiers {
             Endernium.LOGGER.warn("Skipping loot modifier {} because it has no supported loot table target", resourceId);
             return null;
         }
+        if (!Float.isFinite(chance) || chance < 0.0F || chance > 1.0F) {
+            Endernium.LOGGER.warn("Skipping loot modifier {} because chance {} is outside [0, 1]",
+                    resourceId, chance);
+            return null;
+        }
 
         Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(GsonHelper.getAsString(json, "item")));
         if (item == Items.AIR) {
@@ -168,6 +194,8 @@ public final class ModLootModifiers {
             maxCount = GsonHelper.getAsInt(count, "max", minCount);
         }
 
+        minCount = Math.max(1, Math.min(64, minCount));
+        maxCount = Math.max(minCount, Math.min(64, maxCount));
         return new LootModifierDefinition(lootTableId, item, chance, minCount, maxCount, requiresDragonDefeated);
     }
 

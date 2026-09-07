@@ -2,6 +2,7 @@ package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.attachment.ModAttachments;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.world.entity.player.Player;
 
 public final class EnderniumSwordCooldownHandler {
@@ -38,5 +39,7 @@ public final class EnderniumSwordCooldownHandler {
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 EnderniumSword.syncCooldownOnLogin(handler.getPlayer()));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
+                EnderniumSword.syncCooldownOnLogin(newPlayer));
     }
 }

@@ -32,7 +32,6 @@ import com.skittlq.endernium.client.vfx.EnderniumVfxManager.DistantImpactState;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.DistantWaveState;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.ExtractedFrame;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager.PillarPulse;
-import com.skittlq.endernium.config.EnderniumVisualConfig;
 import com.skittlq.endernium.progression.DragonBlessingVfxMath;
 import com.skittlq.endernium.vfx.DragonDeathVfxTiming;
 import net.minecraft.client.Minecraft;
@@ -187,7 +186,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     pass.draw(wave.vertexCount(), 1, 0, 0);
                 }
             }
-        } catch (Throwable throwable) {
+        } catch (RuntimeException throwable) {
             worldPipelineEnabled = false;
             if (!loggedWorldFailure) {
                 loggedWorldFailure = true;
@@ -261,7 +260,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 pass.setUniform("DragonPost", postUniform);
                 pass.draw(3, 1, 0, 0);
             }
-        } catch (Throwable throwable) {
+        } catch (RuntimeException throwable) {
             postPipelineEnabled = false;
             closePostResources();
             if (!loggedPostFailure) {
@@ -372,7 +371,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         float intensity = 0.14F + 0.86F * progress * progress;
 
         // The primary read is a broken End-crystal-like cage that tightens around the core.
-        int shellCount = EnderniumVisualConfig.cinematic() ? 3 : 2;
+        int shellCount = 3;
         for (int shell = 0; shell < shellCount; shell++) {
             double relaxedRadius = 2.15 + shell * 1.48 + progress * (0.42 + shell * 0.16);
             double compressedRadius = 0.82 + shell * 0.57;
@@ -402,7 +401,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         }
 
         // Short fragments spiral inward. Their tails point away from the core, making travel direction legible.
-        int fragmentCount = EnderniumVisualConfig.cinematic() ? 48 : 24;
+        int fragmentCount = 48;
         Random fragmentRandom = new Random(state.seed() ^ 0xB017D0A1L);
         for (int i = 0; i < fragmentCount; i++) {
             float phase = fragmentRandom.nextFloat();
@@ -438,7 +437,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
         // A few local filaments snap in different pulse groups instead of forming one uniform starburst.
         if (filamentProgress > 0.0F) {
-            int filaments = EnderniumVisualConfig.cinematic() ? 14 : 7;
+            int filaments = 14;
             Random filamentRandom = new Random(state.seed() ^ 0xF11A6E47L);
             for (int i = 0; i < filaments; i++) {
                 float phase = filamentRandom.nextFloat() * Mth.TWO_PI;
@@ -510,8 +509,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
         Vec3 cometOrigin = state.origin();
         double displayScale = 1.0;
-        int limit = EnderniumVisualConfig.cinematic() ? state.comets().size() : state.comets().size() / 2;
-        int samples = EnderniumVisualConfig.cinematic() ? 7 : 4;
+        int limit = state.comets().size();
+        int samples = 7;
         for (int i = 0; i < limit; i++) {
             CometPath comet = state.comets().get(i);
             float localAge = age - comet.delay();
@@ -547,7 +546,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             float age,
             Vec3 camera
     ) {
-        int samples = EnderniumVisualConfig.cinematic() ? 7 : 4;
+        int samples = 7;
         for (int i = 0; i < distant.comets().size(); i++) {
             DistantCometPath comet = distant.comets().get(i);
             if (age < comet.startAge() || age >= comet.endAge()) {
@@ -598,7 +597,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 float fade = fadeIn * fadeOut;
                 float shimmer = 0.88F + 0.12F * (float)Math.sin(age * 0.93F + blessing.seed() * 0.0017);
                 double width = (0.074 + 0.012 * Math.sin(age * 0.54F + blessing.recipientIndex())) * shimmer;
-                int samples = EnderniumVisualConfig.cinematic() ? 8 : 5;
+                int samples = 8;
                 float sampleStep = age < DragonBlessingVfxMath.SEEKING_END_TICK ? 0.72F : 0.52F;
                 Vec3 previous = blessing.corePosition(age);
 
@@ -746,7 +745,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             Vec3 direction = new Vec3(Math.cos(crack.angle()), 0.0, Math.sin(crack.angle()));
             Vec3 side = new Vec3(-direction.z, 0.0, direction.x);
             Vec3 cursor = crack.position().subtract(direction.scale(crack.scale() * 0.58));
-            int segments = EnderniumVisualConfig.cinematic() ? 4 : 3;
+            int segments = 4;
             for (int segment = 0; segment < segments; segment++) {
                 double length = crack.scale() * (0.28 + random.nextDouble() * 0.22);
                 Vec3 next = cursor.add(direction.scale(length))
@@ -793,7 +792,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             double height = pillar.top().y - pillar.bottom().y;
             double leadingY = pillar.bottom().y + height * climb;
             double wakeBottom = Math.max(pillar.bottom().y, leadingY - 18.0 - localAge * 0.8);
-            int streaks = EnderniumVisualConfig.cinematic() ? 5 : 2;
+            int streaks = 5;
             Random random = new Random(pillar.seed());
             for (int streak = 0; streak < streaks; streak++) {
                 double angle = Math.PI * 2.0 * streak / streaks + random.nextDouble() * 0.72;
@@ -839,7 +838,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             return;
         }
 
-        int segments = EnderniumVisualConfig.cinematic() ? 128 : 64;
+        int segments = 128;
         float fade = Math.min(1.0F, age / 2.0F)
                 * Math.min(1.0F, (EnderniumVfxManager.BURST_DURATION - age) / 14.0F);
         float wake = 14.0F + Math.min(18.0F, age * 0.35F);
@@ -884,7 +883,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         Vec3 side = new Vec3(-direction.z, 0.0, direction.x);
         Vec3 leadingCenter = new Vec3(distant.anchor().x, distant.originY(), distant.anchor().z)
                 .add(direction.scale(localAge * DragonDeathVfxTiming.WAVE_SPEED_BLOCKS_PER_TICK));
-        int segments = EnderniumVisualConfig.cinematic() ? 64 : 32;
+        int segments = 64;
 
         for (int i = 0; i < segments; i++) {
             double s0 = -DISTANT_WAVE_HALF_WIDTH + DISTANT_WAVE_HALF_WIDTH * 2.0 * i / segments;
@@ -933,7 +932,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 ? 0x1A4AC7F2E11L
                 : 0x5EC04D1F4A2L);
         Random random = new Random(frameSeed);
-        int clusterCount = EnderniumVisualConfig.cinematic() ? 7 : 5;
+        int clusterCount = 7;
         Vec3[] clusters = new Vec3[clusterCount];
         for (int cluster = 0; cluster < clusterCount; cluster++) {
             double angle = random.nextDouble() * Math.PI * 2.0;
@@ -941,8 +940,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             clusters[cluster] = new Vec3(Math.cos(angle), vertical, Math.sin(angle)).normalize();
         }
 
-        int heroCount = EnderniumVisualConfig.cinematic() ? 9 : 5;
-        int lineCount = EnderniumVisualConfig.cinematic() ? 40 : 22;
+        int heroCount = 9;
+        int lineCount = 40;
         for (int line = 0; line < lineCount; line++) {
             boolean heroStroke = line < heroCount;
             Vec3 direction;
@@ -1159,7 +1158,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
     ) {
         Vec3 axisA = rotateY(new Vec3(1.0, 0.0, 0.0), spin);
         Vec3 axisB = rotateY(new Vec3(0.0, Math.cos(tilt), Math.sin(tilt)), spin);
-        int segments = EnderniumVisualConfig.cinematic() ? 28 : 16;
+        int segments = 28;
         for (int i = 0; i < segments; i++) {
             long bits = seed + i * 0x9E3779B97F4A7C15L;
             bits ^= bits >>> 30;
@@ -1206,7 +1205,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 {1, 2}, {1, 3}, {1, 4}, {1, 5},
                 {2, 3}, {3, 4}, {4, 5}, {5, 2}
         };
-        int pieces = EnderniumVisualConfig.cinematic() ? 3 : 2;
+        int pieces = 3;
         Random random = new Random(seed);
         for (int edgeIndex = 0; edgeIndex < edges.length; edgeIndex++) {
             Vec3 start = vertices[edges[edgeIndex][0]];
