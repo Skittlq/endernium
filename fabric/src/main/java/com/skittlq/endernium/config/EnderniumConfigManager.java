@@ -30,7 +30,7 @@ public final class EnderniumConfigManager {
 
         try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
             EnderniumConfig loaded = GSON.fromJson(reader, EnderniumConfig.class);
-            config = sanitize(loaded);
+            config = EnderniumConfig.sanitize(loaded);
         } catch (Exception exception) {
             Endernium.LOGGER.error("Failed to load config from {}. Using defaults.", CONFIG_PATH, exception);
             preserveInvalidConfig();
@@ -40,7 +40,7 @@ public final class EnderniumConfigManager {
     }
 
     public static void save() {
-        config = sanitize(config);
+        config = EnderniumConfig.sanitize(config);
         try {
             Files.createDirectories(CONFIG_PATH.getParent());
             Path temporaryPath = Files.createTempFile(CONFIG_PATH.getParent(), Endernium.MOD_ID + "-", ".tmp");
@@ -67,7 +67,7 @@ public final class EnderniumConfigManager {
     }
 
     public static void setConfig(EnderniumConfig newConfig) {
-        config = sanitize(newConfig);
+        config = EnderniumConfig.sanitize(newConfig);
     }
 
     private static void preserveInvalidConfig() {
@@ -84,19 +84,4 @@ public final class EnderniumConfigManager {
         }
     }
 
-    private static EnderniumConfig sanitize(EnderniumConfig rawConfig) {
-        EnderniumConfig sanitized = rawConfig == null ? new EnderniumConfig() : rawConfig.copy();
-        sanitized.enderniumArmorAbilityThreshold = Math.max(1,
-                Math.min(2048, sanitized.enderniumArmorAbilityThreshold));
-        sanitized.enderniumArmorAbilityCooldown = Math.max(1L,
-                Math.min(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS,
-                        sanitized.enderniumArmorAbilityCooldown));
-        sanitized.enderniumSwordAbilityBaseCooldown = Math.max(0,
-                Math.min(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS,
-                        sanitized.enderniumSwordAbilityBaseCooldown));
-        sanitized.enderniumSwordAbilityPerMobCooldown = Math.max(0,
-                Math.min(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS,
-                        sanitized.enderniumSwordAbilityPerMobCooldown));
-        return sanitized;
-    }
 }

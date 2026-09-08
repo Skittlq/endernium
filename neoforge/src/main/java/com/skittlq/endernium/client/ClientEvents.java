@@ -4,8 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
-import com.skittlq.endernium.network.ClientModNetworking;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -20,6 +19,7 @@ import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(value = Dist.CLIENT)
@@ -33,13 +33,13 @@ public class ClientEvents {
             GLFW.GLFW_KEY_R,
             ENDERNIUM_CATEGORY
     );
-    private static boolean abilityHandledForCurrentHold;
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft client = Minecraft.getInstance();
         EnderniumClientBehavior.tickClient(client);
-        handleAbilityKey(client);
+        EnderniumAbilityKeyHandler.tick(client, ENDERNIUM_ABILITY_KEY,
+                () -> ClientPacketDistributor.sendToServer(EnderniumAbilityPayload.INSTANCE));
     }
 
     @SubscribeEvent
@@ -67,23 +67,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void closeRenderer(ClientStoppingEvent event) {
         EnderniumShaderRenderer.instance().close();
-    }
-
-    private static void handleAbilityKey(Minecraft client) {
-        if (!ENDERNIUM_ABILITY_KEY.isDown()) {
-            abilityHandledForCurrentHold = false;
-        }
-        while (ENDERNIUM_ABILITY_KEY.consumeClick()) {
-            if (!abilityHandledForCurrentHold
-                    && client.player != null && client.getConnection() != null) {
-                if (EnderniumAwakening.isClientAwakened()) {
-                    ClientModNetworking.sendAbilityActivation();
-                } else {
-                    EnderniumClientBehavior.playLockedAbilityCue(client);
-                }
-                abilityHandledForCurrentHold = true;
-            }
-        }
     }
 
     @SubscribeEvent

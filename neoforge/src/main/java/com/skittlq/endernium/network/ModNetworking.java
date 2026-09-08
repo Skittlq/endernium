@@ -32,7 +32,7 @@ public class ModNetworking {
                 CameraLerpPayload.STREAM_CODEC,
                                 (payload, context) -> context.enqueueWork(() -> {
                                             if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                                                ClientModNetworking.handleCameraLerp(payload);
+                                                EnderniumClientNetworkHandler.handleCameraLerp(payload);
                                         }
                                 })
         );
@@ -41,7 +41,7 @@ public class ModNetworking {
                 CombatOpponentsPayload.STREAM_CODEC,
                                 (payload, context) -> context.enqueueWork(() -> {
                                             if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                                                ClientModNetworking.handleCombatOpponents(payload);
+                                                EnderniumClientNetworkHandler.handleCombatOpponents(payload);
                                         }
                                 })
         );
@@ -50,7 +50,7 @@ public class ModNetworking {
                 DragonDeathVfxPayload.STREAM_CODEC,
                                 (payload, context) -> context.enqueueWork(() -> {
                                             if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                                                ClientModNetworking.handleDragonDeathVfx(payload);
+                                                EnderniumClientNetworkHandler.handleDragonDeathVfx(payload);
                                         }
                                 })
         );
@@ -59,7 +59,7 @@ public class ModNetworking {
                 BlessingVfxPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                        ClientModNetworking.handleBlessingVfx(payload);
+                        EnderniumClientNetworkHandler.handleBlessingVfx(payload);
                     }
                 })
         );
@@ -68,7 +68,7 @@ public class ModNetworking {
                 AbilityCooldownSyncPayload.STREAM_CODEC,
                                 (payload, context) -> context.enqueueWork(() -> {
                                             if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                                                ClientModNetworking.handleAbilityCooldownSync(payload);
+                                                EnderniumClientNetworkHandler.handleAbilityCooldownSync(payload);
                                         }
                                 })
         );
@@ -77,7 +77,7 @@ public class ModNetworking {
                 AwakeningStatePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                        ClientModNetworking.handleAwakeningState(payload);
+                        EnderniumClientNetworkHandler.handleAwakeningState(payload);
                     }
                 })
         );
@@ -86,7 +86,7 @@ public class ModNetworking {
                 GameplaySettingsPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                        ClientModNetworking.handleGameplaySettings(payload);
+                        EnderniumClientNetworkHandler.handleGameplaySettings(payload);
                     }
                 })
         );

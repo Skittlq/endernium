@@ -1,23 +1,22 @@
 package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.client.CameraLerpHandler;
-import com.skittlq.endernium.client.EnderniumClientCooldowns;
 import com.skittlq.endernium.client.EnderniumClientBehavior;
+import com.skittlq.endernium.client.EnderniumClientCooldowns;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
-import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
-import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
+import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
+import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.util.EnderniumTargeting;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
-public final class ClientModNetworking {
-    private ClientModNetworking() {
+public final class EnderniumClientNetworkHandler {
+    private EnderniumClientNetworkHandler() {
     }
 
     public static void handleCameraLerp(CameraLerpPayload payload) {
@@ -53,9 +52,5 @@ public final class ClientModNetworking {
 
     public static void handleGameplaySettings(GameplaySettingsPayload payload) {
         EnderniumClientGameplaySettings.apply(payload);
-    }
-
-    public static void sendAbilityActivation() {
-        ClientPacketDistributor.sendToServer(com.skittlq.endernium.network.payloads.EnderniumAbilityPayload.INSTANCE);
     }
 }

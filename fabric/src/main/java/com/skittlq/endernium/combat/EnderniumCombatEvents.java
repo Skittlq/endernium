@@ -4,9 +4,6 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import com.skittlq.endernium.progression.DragonAwakeningTracker;
 
 public final class EnderniumCombatEvents {
     private EnderniumCombatEvents() {
@@ -14,29 +11,15 @@ public final class EnderniumCombatEvents {
 
     public static void register() {
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {
-            if (!blocked
-                    && damageTaken > 0.0F
-                    && entity instanceof EnderDragon dragon
-                    && source.getEntity() instanceof ServerPlayer attacker) {
-                DragonAwakeningTracker.recordDragonDamage(attacker, dragon);
-            }
-            if (!blocked
-                    && damageTaken > 0.0F
-                    && entity instanceof ServerPlayer victim
-                    && source.getEntity() instanceof ServerPlayer attacker) {
-                EnderniumCombatTags.recordSuccessfulHit(attacker, victim);
-            }
+            EnderniumCombatHooks.onDamage(entity, source, damageTaken, blocked);
         });
-        ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
-            if (entity instanceof ServerPlayer player) {
-                EnderniumCombatTags.playerDied(player);
-            }
-        });
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) ->
+                EnderniumCombatHooks.onDeath(entity));
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                EnderniumCombatTags.playerJoined(handler.getPlayer()));
+                EnderniumCombatHooks.onPlayerJoin(handler.getPlayer()));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
-                EnderniumCombatTags.playerDisconnected(handler.getPlayer()));
-        ServerTickEvents.END_SERVER_TICK.register(EnderniumCombatTags::tick);
-        ServerLifecycleEvents.SERVER_STOPPED.register(EnderniumCombatTags::clear);
+                EnderniumCombatHooks.onPlayerDisconnect(handler.getPlayer()));
+        ServerTickEvents.END_SERVER_TICK.register(EnderniumCombatHooks::onServerTick);
+        ServerLifecycleEvents.SERVER_STOPPED.register(EnderniumCombatHooks::onServerStopped);
     }
 }

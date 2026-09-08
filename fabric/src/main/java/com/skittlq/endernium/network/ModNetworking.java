@@ -1,9 +1,5 @@
 package com.skittlq.endernium.network;
 
-import com.skittlq.endernium.client.CameraLerpHandler;
-import com.skittlq.endernium.client.EnderniumClientCooldowns;
-import com.skittlq.endernium.client.EnderniumClientBehavior;
-import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
 import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
@@ -13,9 +9,6 @@ import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
-import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
-import com.skittlq.endernium.util.EnderniumTargeting;
-import com.skittlq.endernium.progression.EnderniumAwakening;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -52,34 +45,26 @@ public final class ModNetworking {
 
     public static void registerClient() {
         ClientPlayNetworking.registerGlobalReceiver(CameraLerpPayload.TYPE,
-                (payload, context) -> context.client().execute(() -> CameraLerpHandler.onCameraLerpPacket(payload)));
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientNetworkHandler.handleCameraLerp(payload)));
         ClientPlayNetworking.registerGlobalReceiver(CombatOpponentsPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        EnderniumTargeting.replaceClientCombatOpponents(payload.opponentIds())));
+                        EnderniumClientNetworkHandler.handleCombatOpponents(payload)));
         ClientPlayNetworking.registerGlobalReceiver(DragonDeathVfxPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        EnderniumVfxManager.onDragonDeathVfx(payload)));
+                        EnderniumClientNetworkHandler.handleDragonDeathVfx(payload)));
         ClientPlayNetworking.registerGlobalReceiver(BlessingVfxPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        EnderniumVfxManager.onBlessingVfx(payload)));
+                        EnderniumClientNetworkHandler.handleBlessingVfx(payload)));
         ClientPlayNetworking.registerGlobalReceiver(AbilityCooldownSyncPayload.TYPE,
-                (payload, context) -> context.client().execute(() -> {
-                    if (payload.ability() == AbilityCooldownSyncPayload.Ability.ARMOR) {
-                        EnderniumClientCooldowns.setArmorCooldown(payload.endGameTime(), payload.durationTicks());
-                    } else {
-                        EnderniumClientCooldowns.setSwordCooldown(payload.endGameTime(), payload.durationTicks());
-                    }
-                }));
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientNetworkHandler.handleAbilityCooldownSync(payload)));
         ClientPlayNetworking.registerGlobalReceiver(AwakeningStatePayload.TYPE,
-                (payload, context) -> context.client().execute(() -> {
-                    EnderniumAwakening.setClientAwakened(payload.awakened());
-                    if (payload.playReadyEffect()) {
-                        EnderniumClientBehavior.triggerAwakeningReadyHud();
-                    }
-                }));
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientNetworkHandler.handleAwakeningState(payload)));
         ClientPlayNetworking.registerGlobalReceiver(GameplaySettingsPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        EnderniumClientGameplaySettings.apply(payload)));
+                        EnderniumClientNetworkHandler.handleGameplaySettings(payload)));
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

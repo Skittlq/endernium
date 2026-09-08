@@ -5,7 +5,6 @@ import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ModNetworking;
-import com.skittlq.endernium.progression.EnderniumAwakening;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
@@ -38,7 +37,6 @@ public final class ClientEvents {
             ENDERNIUM_CATEGORY
     );
     private static boolean registered;
-    private static boolean abilityHandledForCurrentHold;
 
     private ClientEvents() {
     }
@@ -55,7 +53,8 @@ public final class ClientEvents {
         ClientTickEvents.END_CLIENT_TICK.register(EnderniumClientBehavior::tickClient);
         ClientLifecycleEvents.CLIENT_STOPPING.register(client ->
                 EnderniumShaderRenderer.instance().close());
-        ClientTickEvents.END_CLIENT_TICK.register(ClientEvents::handleAbilityKey);
+        ClientTickEvents.END_CLIENT_TICK.register(client ->
+                EnderniumAbilityKeyHandler.tick(client, ENDERNIUM_ABILITY_KEY, ModNetworking::sendAbilityActivation));
         LevelExtractionEvents.END_EXTRACTION.register(context -> EnderniumVfxManager.extract(Minecraft.getInstance()));
         LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> EnderniumShaderRenderer.instance().render(
                 context.levelState().cameraRenderState.viewRotationMatrix,
@@ -74,23 +73,6 @@ public final class ClientEvents {
             }
         });
         HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, COOLDOWN_HUD, ClientEvents::renderCooldownHuds);
-    }
-
-    private static void handleAbilityKey(Minecraft client) {
-        if (!ENDERNIUM_ABILITY_KEY.isDown()) {
-            abilityHandledForCurrentHold = false;
-        }
-        while (ENDERNIUM_ABILITY_KEY.consumeClick()) {
-            if (!abilityHandledForCurrentHold
-                    && client.player != null && client.getConnection() != null) {
-                if (EnderniumAwakening.isClientAwakened()) {
-                    ModNetworking.sendAbilityActivation();
-                } else {
-                    EnderniumClientBehavior.playLockedAbilityCue(client);
-                }
-                abilityHandledForCurrentHold = true;
-            }
-        }
     }
 
     private static void renderCooldownHuds(GuiGraphicsExtractor gui, DeltaTracker deltaTracker) {

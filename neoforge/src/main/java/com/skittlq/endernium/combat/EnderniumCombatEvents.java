@@ -1,8 +1,6 @@
 package com.skittlq.endernium.combat;
 
-import com.skittlq.endernium.progression.DragonAwakeningTracker;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -24,42 +22,31 @@ public final class EnderniumCombatEvents {
     }
 
     private static void onDamage(LivingDamageEvent.Post event) {
-        if (event.getInflictedDamage() > 0.0F
-                && event.getEntity() instanceof EnderDragon dragon
-                && event.getSource().getEntity() instanceof ServerPlayer attacker) {
-            DragonAwakeningTracker.recordDragonDamage(attacker, dragon);
-        }
-        if (event.getBlockedDamage() <= 0.0F
-                && event.getInflictedDamage() > 0.0F
-                && event.getEntity() instanceof ServerPlayer victim
-                && event.getSource().getEntity() instanceof ServerPlayer attacker) {
-            EnderniumCombatTags.recordSuccessfulHit(attacker, victim);
-        }
+        EnderniumCombatHooks.onDamage(event.getEntity(), event.getSource(),
+                event.getInflictedDamage(), event.getBlockedDamage() > 0.0F);
     }
 
     private static void onDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumCombatTags.playerDied(player);
-        }
+        EnderniumCombatHooks.onDeath(event.getEntity());
     }
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumCombatTags.playerJoined(player);
+            EnderniumCombatHooks.onPlayerJoin(player);
         }
     }
 
     private static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumCombatTags.playerDisconnected(player);
+            EnderniumCombatHooks.onPlayerDisconnect(player);
         }
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
-        EnderniumCombatTags.tick(event.getServer());
+        EnderniumCombatHooks.onServerTick(event.getServer());
     }
 
     private static void onServerStopped(ServerStoppedEvent event) {
-        EnderniumCombatTags.clear(event.getServer());
+        EnderniumCombatHooks.onServerStopped(event.getServer());
     }
 }
