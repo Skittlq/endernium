@@ -3,6 +3,7 @@ package com.skittlq.endernium.client;
 import com.skittlq.endernium.config.EnderniumConfig;
 import com.skittlq.endernium.config.EnderniumConfigManager;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
+import com.skittlq.endernium.client.vfx.EnderniumVfxRenderMode;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -21,6 +22,18 @@ public final class EnderniumConfigScreen {
                 .setTitle(Component.translatable("endernium.config.title"));
         ConfigEntryBuilder entries = builder.entryBuilder();
         ConfigCategory general = builder.getOrCreateCategory(Component.translatable("endernium.config.category.general"));
+        ConfigCategory visuals = builder.getOrCreateCategory(Component.translatable("endernium.config.category.visuals"));
+
+        visuals.addEntry(entries.startEnumSelector(
+                        Component.translatable("endernium.config.vfx_render_mode"),
+                        EnderniumVfxRenderMode.class,
+                        config.vfxRenderMode)
+                .setDefaultValue(EnderniumVfxRenderMode.AUTO)
+                .setEnumNameProvider(value -> Component.translatable(
+                        "endernium.config.vfx_render_mode." + value.name().toLowerCase(java.util.Locale.ROOT)))
+                .setTooltip(Component.translatable("endernium.config.vfx_render_mode.tooltip"))
+                .setSaveConsumer(value -> config.vfxRenderMode = value)
+                .build());
 
         general.addEntry(entries.startBooleanToggle(
                         Component.translatable("endernium.config.armor_ability"),

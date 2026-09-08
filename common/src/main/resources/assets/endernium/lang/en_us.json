@@ -94,5 +94,12 @@
   "endernium.tooltip.armor_ability.title": "Ender Repulsion",
   "endernium.tooltip.armor_ability.trigger": "Triggers below %s HP while the full armor set is equipped.",
   "endernium.tooltip.armor_ability.cooldown": "Cooldown: %s seconds.",
-  "endernium.tooltip.armor_ability.description": "Pushes nearby hostile mobs away and grants regeneration."
+  "endernium.tooltip.armor_ability.description": "Pushes nearby hostile mobs away and grants regeneration.",
+  "endernium.config.category.visuals": "Visuals",
+  "endernium.config.vfx_render_mode": "Endernium VFX Renderer",
+  "endernium.config.vfx_render_mode.tooltip": "Auto uses the full effect unless an Iris shader pack is active. Full may be incompatible with shader packs; Particles is the safe fallback.",
+  "endernium.config.vfx_render_mode.auto": "Auto",
+  "endernium.config.vfx_render_mode.full": "Full",
+  "endernium.config.vfx_render_mode.particles": "Particles",
+  "endernium.configuration.vfxRenderMode": "Endernium VFX Renderer"
 }

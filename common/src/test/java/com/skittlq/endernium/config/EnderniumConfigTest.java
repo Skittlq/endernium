@@ -1,5 +1,6 @@
 package com.skittlq.endernium.config;
 
+import com.skittlq.endernium.client.vfx.EnderniumVfxRenderMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +18,7 @@ class EnderniumConfigTest {
                 config.enderniumArmorAbilityCooldown);
         assertEquals(EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS,
                 config.enderniumSwordAbilityBaseCooldown);
+        assertEquals(EnderniumVfxRenderMode.AUTO, config.vfxRenderMode);
     }
 
     @Test
@@ -25,8 +27,10 @@ class EnderniumConfigTest {
         EnderniumConfig copy = original.copy();
         assertNotSame(original, copy);
         copy.enderniumArmorAbilityThreshold = 99;
+        copy.vfxRenderMode = EnderniumVfxRenderMode.PARTICLES;
         assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_THRESHOLD,
                 original.enderniumArmorAbilityThreshold);
+        assertEquals(EnderniumVfxRenderMode.AUTO, original.vfxRenderMode);
     }
 
     @Test
@@ -40,6 +44,7 @@ class EnderniumConfigTest {
         invalid.enderniumArmorAbilityCooldown = Long.MAX_VALUE;
         invalid.enderniumSwordAbilityBaseCooldown = -1;
         invalid.enderniumSwordAbilityPerMobCooldown = Integer.MAX_VALUE;
+        invalid.vfxRenderMode = null;
         EnderniumConfig sanitized = EnderniumConfig.sanitize(invalid);
 
         assertEquals(2048, sanitized.enderniumArmorAbilityThreshold);
@@ -47,5 +52,6 @@ class EnderniumConfigTest {
         assertEquals(0, sanitized.enderniumSwordAbilityBaseCooldown);
         assertEquals(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS,
                 sanitized.enderniumSwordAbilityPerMobCooldown);
+        assertEquals(EnderniumVfxRenderMode.AUTO, sanitized.vfxRenderMode);
     }
 }

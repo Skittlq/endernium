@@ -80,6 +80,13 @@
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.tooltip.ability.locked": "Derrota al Dragón del End para desbloquear todo el potencial del Endernium.",
+  "endernium.config.category.visuals": "Efectos visuales",
+  "endernium.config.vfx_render_mode": "Renderizador de efectos de Endernium",
+  "endernium.config.vfx_render_mode.tooltip": "Automático usa el efecto completo salvo que haya un paquete de shaders de Iris activo. Completo puede ser incompatible; Partículas es la alternativa segura.",
+  "endernium.config.vfx_render_mode.auto": "Automático",
+  "endernium.config.vfx_render_mode.full": "Completo",
+  "endernium.config.vfx_render_mode.particles": "Partículas",
+  "endernium.configuration.vfxRenderMode": "Renderizador de efectos de Endernium",
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

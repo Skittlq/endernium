@@ -80,6 +80,13 @@
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.tooltip.ability.locked": "エンダードラゴンを倒して、エンダニウムの真の力を解放しよう。",
+  "endernium.config.category.visuals": "ビジュアル",
+  "endernium.config.vfx_render_mode": "Endernium VFX レンダラー",
+  "endernium.config.vfx_render_mode.tooltip": "自動は Iris シェーダーパック使用中のみパーティクルに切り替えます。フルはシェーダーパックと非互換の場合があり、パーティクルは安全な代替です。",
+  "endernium.config.vfx_render_mode.auto": "自動",
+  "endernium.config.vfx_render_mode.full": "フル",
+  "endernium.config.vfx_render_mode.particles": "パーティクル",
+  "endernium.configuration.vfxRenderMode": "Endernium VFX レンダラー",
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

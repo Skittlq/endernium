@@ -48,6 +48,7 @@ public final class EnderniumVfxManager {
     private static DragonTimeline dragonTimeline;
     private static final Map<UUID, BlessingTimeline> BLESSING_TIMELINES = new LinkedHashMap<>();
     private static ExtractedFrame extractedFrame = ExtractedFrame.EMPTY;
+    private static EnderniumVfxRenderMode lastRenderMode;
 
     private EnderniumVfxManager() {
     }
@@ -86,12 +87,21 @@ public final class EnderniumVfxManager {
             clear();
             lastLevel = client.level;
         }
+        EnderniumVfxRenderMode renderMode = EnderniumVfxCompatibility.effectiveMode();
+        if (renderMode != lastRenderMode) {
+            lastRenderMode = renderMode;
+            EnderniumShaderRenderer.instance().onRenderModeChanged();
+            EnderniumParticleFallback.reset();
+        }
         if (client.level == null || client.player == null) {
             return;
         }
         BLESSING_TIMELINES.values().removeIf(timeline -> !timeline.tick(client));
         if (dragonTimeline != null && !dragonTimeline.tick(client)) {
             dragonTimeline = null;
+        }
+        if (renderMode == EnderniumVfxRenderMode.PARTICLES) {
+            EnderniumParticleFallback.tick(client, createFrame(client, 0.0F));
         }
     }
 
@@ -101,6 +111,10 @@ public final class EnderniumVfxManager {
             return;
         }
         float partialTick = client.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        extractedFrame = createFrame(client, partialTick);
+    }
+
+    private static ExtractedFrame createFrame(Minecraft client, float partialTick) {
         ExtractedFrame dragonFrame = dragonTimeline == null
                 ? ExtractedFrame.EMPTY
                 : dragonTimeline.extract(client, partialTick);
@@ -108,7 +122,7 @@ public final class EnderniumVfxManager {
                 .map(timeline -> timeline.extract(client, partialTick))
                 .filter(java.util.Objects::nonNull)
                 .toList();
-        extractedFrame = dragonFrame.withBlessings(blessings);
+        return dragonFrame.withBlessings(blessings);
     }
 
     public static ExtractedFrame frame() {
@@ -120,6 +134,10 @@ public final class EnderniumVfxManager {
         BLESSING_TIMELINES.clear();
         extractedFrame = ExtractedFrame.EMPTY;
         lastLevel = null;
+        lastRenderMode = null;
+        EnderniumParticleFallback.reset();
+        EnderniumVfxCompatibility.resetSession();
+        EnderniumShaderRenderer.instance().resetSessionState();
     }
 
     private static final class BlessingTimeline {

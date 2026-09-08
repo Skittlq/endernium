@@ -1,5 +1,7 @@
 package com.skittlq.endernium.config;
 
+import com.skittlq.endernium.client.vfx.EnderniumVfxRenderMode;
+
 public class EnderniumConfig {
     public boolean enderniumArmorAbility = true;
     public int enderniumArmorAbilityThreshold = EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_THRESHOLD;
@@ -8,6 +10,7 @@ public class EnderniumConfig {
     public int enderniumSwordAbilityBaseCooldown = EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS;
     public int enderniumSwordAbilityPerMobCooldown = EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_PER_MOB_COOLDOWN_SECONDS;
     public boolean enderniumToolsVeinMining = true;
+    public EnderniumVfxRenderMode vfxRenderMode = EnderniumVfxRenderMode.AUTO;
 
     public EnderniumConfig copy() {
         EnderniumConfig copy = new EnderniumConfig();
@@ -18,6 +21,7 @@ public class EnderniumConfig {
         copy.enderniumSwordAbilityBaseCooldown = enderniumSwordAbilityBaseCooldown;
         copy.enderniumSwordAbilityPerMobCooldown = enderniumSwordAbilityPerMobCooldown;
         copy.enderniumToolsVeinMining = enderniumToolsVeinMining;
+        copy.vfxRenderMode = vfxRenderMode;
         return copy;
     }
 
@@ -31,6 +35,9 @@ public class EnderniumConfig {
                 Math.min(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS, sanitized.enderniumSwordAbilityBaseCooldown));
         sanitized.enderniumSwordAbilityPerMobCooldown = Math.max(0,
                 Math.min(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS, sanitized.enderniumSwordAbilityPerMobCooldown));
+        if (sanitized.vfxRenderMode == null) {
+            sanitized.vfxRenderMode = EnderniumVfxRenderMode.AUTO;
+        }
         return sanitized;
     }
 }

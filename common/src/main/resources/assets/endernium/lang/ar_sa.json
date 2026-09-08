@@ -80,6 +80,13 @@
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.tooltip.ability.locked": "اهزم تنين الإند لفتح كامل إمكانات الإندرنيوم.",
+  "endernium.config.category.visuals": "المؤثرات البصرية",
+  "endernium.config.vfx_render_mode": "عارض مؤثرات Endernium",
+  "endernium.config.vfx_render_mode.tooltip": "يستخدم الوضع التلقائي الجسيمات عند تفعيل حزمة تظليل Iris. قد لا يتوافق الوضع الكامل مع حزم التظليل؛ الجسيمات هي البديل الآمن.",
+  "endernium.config.vfx_render_mode.auto": "تلقائي",
+  "endernium.config.vfx_render_mode.full": "كامل",
+  "endernium.config.vfx_render_mode.particles": "جسيمات",
+  "endernium.configuration.vfxRenderMode": "عارض مؤثرات Endernium",
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

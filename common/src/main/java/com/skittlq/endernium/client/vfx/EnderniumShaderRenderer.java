@@ -143,7 +143,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
     public void render(Matrix4fc modelViewMatrix, Vec3 camera) {
         ExtractedFrame frame = EnderniumVfxManager.frame();
-        if (!worldPipelineEnabled || frame.empty()) {
+        if (EnderniumVfxCompatibility.usesParticleFallback() || !worldPipelineEnabled || frame.empty()) {
             return;
         }
 
@@ -186,8 +186,9 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     pass.draw(wave.vertexCount(), 1, 0, 0);
                 }
             }
-        } catch (RuntimeException throwable) {
+        } catch (RuntimeException | LinkageError throwable) {
             worldPipelineEnabled = false;
+            EnderniumVfxCompatibility.reportShaderFailure();
             if (!loggedWorldFailure) {
                 loggedWorldFailure = true;
                 LOGGER.error("Disabling Endernium dragon world shaders for this session; fallback particles remain active", throwable);
@@ -204,7 +205,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
     public void renderPost(Vec3 camera) {
         ExtractedFrame frame = EnderniumVfxManager.frame();
-        if (!postPipelineEnabled
+        if (EnderniumVfxCompatibility.usesParticleFallback()
+                || !postPipelineEnabled
                 || (frame.postIntensity() <= 0.001F
                 && frame.atmosphereIntensity() <= 0.001F
                 && frame.impactIntensity() <= 0.001F
@@ -260,8 +262,9 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 pass.setUniform("DragonPost", postUniform);
                 pass.draw(3, 1, 0, 0);
             }
-        } catch (RuntimeException throwable) {
+        } catch (RuntimeException | LinkageError throwable) {
             postPipelineEnabled = false;
+            EnderniumVfxCompatibility.reportShaderFailure();
             closePostResources();
             if (!loggedPostFailure) {
                 loggedPostFailure = true;
@@ -1368,6 +1371,17 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         postPipelineEnabled = true;
         loggedWorldFailure = false;
         loggedPostFailure = false;
+        EnderniumVfxCompatibility.resetRendererFailure();
+    }
+
+    /** Drops mode-sensitive resources without forgiving a renderer failure. */
+    public void onRenderModeChanged() {
+        closePostResources();
+    }
+
+    public void resetSessionState() {
+        resetBuffers();
+        EnderniumVfxCompatibility.resetSession();
     }
 
     private void closePostResources() {

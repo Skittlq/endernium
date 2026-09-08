@@ -80,6 +80,13 @@
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.tooltip.ability.locked": "엔더 드래곤을 처치해 엔더니움의 잠재력을 모두 해방하세요.",
+  "endernium.config.category.visuals": "시각 효과",
+  "endernium.config.vfx_render_mode": "Endernium VFX 렌더러",
+  "endernium.config.vfx_render_mode.tooltip": "자동은 Iris 셰이더팩 사용 중에만 파티클로 전환합니다. 전체는 셰이더팩과 호환되지 않을 수 있으며 파티클은 안전한 대체 모드입니다.",
+  "endernium.config.vfx_render_mode.auto": "자동",
+  "endernium.config.vfx_render_mode.full": "전체",
+  "endernium.config.vfx_render_mode.particles": "파티클",
+  "endernium.configuration.vfxRenderMode": "Endernium VFX 렌더러",
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

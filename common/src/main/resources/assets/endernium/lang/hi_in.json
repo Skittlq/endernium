@@ -80,6 +80,13 @@
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.tooltip.ability.locked": "एंडर्नियम की पूरी क्षमता खोलने के लिए एंडर ड्रैगन को हराएँ।",
+  "endernium.config.category.visuals": "दृश्य प्रभाव",
+  "endernium.config.vfx_render_mode": "Endernium VFX रेंडरर",
+  "endernium.config.vfx_render_mode.tooltip": "ऑटो Iris शेडर पैक सक्रिय होने पर पार्टिकल का उपयोग करता है। फुल शेडर पैक के साथ असंगत हो सकता है; पार्टिकल सुरक्षित विकल्प है।",
+  "endernium.config.vfx_render_mode.auto": "ऑटो",
+  "endernium.config.vfx_render_mode.full": "फुल",
+  "endernium.config.vfx_render_mode.particles": "पार्टिकल",
+  "endernium.configuration.vfxRenderMode": "Endernium VFX रेंडरर",
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }

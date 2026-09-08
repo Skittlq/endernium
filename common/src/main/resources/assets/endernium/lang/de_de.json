@@ -80,6 +80,13 @@
   "endernium.config.screen_distortion.tooltip": "Allows future local screen-space shader effects.",
   "endernium.configuration.section.endernium-client.toml": "Shader Effects",
   "endernium.tooltip.ability.locked": "Besiege den Enderdrachen, um das volle Potenzial von Endernium freizuschalten.",
+  "endernium.config.category.visuals": "Grafik",
+  "endernium.config.vfx_render_mode": "Endernium-VFX-Renderer",
+  "endernium.config.vfx_render_mode.tooltip": "Automatisch nutzt den vollen Effekt, solange kein Iris-Shaderpaket aktiv ist. Voll kann mit Shaderpaketen inkompatibel sein; Partikel ist die sichere Alternative.",
+  "endernium.config.vfx_render_mode.auto": "Automatisch",
+  "endernium.config.vfx_render_mode.full": "Voll",
+  "endernium.config.vfx_render_mode.particles": "Partikel",
+  "endernium.configuration.vfxRenderMode": "Endernium-VFX-Renderer",
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
 }
