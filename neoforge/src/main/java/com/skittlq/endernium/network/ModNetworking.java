@@ -3,7 +3,7 @@ package com.skittlq.endernium.network;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
-import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
+import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
@@ -73,11 +73,11 @@ public class ModNetworking {
                                 })
         );
         registrar.playToClient(
-                AwakeningStatePayload.TYPE,
-                AwakeningStatePayload.STREAM_CODEC,
+                BlessingStatePayload.TYPE,
+                BlessingStatePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
-                        EnderniumClientNetworkHandler.handleAwakeningState(payload);
+                        EnderniumClientNetworkHandler.handleBlessingState(payload);
                     }
                 })
         );
@@ -104,7 +104,7 @@ public class ModNetworking {
         EnderniumNetworking.bindDragonDeathVfxSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindBlessingVfxSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindAbilityCooldownSyncSender(PacketDistributor::sendToPlayer);
-        EnderniumNetworking.bindAwakeningStateSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindBlessingStateSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindGameplaySettingsSender(PacketDistributor::sendToPlayer);
     }
 

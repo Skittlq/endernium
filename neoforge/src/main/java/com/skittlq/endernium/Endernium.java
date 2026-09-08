@@ -16,8 +16,8 @@ import com.skittlq.endernium.particles.custom.EnderniumBit;
 import com.skittlq.endernium.particles.custom.EnderniumBlessingBit;
 import com.skittlq.endernium.particles.custom.EnderniumSweep;
 import com.skittlq.endernium.particles.custom.ReverseEnderniumBit;
-import com.skittlq.endernium.progression.EnderniumAwakeningHandler;
-import com.skittlq.endernium.progression.EnderniumAwakeningCommand;
+import com.skittlq.endernium.progression.EnderniumBlessingHandler;
+import com.skittlq.endernium.progression.EnderniumBlessingCommand;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.vfx.DragonDeathVfxDebugCommand;
 import com.skittlq.endernium.util.EnderniumUtils;
@@ -61,7 +61,7 @@ public class Endernium {
         EnderniumArmorAbilityHandler.register();
         EnderniumSwordCooldownHandler.register();
         EnderniumCombatEvents.register();
-        EnderniumAwakeningHandler.register();
+        EnderniumBlessingHandler.register();
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
@@ -79,7 +79,7 @@ public class Endernium {
 
     @SubscribeEvent
     public void registerDevelopmentCommands(RegisterCommandsEvent event) {
-        EnderniumAwakeningCommand.register(event.getDispatcher());
+        EnderniumBlessingCommand.register(event.getDispatcher());
         if (SharedConstants.IS_RUNNING_IN_IDE) {
             DragonDeathVfxDebugCommand.register(event.getDispatcher());
         }

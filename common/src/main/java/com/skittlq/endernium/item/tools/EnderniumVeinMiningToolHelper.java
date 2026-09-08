@@ -3,7 +3,7 @@ package com.skittlq.endernium.item.tools;
 import com.skittlq.endernium.client.EnderniumKeyBindings;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -63,7 +63,7 @@ public final class EnderniumVeinMiningToolHelper {
             return InteractionResult.PASS;
         }
 
-        if (!EnderniumAwakening.isAwakened(player)) {
+        if (!EnderniumBlessing.isBlessed(player)) {
             return InteractionResult.SUCCESS;
         }
 
@@ -106,7 +106,7 @@ public final class EnderniumVeinMiningToolHelper {
         if (!level.isClientSide()
                 && isVeinMiningEnabled(stack)
                 && entity instanceof Player player
-                && EnderniumAwakening.isAwakened(player)
+                && EnderniumBlessing.isBlessed(player)
                 && !player.isCreative()) {
             EnderniumUtils.veinMineBlocks(stack, level, pos, state, player, EnderniumUtils.DEFAULT_MAX_BLOCKS);
         }
@@ -119,7 +119,7 @@ public final class EnderniumVeinMiningToolHelper {
             return;
         }
 
-        if (!EnderniumAwakening.isClientAwakened()) {
+        if (!EnderniumBlessing.isClientBlessed()) {
             tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
                     .withStyle(ChatFormatting.GRAY));
             return;
@@ -144,7 +144,7 @@ public final class EnderniumVeinMiningToolHelper {
     static void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         if (level.isClientSide()
                 || !(entity instanceof Player player)
-                || !EnderniumAwakening.isAwakened(player)) {
+                || !EnderniumBlessing.isBlessed(player)) {
             return;
         }
 

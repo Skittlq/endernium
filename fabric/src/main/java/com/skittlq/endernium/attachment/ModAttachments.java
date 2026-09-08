@@ -31,7 +31,7 @@ public final class ModAttachments {
             .copyOnDeath()
     );
 
-    public static final AttachmentType<Boolean> ENDERNIUM_ABILITIES_AWAKENED = AttachmentRegistry.create(
+    public static final AttachmentType<Boolean> ENDERNIUM_ABILITIES_BLESSED = AttachmentRegistry.create(
         Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_abilities_awakened"),
         builder -> builder
             .persistent(Codec.BOOL)

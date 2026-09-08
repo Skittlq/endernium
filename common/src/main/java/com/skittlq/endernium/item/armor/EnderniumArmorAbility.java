@@ -2,7 +2,7 @@ package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import com.skittlq.endernium.util.EnderniumCooldowns;
 import net.minecraft.server.level.ServerLevel;
@@ -34,7 +34,7 @@ public final class EnderniumArmorAbility {
     public static void tickPlayer(ServerPlayer player, Settings settings, CooldownStore cooldownStore) {
         if (!settings.enabled()
                 || player.isSpectator()
-                || !EnderniumAwakening.isAwakened(player)
+                || !EnderniumBlessing.isBlessed(player)
                 || !EnderniumArmorUtil.hasFullEnderniumSet(player)) {
             return;
         }
@@ -133,7 +133,7 @@ public final class EnderniumArmorAbility {
 
     // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
     public static void syncCooldownOnLogin(ServerPlayer player, Settings settings, CooldownStore cooldownStore) {
-        if (!settings.enabled() || !EnderniumAwakening.isAwakened(player)) {
+        if (!settings.enabled() || !EnderniumBlessing.isBlessed(player)) {
             EnderniumNetworking.sendArmorCooldownSync(player, 0L, 0);
             return;
         }

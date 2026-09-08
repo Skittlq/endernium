@@ -2,7 +2,7 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
-import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
+import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
@@ -26,7 +26,7 @@ public final class ModNetworking {
         PayloadTypeRegistry.clientboundPlay().register(DragonDeathVfxPayload.TYPE, DragonDeathVfxPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BlessingVfxPayload.TYPE, BlessingVfxPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AbilityCooldownSyncPayload.TYPE, AbilityCooldownSyncPayload.STREAM_CODEC);
-        PayloadTypeRegistry.clientboundPlay().register(AwakeningStatePayload.TYPE, AwakeningStatePayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(BlessingStatePayload.TYPE, BlessingStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(GameplaySettingsPayload.TYPE, GameplaySettingsPayload.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(EnderniumAbilityPayload.TYPE, EnderniumAbilityPayload.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(EnderniumAbilityPayload.TYPE,
@@ -39,7 +39,7 @@ public final class ModNetworking {
         EnderniumNetworking.bindDragonDeathVfxSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindBlessingVfxSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindAbilityCooldownSyncSender(ServerPlayNetworking::send);
-        EnderniumNetworking.bindAwakeningStateSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindBlessingStateSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindGameplaySettingsSender(ServerPlayNetworking::send);
     }
 
@@ -59,9 +59,9 @@ public final class ModNetworking {
         ClientPlayNetworking.registerGlobalReceiver(AbilityCooldownSyncPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         EnderniumClientNetworkHandler.handleAbilityCooldownSync(payload)));
-        ClientPlayNetworking.registerGlobalReceiver(AwakeningStatePayload.TYPE,
+        ClientPlayNetworking.registerGlobalReceiver(BlessingStatePayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        EnderniumClientNetworkHandler.handleAwakeningState(payload)));
+                        EnderniumClientNetworkHandler.handleBlessingState(payload)));
         ClientPlayNetworking.registerGlobalReceiver(GameplaySettingsPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         EnderniumClientNetworkHandler.handleGameplaySettings(payload)));

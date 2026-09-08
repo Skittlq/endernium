@@ -1,7 +1,7 @@
 package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
-import com.skittlq.endernium.network.payloads.AwakeningStatePayload;
+import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
@@ -24,8 +24,8 @@ public final class EnderniumNetworking {
     private static AbilityCooldownSyncSender abilityCooldownSyncSender = (player, payload) -> {
         throw new IllegalStateException("Endernium ability cooldown sync sender has not been bound to a loader network API yet");
     };
-    private static AwakeningStateSender awakeningStateSender = (player, payload) -> {
-        throw new IllegalStateException("Endernium awakening state sender has not been bound to a loader network API yet");
+    private static BlessingStateSender blessingStateSender = (player, payload) -> {
+        throw new IllegalStateException("Endernium blessing state sender has not been bound to a loader network API yet");
     };
     private static BlessingVfxSender blessingVfxSender = (player, payload) -> {
         throw new IllegalStateException("Endernium blessing VFX sender has not been bound to a loader network API yet");
@@ -75,12 +75,12 @@ public final class EnderniumNetworking {
                 new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.SWORD, endGameTime, durationTicks));
     }
 
-    public static void bindAwakeningStateSender(AwakeningStateSender sender) {
-        awakeningStateSender = Objects.requireNonNull(sender);
+    public static void bindBlessingStateSender(BlessingStateSender sender) {
+        blessingStateSender = Objects.requireNonNull(sender);
     }
 
-    public static void sendAwakeningState(ServerPlayer player, boolean awakened, boolean playReadyEffect) {
-        awakeningStateSender.send(player, new AwakeningStatePayload(awakened, playReadyEffect));
+    public static void sendBlessingState(ServerPlayer player, boolean blessed, boolean playReadyEffect) {
+        blessingStateSender.send(player, new BlessingStatePayload(blessed, playReadyEffect));
     }
 
     public static void bindBlessingVfxSender(BlessingVfxSender sender) {
@@ -120,8 +120,8 @@ public final class EnderniumNetworking {
     }
 
     @FunctionalInterface
-    public interface AwakeningStateSender {
-        void send(ServerPlayer player, AwakeningStatePayload payload);
+    public interface BlessingStateSender {
+        void send(ServerPlayer player, BlessingStatePayload payload);
     }
 
     @FunctionalInterface

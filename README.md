@@ -35,15 +35,15 @@ Using Endernium Ingots and the appropriate Smithing Template, you may upgrade th
 
 ## Special Abilities
 
-The Endernium Sword, Endernium tools, and full armor set come with special abilities. Their normal equipment stats work immediately, but their supernatural abilities must first be awakened.
+The Endernium Sword, Endernium tools, and full armor set come with special abilities. Their normal equipment stats work immediately, but their supernatural abilities must first be blessed.
 
-### Awakening Endernium
+### Blessing Endernium
 
 - Participate in a successful Ender Dragon fight by damaging the dragon or fighting within the central End arena for at least 30 seconds.
-- Every dragon fight counts, including respawned dragons, so players who join a world later can still earn the awakening.
+- Every dragon fight counts, including respawned dragons, so players who join a world later can still earn the blessing.
 - When the dragon falls, streams of Endernium energy gather around it, fly to every qualifying player, orbit them, and absorb into them as a visual blessing.
 - Participation is retained if a qualifying player dies or disconnects. Their shorter blessing waits at the exit portal and begins the next time they enter the End carrying or wearing Endernium equipment.
-- The awakening is permanently saved to the player. Existing players who already completed Minecraft's **Free the End** advancement are unlocked silently.
+- The blessing is permanently saved to the player. Existing players who already completed Minecraft's **Free the End** advancement are unlocked silently.
 - Dormant abilities do not display an explanatory message; attempting one produces only a subtle failed particle and sound cue.
 
 - **Endernium Armor Set**

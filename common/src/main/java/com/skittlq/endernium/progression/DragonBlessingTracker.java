@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-/** Tracks participation in every real Ender Dragon fight and delivers the visual awakening. */
-public final class DragonAwakeningTracker {
+/** Tracks participation in every real Ender Dragon fight and delivers the visual blessing. */
+public final class DragonBlessingTracker {
     private static final int PASSIVE_PARTICIPATION_TICKS = 20 * 30;
     private static final double ARENA_RADIUS_SQR = 192.0 * 192.0;
     private static final int EMERGENCE_END_TICK = DragonBlessingVfxMath.EMERGENCE_END_TICK;
@@ -45,7 +45,7 @@ public final class DragonAwakeningTracker {
     private static final List<BlessingSession> BLESSINGS = new ArrayList<>();
     private static final Set<UUID> ACTIVE_RECIPIENTS = new HashSet<>();
 
-    private DragonAwakeningTracker() {
+    private DragonBlessingTracker() {
     }
 
     public static void recordDragonDamage(ServerPlayer attacker, EnderDragon dragon) {
@@ -184,7 +184,7 @@ public final class DragonAwakeningTracker {
             return;
         }
 
-        EnderniumAwakeningSavedData pending = EnderniumAwakeningSavedData.get(end.getServer());
+        EnderniumBlessingSavedData pending = EnderniumBlessingSavedData.get(end.getServer());
         pending.addAll(finished.qualifyingPlayers);
         List<ServerPlayer> immediateRecipients = new ArrayList<>();
         for (UUID playerId : finished.qualifyingPlayers) {
@@ -193,7 +193,7 @@ public final class DragonAwakeningTracker {
                     && player.level() == end
                     && player.isAlive()
                     && !player.isSpectator()
-                    && !EnderniumAwakening.isAwakened(player)) {
+                    && !EnderniumBlessing.isBlessed(player)) {
                 immediateRecipients.add(player);
             }
         }
@@ -204,13 +204,13 @@ public final class DragonAwakeningTracker {
     }
 
     private static void tickPendingPlayers(MinecraftServer server, ServerLevel end) {
-        EnderniumAwakeningSavedData pending = EnderniumAwakeningSavedData.get(server);
+        EnderniumBlessingSavedData pending = EnderniumBlessingSavedData.get(server);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             UUID playerId = player.getUUID();
             if (!pending.contains(playerId) || ACTIVE_RECIPIENTS.contains(playerId)) {
                 continue;
             }
-            if (EnderniumAwakening.isAwakened(player)) {
+            if (EnderniumBlessing.isBlessed(player)) {
                 pending.remove(playerId);
                 continue;
             }
@@ -229,7 +229,7 @@ public final class DragonAwakeningTracker {
             Vec3 origin,
             int recipientIndex,
             int recipientCount,
-            boolean grantsAwakening
+            boolean grantsBlessing
     ) {
         if (ACTIVE_RECIPIENTS.add(player.getUUID())) {
             long seed = player.getRandom().nextLong();
@@ -239,7 +239,7 @@ public final class DragonAwakeningTracker {
                     seed,
                     recipientIndex,
                     Math.max(1, recipientCount),
-                    grantsAwakening
+                    grantsBlessing
             ));
             BlessingVfxPayload payload = new BlessingVfxPayload(
                     player.getUUID(),
@@ -282,9 +282,9 @@ public final class DragonAwakeningTracker {
                 continue;
             }
 
-            if (blessing.grantsAwakening) {
-                EnderniumAwakeningSavedData.get(end.getServer()).remove(blessing.playerId);
-                EnderniumAwakening.awaken(player, true);
+            if (blessing.grantsBlessing) {
+                EnderniumBlessingSavedData.get(end.getServer()).remove(blessing.playerId);
+                EnderniumBlessing.bless(player, true);
             }
             ACTIVE_RECIPIENTS.remove(blessing.playerId);
             iterator.remove();
@@ -342,7 +342,7 @@ public final class DragonAwakeningTracker {
         private final double phase;
         private final int recipientIndex;
         private final int recipientCount;
-        private final boolean grantsAwakening;
+        private final boolean grantsBlessing;
         private float smoothedFacingYaw = Float.NaN;
         private Vec3 previousCore;
         private int age;
@@ -353,7 +353,7 @@ public final class DragonAwakeningTracker {
                 long seed,
                 int recipientIndex,
                 int recipientCount,
-                boolean grantsAwakening
+                boolean grantsBlessing
         ) {
             this.playerId = playerId;
             this.origin = origin;
@@ -361,7 +361,7 @@ public final class DragonAwakeningTracker {
             this.phase = DragonBlessingVfxMath.phase(seed);
             this.recipientIndex = recipientIndex;
             this.recipientCount = recipientCount;
-            this.grantsAwakening = grantsAwakening;
+            this.grantsBlessing = grantsBlessing;
         }
 
         private void tick(ServerLevel level, ServerPlayer player, int particleBudget) {
@@ -388,7 +388,7 @@ public final class DragonAwakeningTracker {
             previousCore = core;
 
             if (age == BLESSING_TICKS - 1) {
-                tickAwakeningPulse(level, chestTarget, particleBudget);
+                tickBlessingPulse(level, chestTarget, particleBudget);
                 level.playSound(
                         null,
                         chestTarget.x, chestTarget.y, chestTarget.z,
@@ -619,7 +619,7 @@ public final class DragonAwakeningTracker {
                 spawnBit(level, point, tangent.add(inward));
             }
             if (age == BLESSING_TICKS - 1) {
-                tickAwakeningPulse(level, target, particleBudget);
+                tickBlessingPulse(level, target, particleBudget);
                 level.playSound(
                         null,
                         target.x, target.y, target.z,
@@ -639,7 +639,7 @@ public final class DragonAwakeningTracker {
             }
         }
 
-        private void tickAwakeningPulse(ServerLevel level, Vec3 target, int particleBudget) {
+        private void tickBlessingPulse(ServerLevel level, Vec3 target, int particleBudget) {
             int count = particleBudget;
             for (int stream = 0; stream < count; stream++) {
                 double y = 1.0 - 2.0 * (stream + 0.5) / count;

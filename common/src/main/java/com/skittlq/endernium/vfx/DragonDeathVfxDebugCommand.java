@@ -1,7 +1,7 @@
 package com.skittlq.endernium.vfx;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.skittlq.endernium.progression.DragonAwakeningTracker;
+import com.skittlq.endernium.progression.DragonBlessingTracker;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -62,7 +62,7 @@ public final class DragonDeathVfxDebugCommand {
     }
 
     private static int simulateBlessing(CommandSourceStack source, ServerPlayer target, Vec3 origin) {
-        if (!DragonAwakeningTracker.startBlessingSimulation(target, origin)) {
+        if (!DragonBlessingTracker.startBlessingSimulation(target, origin)) {
             source.sendFailure(Component.literal("The blessing target must be a non-spectating player in The End."));
             return 0;
         }

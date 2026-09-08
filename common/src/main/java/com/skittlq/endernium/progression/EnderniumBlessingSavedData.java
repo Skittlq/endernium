@@ -13,44 +13,44 @@ import java.util.Set;
 import java.util.UUID;
 
 /** Global queue for qualified players who have not yet received their visible blessing. */
-public final class EnderniumAwakeningSavedData extends SavedData {
-    private static final Codec<EnderniumAwakeningSavedData> CODEC = UUIDUtil.CODEC_SET
+public final class EnderniumBlessingSavedData extends SavedData {
+    private static final Codec<EnderniumBlessingSavedData> CODEC = UUIDUtil.CODEC_SET
             .optionalFieldOf("pending_awakenings", Set.of())
-            .xmap(EnderniumAwakeningSavedData::new, data -> Set.copyOf(data.pendingAwakenings))
+            .xmap(EnderniumBlessingSavedData::new, data -> Set.copyOf(data.pendingBlessings))
             .codec();
-    private static final SavedDataType<EnderniumAwakeningSavedData> TYPE = new SavedDataType<>(
+    private static final SavedDataType<EnderniumBlessingSavedData> TYPE = new SavedDataType<>(
             Identifier.fromNamespaceAndPath("endernium", "pending_awakenings"),
-            EnderniumAwakeningSavedData::new,
+            EnderniumBlessingSavedData::new,
             CODEC,
             DataFixTypes.LEVEL
     );
 
-    private final Set<UUID> pendingAwakenings;
+    private final Set<UUID> pendingBlessings;
 
-    public EnderniumAwakeningSavedData() {
+    public EnderniumBlessingSavedData() {
         this(Set.of());
     }
 
-    private EnderniumAwakeningSavedData(Set<UUID> pendingAwakenings) {
-        this.pendingAwakenings = new HashSet<>(pendingAwakenings);
+    private EnderniumBlessingSavedData(Set<UUID> pendingBlessings) {
+        this.pendingBlessings = new HashSet<>(pendingBlessings);
     }
 
-    public static EnderniumAwakeningSavedData get(MinecraftServer server) {
+    public static EnderniumBlessingSavedData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
     public boolean contains(UUID playerId) {
-        return pendingAwakenings.contains(playerId);
+        return pendingBlessings.contains(playerId);
     }
 
     public void addAll(Set<UUID> playerIds) {
-        if (pendingAwakenings.addAll(playerIds)) {
+        if (pendingBlessings.addAll(playerIds)) {
             setDirty();
         }
     }
 
     public void remove(UUID playerId) {
-        if (pendingAwakenings.remove(playerId)) {
+        if (pendingBlessings.remove(playerId)) {
             setDirty();
         }
     }

@@ -8,7 +8,7 @@ import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
 import com.skittlq.endernium.particles.EnderniumParticles;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -61,7 +61,7 @@ public final class EnderniumUtils {
     }
 
     public static void onAutoCollectToolBlockBreak(Level level, Player player, BlockPos pos, BlockState state, boolean allowVeinMiningFallback) {
-        if (level.isClientSide() || player.isCreative() || !EnderniumAwakening.isAwakened(player)) {
+        if (level.isClientSide() || player.isCreative() || !EnderniumBlessing.isBlessed(player)) {
             return;
         }
 
@@ -95,7 +95,7 @@ public final class EnderniumUtils {
                 || player == null
                 || player.isCreative()
                 || !(player instanceof ServerPlayer serverPlayer)
-                || !EnderniumAwakening.isAwakened(serverPlayer)
+                || !EnderniumBlessing.isBlessed(serverPlayer)
                 || state.isAir()) {
             return false;
         }
@@ -131,7 +131,7 @@ public final class EnderniumUtils {
         if (!(level instanceof ServerLevel serverLevel)
                 || !(player instanceof ServerPlayer serverPlayer)
                 || BREAKING_ADDITIONAL_BLOCK.get().contains(player.getUUID())
-                || !EnderniumAwakening.isAwakened(serverPlayer)
+                || !EnderniumBlessing.isBlessed(serverPlayer)
                 || !canVeinMineBlock(stack, originState)) {
             return;
         }
@@ -410,7 +410,7 @@ public final class EnderniumUtils {
                 && (player.getMainHandItem() == operation.tool || player.getOffhandItem() == operation.tool)
                 && !operation.tool.isEmpty()
                 && EnderniumGameplayConfig.toolsVeinMiningEnabled()
-                && EnderniumAwakening.isAwakened(player);
+                && EnderniumBlessing.isBlessed(player);
     }
 
     private static boolean isCurrentOperation(VeinMiningOperation operation) {

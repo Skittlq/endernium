@@ -11,7 +11,7 @@ import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumAxe;
 import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.particles.EnderniumParticles;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -75,7 +75,7 @@ public final class EnderniumClientBehavior {
 
     public static void resetSessionState() {
         EnderniumTargeting.clearClientCombatOpponents();
-        EnderniumAwakening.clearClientState();
+        EnderniumBlessing.clearClientState();
         EnderniumClientCooldowns.clear();
         EnderniumClientGameplaySettings.reset();
         EnderniumClientEquipmentState.reset();
@@ -110,7 +110,7 @@ public final class EnderniumClientBehavior {
     }
 
     public static boolean shouldRenderArmorCooldown(Player player, boolean armorAbilityEnabled) {
-        if (player == null || !armorAbilityEnabled || !EnderniumAwakening.isAwakened(player)) {
+        if (player == null || !armorAbilityEnabled || !EnderniumBlessing.isBlessed(player)) {
             return false;
         }
 
@@ -119,7 +119,7 @@ public final class EnderniumClientBehavior {
     }
 
     public static boolean shouldRenderSwordCooldown(Player player, boolean swordAbilityEnabled) {
-        if (player == null || !swordAbilityEnabled || !EnderniumAwakening.isAwakened(player)) {
+        if (player == null || !swordAbilityEnabled || !EnderniumBlessing.isBlessed(player)) {
             return false;
         }
 
@@ -161,7 +161,7 @@ public final class EnderniumClientBehavior {
         SWORD_HUD_TRACKER.reset();
     }
 
-    public static void triggerAwakeningReadyHud() {
+    public static void triggerBlessingReadyHud() {
         ARMOR_HUD_TRACKER.triggerReady();
         SWORD_HUD_TRACKER.triggerReady();
     }
@@ -184,7 +184,7 @@ public final class EnderniumClientBehavior {
             boolean swordAbilityEnabled
     ) {
         Player player = client.player;
-        if (player == null || !EnderniumAwakening.isAwakened(player)) {
+        if (player == null || !EnderniumBlessing.isBlessed(player)) {
             return;
         }
 
@@ -276,7 +276,7 @@ public final class EnderniumClientBehavior {
     }
 
     private static void renderSwordPreviewParticles(Player player) {
-        if (player == null || !EnderniumAwakening.isClientAwakened()
+        if (player == null || !EnderniumBlessing.isClientBlessed()
                 || !EnderniumClientGameplaySettings.get().swordAbilityEnabled()) {
             return;
         }

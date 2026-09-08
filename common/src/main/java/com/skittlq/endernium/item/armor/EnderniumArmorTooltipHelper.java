@@ -3,7 +3,7 @@ package com.skittlq.endernium.item.armor;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.client.EnderniumClientEquipmentState;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -23,7 +23,7 @@ final class EnderniumArmorTooltipHelper {
             return;
         }
 
-        if (!EnderniumAwakening.isClientAwakened()) {
+        if (!EnderniumBlessing.isClientBlessed()) {
             tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
                     .withStyle(ChatFormatting.GRAY));
             return;

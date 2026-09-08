@@ -1,6 +1,6 @@
 package com.skittlq.endernium.combat;
 
-import com.skittlq.endernium.progression.DragonAwakeningTracker;
+import com.skittlq.endernium.progression.DragonBlessingTracker;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -15,7 +15,7 @@ public final class EnderniumCombatHooks {
         if (entity instanceof EnderDragon dragon
                 && source.getEntity() instanceof ServerPlayer attacker
                 && shouldRecordDragonDamage(inflictedDamage, true)) {
-            DragonAwakeningTracker.recordDragonDamage(attacker, dragon);
+            DragonBlessingTracker.recordDragonDamage(attacker, dragon);
         }
         if (entity instanceof ServerPlayer victim
                 && source.getEntity() instanceof ServerPlayer attacker

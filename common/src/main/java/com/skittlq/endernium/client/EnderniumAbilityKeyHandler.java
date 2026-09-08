@@ -1,6 +1,6 @@
 package com.skittlq.endernium.client;
 
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
@@ -21,7 +21,7 @@ public final class EnderniumAbilityKeyHandler {
         }
         while (abilityKey.consumeClick()) {
             if (!handledForCurrentHold && client.player != null && client.getConnection() != null) {
-                if (EnderniumAwakening.isClientAwakened()) {
+                if (EnderniumBlessing.isClientBlessed()) {
                     sendActivation.run();
                 } else {
                     EnderniumClientBehavior.playLockedAbilityCue(client);

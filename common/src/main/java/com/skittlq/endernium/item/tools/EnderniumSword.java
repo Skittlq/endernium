@@ -7,7 +7,7 @@ import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
-import com.skittlq.endernium.progression.EnderniumAwakening;
+import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import com.skittlq.endernium.util.EnderniumCooldowns;
@@ -325,7 +325,7 @@ public class EnderniumSword extends Item {
                 && player.level() == originLevel
                 && player.getItemInHand(hand) == activatedWeapon
                 && activatedWeapon.getItem() instanceof EnderniumSword
-                && EnderniumAwakening.isAwakened(player)
+                && EnderniumBlessing.isBlessed(player)
                 && EnderniumGameplayConfig.swordAbilityEnabled();
     }
 
@@ -375,7 +375,7 @@ public class EnderniumSword extends Item {
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         EnderniumGameplayConfig.Snapshot clientSettings = EnderniumClientGameplaySettings.get();
         if (clientSettings.swordAbilityEnabled()) {
-            if (!EnderniumAwakening.isClientAwakened()) {
+            if (!EnderniumBlessing.isClientBlessed()) {
                 tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
                         .withStyle(ChatFormatting.GRAY));
             } else {

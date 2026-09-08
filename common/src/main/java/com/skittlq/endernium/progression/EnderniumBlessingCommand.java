@@ -7,15 +7,15 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-/** Operator tools for repairing or inspecting a player's awakening state. */
-public final class EnderniumAwakeningCommand {
-    private EnderniumAwakeningCommand() {
+/** Operator tools for repairing or inspecting a player's blessing state. */
+public final class EnderniumBlessingCommand {
+    private EnderniumBlessingCommand() {
     }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("endernium")
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                .then(Commands.literal("awakening")
+                .then(Commands.literal("blessing")
                         .then(Commands.literal("grant")
                                 .then(Commands.argument("player", EntityArgument.player())
                                         .executes(context -> grant(
@@ -37,33 +37,33 @@ public final class EnderniumAwakeningCommand {
     }
 
     private static int grant(CommandSourceStack source, ServerPlayer player) {
-        EnderniumAwakeningSavedData.get(player.level().getServer()).remove(player.getUUID());
-        EnderniumAwakening.setAwakened(player, true, false);
+        EnderniumBlessingSavedData.get(player.level().getServer()).remove(player.getUUID());
+        EnderniumBlessing.setBlessed(player, true, false);
         source.sendSuccess(
-                () -> Component.literal("Granted Endernium awakening to " + player.getScoreboardName() + "."),
+                () -> Component.literal("Granted Endernium blessing to " + player.getScoreboardName() + "."),
                 true
         );
         return 1;
     }
 
     private static int revoke(CommandSourceStack source, ServerPlayer player) {
-        EnderniumAwakeningSavedData.get(player.level().getServer()).remove(player.getUUID());
-        EnderniumAwakening.setAwakened(player, false, false);
+        EnderniumBlessingSavedData.get(player.level().getServer()).remove(player.getUUID());
+        EnderniumBlessing.setBlessed(player, false, false);
         source.sendSuccess(
-                () -> Component.literal("Revoked Endernium awakening from " + player.getScoreboardName() + "."),
+                () -> Component.literal("Revoked Endernium blessing from " + player.getScoreboardName() + "."),
                 true
         );
         return 1;
     }
 
     private static int check(CommandSourceStack source, ServerPlayer player) {
-        boolean awakened = EnderniumAwakening.isAwakened(player);
-        boolean pending = EnderniumAwakeningSavedData.get(player.level().getServer()).contains(player.getUUID());
-        String state = awakened ? "awakened" : pending ? "awaiting blessing" : "dormant";
+        boolean blessed = EnderniumBlessing.isBlessed(player);
+        boolean pending = EnderniumBlessingSavedData.get(player.level().getServer()).contains(player.getUUID());
+        String state = blessed ? "blessed" : pending ? "awaiting blessing" : "dormant";
         source.sendSuccess(
                 () -> Component.literal(player.getScoreboardName() + " is " + state + "."),
                 false
         );
-        return awakened ? 1 : 0;
+        return blessed ? 1 : 0;
     }
 }

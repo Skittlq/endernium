@@ -14,8 +14,8 @@ import com.skittlq.endernium.loot.ModLootConditions;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.network.ModNetworking;
 import com.skittlq.endernium.particles.ModParticles;
-import com.skittlq.endernium.progression.EnderniumAwakeningHandler;
-import com.skittlq.endernium.progression.EnderniumAwakeningCommand;
+import com.skittlq.endernium.progression.EnderniumBlessingHandler;
+import com.skittlq.endernium.progression.EnderniumBlessingCommand;
 import com.skittlq.endernium.util.EnderniumTickSchedulerEvents;
 import com.skittlq.endernium.util.EnderniumUtilsEvents;
 import com.skittlq.endernium.util.EnderniumUtils;
@@ -45,7 +45,7 @@ public class Endernium implements ModInitializer {
         ModItems.register();
         ModParticles.register();
         ModNetworking.register();
-        EnderniumAwakeningHandler.register();
+        EnderniumBlessingHandler.register();
         EnderniumCombatEvents.register();
         ModCriteriaTriggerRegistrar.register();
         ModFeatures.register();
@@ -58,7 +58,7 @@ public class Endernium implements ModInitializer {
         EnderniumArmorAbilityHandler.register();
         EnderniumSwordCooldownHandler.register();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                EnderniumAwakeningCommand.register(dispatcher));
+                EnderniumBlessingCommand.register(dispatcher));
         if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
             CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                     DragonDeathVfxDebugCommand.register(dispatcher));
