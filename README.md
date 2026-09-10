@@ -37,7 +37,7 @@ Using Endernium Ingots and the appropriate Smithing Template, you may upgrade th
 
 The Endernium Sword, Endernium tools, and full armor set come with special abilities. Their normal equipment stats work immediately, but their supernatural abilities must first be blessed.
 
-### Blessing Endernium
+### The Endernium Blessing
 
 - Help defeat the Ender Dragon to permanently unlock Endernium abilities. When the dragon falls, Endernium will seek you out and grant its blessing.
 
