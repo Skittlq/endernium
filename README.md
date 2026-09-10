@@ -39,12 +39,7 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 
 ### Blessing Endernium
 
-- Participate in a successful Ender Dragon fight by damaging the dragon or fighting within the central End arena for at least 30 seconds.
-- Every dragon fight counts, including respawned dragons, so players who join a world later can still earn the blessing.
-- When the dragon falls, streams of Endernium energy gather around it, fly to every qualifying player, orbit them, and absorb into them as a visual blessing.
-- Participation is retained if a qualifying player dies or disconnects. Their shorter blessing waits at the exit portal and begins the next time they enter the End carrying or wearing Endernium equipment.
-- The blessing is permanently saved to the player. Existing players who already completed Minecraft's **Free the End** advancement are unlocked silently.
-- Dormant abilities do not display an explanatory message; attempting one produces only a subtle failed particle and sound cue.
+- Help defeat the Ender Dragon to permanently unlock Endernium abilities. When the dragon falls, Endernium will seek you out and grant its blessing.
 
 - **Endernium Armor Set**
   - Grants a unique "last-minute defense" ability when wearing the full set of armor.
@@ -55,9 +50,8 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 
 - **Endernium Sword**
   - Features a _Teleportation Barrage_ attack.
-  - Press **`R`** to automatically teleport to valid targets in a wide forward arc, plus targets within 2 blocks in any direction, and slice them.
-  - Against players, it can only target someone who has attacked you; attacking another player does not give you permission to barrage them.
-  - Damage behaves like a normal sword hit before the ability multiplier, including enchantments, buffs, debuffs, armor, Protection, and effects such as Fire Aspect.
+  - Press **`R`** to automatically teleport to valid targets in a wide forward arc, and slice them.
+  - Against players, it can only target someone who has attacked you.
   - Deals **double damage** to players, and **triple damage** to each mob.
   - Base cooldown: **10 seconds**.
   - Additional **5 seconds** cooldown per mob hit.
