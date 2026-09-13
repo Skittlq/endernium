@@ -5,11 +5,15 @@ import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.EnderniumItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorUtil;
+import com.skittlq.endernium.item.armor.EnderniumHorseArmorAbility;
+import com.skittlq.endernium.item.armor.EnderniumNautilusArmorAbility;
 import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.EnderniumSpear;
 import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumAxe;
 import com.skittlq.endernium.item.tools.EnderniumHoe;
+import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTargeting;
@@ -23,6 +27,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
@@ -43,6 +48,34 @@ public final class EnderniumClientBehavior {
             EnderniumConstants.MOD_ID,
             "textures/item/endernium_sword_ready.png"
     );
+    public static final Identifier HORSE_COOLDOWN_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_horse_armor.png"
+    );
+    public static final Identifier NAUTILUS_COOLDOWN_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_nautilus_armor.png"
+    );
+    public static final Identifier SPEAR_COOLDOWN_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_spear.png"
+    );
+    public static final Identifier PICKAXE_VEIN_MINING_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_pickaxe.png"
+    );
+    public static final Identifier SHOVEL_VEIN_MINING_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_shovel.png"
+    );
+    public static final Identifier AXE_VEIN_MINING_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_axe.png"
+    );
+    public static final Identifier HOE_VEIN_MINING_ICON = Identifier.fromNamespaceAndPath(
+            EnderniumConstants.MOD_ID,
+            "textures/item/endernium_hoe.png"
+    );
     public static final int COOLDOWN_ICON_SIZE = 16;
     public static final int COOLDOWN_SPRITE_WIDTH = 14;
     public static final int COOLDOWN_SPRITE_HEIGHT = 13;
@@ -57,6 +90,10 @@ public final class EnderniumClientBehavior {
             new CooldownHudFrame(false, 0.0F, 0.0F, 0.0F, false);
     private static final CooldownHudTracker ARMOR_HUD_TRACKER = new CooldownHudTracker();
     private static final CooldownHudTracker SWORD_HUD_TRACKER = new CooldownHudTracker();
+    private static final CooldownHudTracker HORSE_HUD_TRACKER = new CooldownHudTracker();
+    private static final CooldownHudTracker NAUTILUS_HUD_TRACKER = new CooldownHudTracker();
+    private static final CooldownHudTracker SPEAR_HUD_TRACKER = new CooldownHudTracker();
+    private static final VeinMiningHudTracker VEIN_MINING_HUD_TRACKER = new VeinMiningHudTracker();
 
     private EnderniumClientBehavior() {
     }
@@ -82,6 +119,11 @@ public final class EnderniumClientBehavior {
         CameraLerpHandler.reset();
         ARMOR_HUD_TRACKER.reset();
         SWORD_HUD_TRACKER.reset();
+        HORSE_HUD_TRACKER.reset();
+        NAUTILUS_HUD_TRACKER.reset();
+        SPEAR_HUD_TRACKER.reset();
+        VEIN_MINING_HUD_TRACKER.reset();
+        EnderniumClientVeinMiningState.reset();
         EnderniumVfxManager.clear();
     }
 
@@ -94,13 +136,18 @@ public final class EnderniumClientBehavior {
 
     private static boolean hasEnabledAbilityItem(Player player) {
         EnderniumGameplayConfig.Snapshot settings = EnderniumClientGameplaySettings.get();
-        return hasEnabledAbilityItem(player.getMainHandItem(), settings)
+        return EnderniumHorseArmorAbility.hasArmoredHorseMount(player)
+                || EnderniumNautilusArmorAbility.hasArmoredNautilusMount(player)
+                || hasEnabledAbilityItem(player.getMainHandItem(), settings)
                 || hasEnabledAbilityItem(player.getOffhandItem(), settings);
     }
 
     private static boolean hasEnabledAbilityItem(ItemStack stack, EnderniumGameplayConfig.Snapshot settings) {
         if (stack.getItem() instanceof EnderniumSword) {
             return settings.swordAbilityEnabled();
+        }
+        if (stack.getItem() instanceof EnderniumSpear) {
+            return true;
         }
         return settings.toolsVeinMiningEnabled()
                 && (stack.getItem() instanceof EnderniumPickaxe
@@ -125,6 +172,53 @@ public final class EnderniumClientBehavior {
 
         return player.getMainHandItem().getItem() instanceof EnderniumSword
                 || player.getOffhandItem().getItem() instanceof EnderniumSword;
+    }
+
+    public static boolean shouldRenderHorseCooldown(Player player) {
+        return player != null
+                && EnderniumBlessing.isBlessed(player)
+                && EnderniumHorseArmorAbility.hasArmoredHorseMount(player);
+    }
+
+    public static boolean shouldRenderNautilusCooldown(Player player) {
+        return player != null
+                && EnderniumBlessing.isBlessed(player)
+                && EnderniumNautilusArmorAbility.hasArmoredNautilusMount(player);
+    }
+
+    public static boolean shouldRenderSpearCooldown(Player player) {
+        return player != null
+                && EnderniumBlessing.isBlessed(player)
+                && EnderniumSpear.isHeldBy(player);
+    }
+
+    public static ItemStack heldVeinMiningTool(Player player) {
+        ItemStack mainHand = player.getMainHandItem();
+        if (isVeinMiningTool(mainHand)) {
+            return mainHand;
+        }
+        ItemStack offhand = player.getOffhandItem();
+        return isVeinMiningTool(offhand) ? offhand : ItemStack.EMPTY;
+    }
+
+    private static boolean isVeinMiningTool(ItemStack stack) {
+        return stack.getItem() instanceof EnderniumPickaxe
+                || stack.getItem() instanceof EnderniumShovel
+                || stack.getItem() instanceof EnderniumAxe
+                || stack.getItem() instanceof EnderniumHoe;
+    }
+
+    private static Identifier veinMiningIcon(ItemStack stack) {
+        if (stack.getItem() instanceof EnderniumPickaxe) {
+            return PICKAXE_VEIN_MINING_ICON;
+        }
+        if (stack.getItem() instanceof EnderniumShovel) {
+            return SHOVEL_VEIN_MINING_ICON;
+        }
+        if (stack.getItem() instanceof EnderniumAxe) {
+            return AXE_VEIN_MINING_ICON;
+        }
+        return HOE_VEIN_MINING_ICON;
     }
 
     // Slot 0 sits right next to the hotbar; each further slot stacks outward, so a lone icon closes the gap.
@@ -153,6 +247,18 @@ public final class EnderniumClientBehavior {
         return SWORD_HUD_TRACKER.frame(cooldownRemaining);
     }
 
+    public static CooldownHudFrame horseCooldownHudFrame(float cooldownRemaining) {
+        return HORSE_HUD_TRACKER.frame(cooldownRemaining);
+    }
+
+    public static CooldownHudFrame nautilusCooldownHudFrame(float cooldownRemaining) {
+        return NAUTILUS_HUD_TRACKER.frame(cooldownRemaining);
+    }
+
+    public static CooldownHudFrame spearCooldownHudFrame(float cooldownRemaining) {
+        return SPEAR_HUD_TRACKER.frame(cooldownRemaining);
+    }
+
     public static void resetArmorCooldownHud() {
         ARMOR_HUD_TRACKER.reset();
     }
@@ -161,9 +267,23 @@ public final class EnderniumClientBehavior {
         SWORD_HUD_TRACKER.reset();
     }
 
+    public static void resetHorseCooldownHud() {
+        HORSE_HUD_TRACKER.reset();
+    }
+
+    public static void resetNautilusCooldownHud() {
+        NAUTILUS_HUD_TRACKER.reset();
+    }
+
+    public static void resetSpearCooldownHud() {
+        SPEAR_HUD_TRACKER.reset();
+    }
+
     public static void triggerBlessingReadyHud() {
         ARMOR_HUD_TRACKER.triggerReady();
         SWORD_HUD_TRACKER.triggerReady();
+        HORSE_HUD_TRACKER.triggerReady();
+        SPEAR_HUD_TRACKER.triggerReady();
     }
 
     public static void playCooldownReadySound(Minecraft client) {
@@ -190,6 +310,26 @@ public final class EnderniumClientBehavior {
 
         int slot = 0;
 
+        ItemStack veinMiningTool = heldVeinMiningTool(player);
+        if (!veinMiningTool.isEmpty()
+                && EnderniumClientGameplaySettings.get().toolsVeinMiningEnabled()) {
+            boolean enabled = EnderniumVeinMiningToolHelper.isVeinMiningPreferenceEnabled(
+                    veinMiningTool);
+            boolean active = enabled && EnderniumClientVeinMiningState.isActive();
+            CooldownHudFrame frame = VEIN_MINING_HUD_TRACKER.frame(
+                    veinMiningTool,
+                    enabled,
+                    active,
+                    EnderniumClientVeinMiningState.blockProgress(player.level().getGameTime())
+            );
+            HudIconPosition position = cooldownPosition(
+                    gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+            Identifier icon = veinMiningIcon(veinMiningTool);
+            renderCooldownIcon(gui, icon, icon, position, frame);
+        } else {
+            VEIN_MINING_HUD_TRACKER.reset();
+        }
+
         if (shouldRenderArmorCooldown(player, armorAbilityEnabled)) {
             float cooldownRemaining = EnderniumClientCooldowns.armorCooldownRemainingFraction(player.level().getGameTime());
             CooldownHudFrame frame = armorCooldownHudFrame(cooldownRemaining);
@@ -202,6 +342,54 @@ public final class EnderniumClientBehavior {
             }
         } else {
             resetArmorCooldownHud();
+        }
+
+        if (shouldRenderHorseCooldown(player)) {
+            float cooldownRemaining = EnderniumClientCooldowns.horseCooldownRemainingFraction(
+                    player.level().getGameTime());
+            CooldownHudFrame frame = horseCooldownHudFrame(cooldownRemaining);
+            if (frame.visible()) {
+                if (frame.playReadySound()) {
+                    playCooldownReadySound(client);
+                }
+                HudIconPosition position = cooldownPosition(
+                        gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+                renderCooldownIcon(gui, HORSE_COOLDOWN_ICON, HORSE_COOLDOWN_ICON, position, frame);
+            }
+        } else {
+            resetHorseCooldownHud();
+        }
+
+        if (shouldRenderNautilusCooldown(player)) {
+            float cooldownRemaining = EnderniumClientCooldowns.nautilusCooldownRemainingFraction(
+                    player.level().getGameTime());
+            CooldownHudFrame frame = nautilusCooldownHudFrame(cooldownRemaining);
+            if (frame.visible()) {
+                if (frame.playReadySound()) {
+                    playCooldownReadySound(client);
+                }
+                HudIconPosition position = cooldownPosition(
+                        gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+                renderCooldownIcon(gui, NAUTILUS_COOLDOWN_ICON, NAUTILUS_COOLDOWN_ICON, position, frame);
+            }
+        } else {
+            resetNautilusCooldownHud();
+        }
+
+        if (shouldRenderSpearCooldown(player)) {
+            float cooldownRemaining = EnderniumClientCooldowns.spearCooldownRemainingFraction(
+                    player.level().getGameTime());
+            CooldownHudFrame frame = spearCooldownHudFrame(cooldownRemaining);
+            if (frame.visible()) {
+                if (frame.playReadySound()) {
+                    playCooldownReadySound(client);
+                }
+                HudIconPosition position = cooldownPosition(
+                        gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+                renderCooldownIcon(gui, SPEAR_COOLDOWN_ICON, SPEAR_COOLDOWN_ICON, position, frame);
+            }
+        } else {
+            resetSpearCooldownHud();
         }
 
         if (shouldRenderSwordCooldown(player, swordAbilityEnabled)) {
@@ -364,6 +552,63 @@ public final class EnderniumClientBehavior {
         void triggerReady() {
             wasActive = false;
             readyAtNanos = System.nanoTime();
+        }
+    }
+
+    private static final class VeinMiningHudTracker {
+        private Item trackedItem;
+        private boolean initialized;
+        private boolean wasEnabled;
+        private long enabledAtNanos = -1L;
+
+        CooldownHudFrame frame(
+                ItemStack stack,
+                boolean enabled,
+                boolean active,
+                float blockProgress
+        ) {
+            long nowNanos = System.nanoTime();
+            if (trackedItem != stack.getItem()) {
+                trackedItem = stack.getItem();
+                initialized = true;
+                wasEnabled = enabled;
+                enabledAtNanos = -1L;
+            } else if (!initialized) {
+                initialized = true;
+                wasEnabled = enabled;
+            }
+
+            if (enabled && !wasEnabled) {
+                enabledAtNanos = nowNanos;
+            }
+            wasEnabled = enabled;
+
+            float progress;
+            if (!enabled) {
+                progress = 0.0F;
+            } else if (active) {
+                progress = Math.max(0.0F, Math.min(1.0F, blockProgress));
+            } else {
+                progress = 1.0F;
+            }
+
+            float flashOpacity = 0.0F;
+            if (enabledAtNanos >= 0L) {
+                long elapsed = nowNanos - enabledAtNanos;
+                if (elapsed < READY_FLASH_DURATION_NANOS) {
+                    flashOpacity = 1.0F - (float) elapsed / READY_FLASH_DURATION_NANOS;
+                } else {
+                    enabledAtNanos = -1L;
+                }
+            }
+            return new CooldownHudFrame(true, progress, 1.0F, flashOpacity, false);
+        }
+
+        void reset() {
+            trackedItem = null;
+            initialized = false;
+            wasEnabled = false;
+            enabledAtNanos = -1L;
         }
     }
 }

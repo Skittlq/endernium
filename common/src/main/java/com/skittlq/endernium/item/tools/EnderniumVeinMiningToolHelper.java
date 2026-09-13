@@ -11,13 +11,10 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -27,13 +24,10 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.function.Consumer;
 
 public final class EnderniumVeinMiningToolHelper {
     static final String VEIN_MINING_KEY = "VeinMiningEnabled";
-    private static final String VEIN_MINING_NOTIFIED_KEY = "VeinMiningNotified";
 
     private EnderniumVeinMiningToolHelper() {
     }
@@ -46,14 +40,13 @@ public final class EnderniumVeinMiningToolHelper {
         return isVeinMiningPreferenceEnabled(stack);
     }
 
-    private static boolean isVeinMiningPreferenceEnabled(ItemStack stack) {
+    public static boolean isVeinMiningPreferenceEnabled(ItemStack stack) {
         CompoundTag tag = getOrCreateCustomDataTag(stack);
         return tag.getBooleanOr(VEIN_MINING_KEY, false);
     }
 
     static void setVeinMiningEnabled(ItemStack stack, boolean enabled) {
         CompoundTag tag = getOrCreateCustomDataTag(stack);
-        tag.remove(VEIN_MINING_NOTIFIED_KEY);
         tag.putByte(VEIN_MINING_KEY, (byte) (enabled ? 1 : 0));
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
@@ -72,11 +65,11 @@ public final class EnderniumVeinMiningToolHelper {
         if (player.isShiftKeyDown()) {
             boolean enabled = !isVeinMiningPreferenceEnabled(stack);
             setVeinMiningEnabled(stack, enabled);
+            if (!enabled) {
+                EnderniumUtils.cancelVeinMining(player, stack);
+            }
 
             if (!level.isClientSide()) {
-                player.sendOverlayMessage(
-                        veinMiningStatus(enabled).withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY)
-                );
                 level.playSound(null, player.blockPosition(),
                         SoundEvents.ENDERMAN_TELEPORT,
                         SoundSource.PLAYERS, 0.25F, enabled ? 1.4F : 0.8F);
@@ -84,16 +77,9 @@ public final class EnderniumVeinMiningToolHelper {
             return InteractionResult.SUCCESS;
         }
 
-        boolean hadActiveOperation = EnderniumUtils.hasActiveVeinMiningOperation(player, stack);
         EnderniumUtils.cancelVeinMining(player, stack);
 
         if (!level.isClientSide()) {
-            if (hadActiveOperation) {
-                player.sendOverlayMessage(
-                        Component.translatable("endernium.message.vein_mining.cancelled")
-                                .withStyle(ChatFormatting.GRAY)
-                );
-            }
             level.playSound(null, player.blockPosition(),
                     SoundEvents.ENCHANTMENT_TABLE_USE,
                     SoundSource.PLAYERS, 0.25F, 1.0F);
@@ -139,36 +125,6 @@ public final class EnderniumVeinMiningToolHelper {
                 EnderniumKeyBindings.abilityKeyName()
         ).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable("endernium.tooltip.vein_mining.works").withStyle(ChatFormatting.GRAY));
-    }
-
-    static void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
-        if (level.isClientSide()
-                || !(entity instanceof Player player)
-                || !EnderniumBlessing.isBlessed(player)) {
-            return;
-        }
-
-        boolean inHand = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
-        CompoundTag tag = getOrCreateCustomDataTag(stack);
-        boolean notified = tag.getBooleanOr(VEIN_MINING_NOTIFIED_KEY, false);
-
-        if (!inHand || !EnderniumGameplayConfig.toolsVeinMiningEnabled()) {
-            if (notified) {
-                tag.remove(VEIN_MINING_NOTIFIED_KEY);
-                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-            }
-            return;
-        }
-
-        if (!notified) {
-            boolean enabled = isVeinMiningPreferenceEnabled(stack);
-            player.sendOverlayMessage(
-                    veinMiningStatus(enabled)
-                            .withStyle(enabled ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.GRAY)
-            );
-            tag.putByte(VEIN_MINING_NOTIFIED_KEY, (byte) 1);
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        }
     }
 
     private static MutableComponent veinMiningStatus(boolean enabled) {

@@ -6,7 +6,10 @@ import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.EnderniumSpear;
 import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
+import com.skittlq.endernium.item.armor.EnderniumHorseArmorAbility;
+import com.skittlq.endernium.item.armor.EnderniumNautilusArmorAbility;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -36,6 +39,12 @@ public final class EnderniumAbilityHandler {
                 return;
             }
         }
+        if (EnderniumHorseArmorAbility.tryDash(level, player)) {
+            return;
+        }
+        if (EnderniumNautilusArmorAbility.tryTeleport(level, player)) {
+            return;
+        }
         if (tryActivate(level, player, InteractionHand.MAIN_HAND)) {
             return;
         }
@@ -43,6 +52,8 @@ public final class EnderniumAbilityHandler {
     }
 
     public static void clearPlayerState(MinecraftServer server, UUID playerId) {
+        EnderniumHorseArmorAbility.clearPlayerState(server, playerId);
+        EnderniumNautilusArmorAbility.clearPlayerState(server, playerId);
         Map<UUID, Integer> playerTicks = LAST_PACKET_TICKS.get(server);
         if (playerTicks != null) {
             playerTicks.remove(playerId);
@@ -53,6 +64,8 @@ public final class EnderniumAbilityHandler {
     }
 
     public static void clearServerState(MinecraftServer server) {
+        EnderniumHorseArmorAbility.clearServerState(server);
+        EnderniumNautilusArmorAbility.clearServerState(server);
         LAST_PACKET_TICKS.remove(server);
     }
 
@@ -67,6 +80,14 @@ public final class EnderniumAbilityHandler {
                 return true;
             }
             sword.activateAbility(level, player, hand);
+            return true;
+        }
+
+        if (item instanceof EnderniumSpear spear) {
+            if (!EnderniumBlessing.isBlessed(player)) {
+                return true;
+            }
+            spear.activateAbility(level, player, hand);
             return true;
         }
 

@@ -3,6 +3,7 @@
   "package": "com.skittlq.endernium.mixin",
   "mixins": [
     "AbstractFurnaceBlockEntityMixin",
+    "LivingEntityMixin",
     "SingleItemRecipeMixin"
   ],
   "injectors": {

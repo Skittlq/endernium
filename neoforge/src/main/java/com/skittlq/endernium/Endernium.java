@@ -6,6 +6,7 @@ import com.skittlq.endernium.combat.EnderniumCombatEvents;
 import com.skittlq.endernium.item.EnderniumCreativeTabContents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
 import com.skittlq.endernium.item.ModItems;
+import com.skittlq.endernium.entity.ModEntities;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.item.tools.EnderniumSwordCooldownHandler;
 import com.skittlq.endernium.loot.ModLootConditions;
@@ -34,6 +35,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import com.skittlq.endernium.client.render.EnderniumThrownSpearRenderer;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -51,6 +54,7 @@ public class Endernium {
 
         ModCreativeModeTabs.register(modEventBus);
         ModItems.register(modEventBus);
+        ModEntities.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModLootConditions.register(modEventBus);
@@ -87,6 +91,11 @@ public class Endernium {
 
     @EventBusSubscriber(value = Dist.CLIENT, modid = MODID)
     public static class ClientModEvents {
+        @SubscribeEvent
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ModEntities.THROWN_SPEAR.get(), EnderniumThrownSpearRenderer::new);
+        }
+
         @SubscribeEvent
         public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(EnderniumParticles.ENDERNIUM_SWEEP.get(), EnderniumSweep.Provider::new);

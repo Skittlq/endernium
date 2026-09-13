@@ -5,6 +5,7 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import com.skittlq.endernium.item.tools.EnderniumSpear;
 
 import java.util.Objects;
 
@@ -60,6 +61,7 @@ public final class EnderniumBlessing {
             blessed = true;
         }
         EnderniumNetworking.sendBlessingState(player, blessed, false);
+        EnderniumSpear.syncCooldownOnLogin(player);
     }
 
     public static void setClientBlessed(boolean blessed) {

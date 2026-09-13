@@ -5,6 +5,7 @@ import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
+import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -32,6 +33,9 @@ public final class EnderniumNetworking {
     };
     private static GameplaySettingsSender gameplaySettingsSender = (player, payload) -> {
         throw new IllegalStateException("Endernium gameplay settings sender has not been bound yet");
+    };
+    private static VeinMiningStateSender veinMiningStateSender = (player, payload) -> {
+        throw new IllegalStateException("Endernium vein mining state sender has not been bound yet");
     };
 
     private EnderniumNetworking() {
@@ -75,6 +79,21 @@ public final class EnderniumNetworking {
                 new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.SWORD, endGameTime, durationTicks));
     }
 
+    public static void sendHorseCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
+        abilityCooldownSyncSender.send(player,
+                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.HORSE, endGameTime, durationTicks));
+    }
+
+    public static void sendSpearCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
+        abilityCooldownSyncSender.send(player,
+                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.SPEAR, endGameTime, durationTicks));
+    }
+
+    public static void sendNautilusCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
+        abilityCooldownSyncSender.send(player,
+                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.NAUTILUS, endGameTime, durationTicks));
+    }
+
     public static void bindBlessingStateSender(BlessingStateSender sender) {
         blessingStateSender = Objects.requireNonNull(sender);
     }
@@ -97,6 +116,22 @@ public final class EnderniumNetworking {
 
     public static void sendGameplaySettings(ServerPlayer player) {
         gameplaySettingsSender.send(player, GameplaySettingsPayload.current());
+    }
+
+    public static void bindVeinMiningStateSender(VeinMiningStateSender sender) {
+        veinMiningStateSender = Objects.requireNonNull(sender);
+    }
+
+    public static void sendVeinMiningState(
+            ServerPlayer player,
+            boolean active,
+            long blockEndGameTime,
+            int blockDurationTicks
+    ) {
+        veinMiningStateSender.send(
+                player,
+                new VeinMiningStatePayload(active, blockEndGameTime, blockDurationTicks)
+        );
     }
 
     @FunctionalInterface
@@ -132,5 +167,10 @@ public final class EnderniumNetworking {
     @FunctionalInterface
     public interface GameplaySettingsSender {
         void send(ServerPlayer player, GameplaySettingsPayload payload);
+    }
+
+    @FunctionalInterface
+    public interface VeinMiningStateSender {
+        void send(ServerPlayer player, VeinMiningStatePayload payload);
     }
 }

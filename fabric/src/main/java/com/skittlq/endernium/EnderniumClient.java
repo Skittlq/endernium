@@ -5,6 +5,9 @@ import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.client.vfx.EnderniumVfxCompatibility;
 import com.skittlq.endernium.config.EnderniumConfigManager;
 import com.skittlq.endernium.network.ModNetworking;
+import com.skittlq.endernium.entity.ModEntities;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import com.skittlq.endernium.client.render.EnderniumThrownSpearRenderer;
 import com.skittlq.endernium.particles.ModParticles;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -16,6 +19,7 @@ public class EnderniumClient implements ClientModInitializer {
         EnderniumVfxCompatibility.bindPreference(() -> EnderniumConfigManager.getConfig().vfxRenderMode);
         EnderniumShaderRenderer.pipelines().forEach(RenderPipelines::register);
         ModParticles.registerClient();
+        EntityRendererRegistry.register(ModEntities.THROWN_SPEAR, EnderniumThrownSpearRenderer::new);
         ModNetworking.registerClient();
         ClientEvents.register();
     }

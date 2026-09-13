@@ -34,7 +34,10 @@ public record AbilityCooldownSyncPayload(Ability ability, long endGameTime, int 
 
     public enum Ability {
         ARMOR,
-        SWORD;
+        SWORD,
+        HORSE,
+        SPEAR,
+        NAUTILUS;
 
         private static Ability fromId(int id) {
             if (id < 0 || id >= values().length) {

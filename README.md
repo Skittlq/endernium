@@ -42,27 +42,48 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 - Help defeat the Ender Dragon to permanently unlock Endernium abilities. When the dragon falls, Endernium will seek you out and grant its blessing.
 
 - **Endernium Armor Set**
-  - Grants a unique "last-minute defense" ability when wearing the full set of armor.
-  - When health drops below 4 (2 hearts), nearby monsters are launched away.
-  - You are granted a short regeneration buff to get you back up.
-  - Offers a final chance to survive dangerous encounters.
-  - 1.5 minute cooldown.
+  - Grants a unique _Last-Minute Defense_ ability when wearing the full set.
+  - When health drops below **4 HP (2 hearts)**, nearby monsters are launched away.
+  - Grants a short regeneration buff to help you recover.
+  - Offers one final chance to survive dangerous encounters.
+  - Cooldown: **1.5 minutes**.
 
 - **Endernium Sword**
   - Features a _Teleportation Barrage_ attack.
-  - Press **`R`** to automatically teleport to valid targets in a wide forward arc, and slice them.
+  - Press **`R`** to automatically teleport to valid targets in a wide forward arc and strike them.
   - Against players, it can only target someone who has attacked you.
-  - Deals **double damage** to players, and **triple damage** to each mob.
-  - Base cooldown: **10 seconds**.
-  - Additional **5 seconds** cooldown per mob hit.
+  - Deals **double damage** to players and **triple damage** to mobs.
+  - Consumes **2 durability per target successfully hit**.
+  - Cooldown: **10 seconds** + **5 seconds per target hit**.
+
+- **Endernium Spear**
+  - Features the _Ender Javelin_ ability.
+  - Press **`R`** to throw the spear directly toward your crosshair with pinpoint accuracy.
+  - The thrown spear deals the same damage as a normal melee strike.
+  - When it lands, you are teleported to it and the spear returns to your inventory.
+  - If it enters the void or remains airborne for too long, it returns without teleporting you.
+  - Cooldown: **8 seconds**, beginning when the spear returns.
+
+- **Endernium Horse Armor**
+  - Grants the _Ender Gallop_ ability to its horse.
+  - Passively allows the horse to teleport up ledges up to **2 blocks high**.
+  - Press **`R`** while mounted to teleport the horse and rider forward to traversable terrain, like a dash.
+  - Cooldown: **5 seconds**.
+
+- **Endernium Nautilus Armor**
+  - Grants the _Ender Current_ ability to its nautilus.
+  - Press **`R`** while mounted to teleport through water toward your crosshair.
+  - Can teleport horizontally or vertically through continuous water, up to **16 blocks**.
+  - Cooldown: **8 seconds**.
 
 - **Endernium Tools**
-  - Endernium Pickaxes, Shovels, Axes, and Hoes have a **Vein Mining** ability:
-    - Toggle with **Sneak + `R`**.
-    - Mine up to **64 connected blocks of the same type** at once.
-    - Cancel vein mining mid-operation with **`R`**.
+  - Endernium Pickaxes, Shovels, Axes, and Hoes feature a _Vein Mining_ ability:
+    - Toggle vein mining with **Sneak + `R`**.
+    - Mine up to **64 connected blocks of the same type** in one operation.
+    - Press **`R`** to cancel an active vein-mining operation.
+    - The HUD displays whether vein mining is enabled and the current block-breaking progress.
 
-  - Blocks broken with Endernium tools are **teleported directly to your inventory** (unless full).
+  - Blocks broken with Endernium tools are teleported directly into your inventory unless it is full.
 
 ## Configuration
 

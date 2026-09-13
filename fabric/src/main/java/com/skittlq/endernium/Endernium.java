@@ -7,6 +7,7 @@ import com.skittlq.endernium.config.EnderniumConfigManager;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.combat.EnderniumCombatEvents;
 import com.skittlq.endernium.item.ModCreativeModeTabs;
+import com.skittlq.endernium.entity.ModEntities;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.item.tools.EnderniumSwordCooldownHandler;
@@ -42,6 +43,7 @@ public class Endernium implements ModInitializer {
         ModAttachments.initialize();
         ModCreativeModeTabs.registerModCreativeModeTabs();
         ModBlocks.register();
+        ModEntities.register();
         ModItems.register();
         ModParticles.register();
         ModNetworking.register();

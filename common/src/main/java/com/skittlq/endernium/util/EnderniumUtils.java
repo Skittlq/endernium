@@ -7,6 +7,7 @@ import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.item.tools.EnderniumVeinMiningToolHelper;
+import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.core.BlockPos;
@@ -379,6 +380,12 @@ public final class EnderniumUtils {
         operation.currentProgressPos = target.pos;
         int delay = getVeinMiningDelayTicks(operation.level,
                 operation.level.getBlockState(target.pos), target.pos, operation.player);
+        EnderniumNetworking.sendVeinMiningState(
+                operation.player,
+                true,
+                operation.level.getGameTime() + delay,
+                delay
+        );
         scheduleVeinMiningProgress(operation, target.pos, delay);
         int taskId = EnderniumTickScheduler.schedule(operation.level.getServer(), operation.player.getUUID(),
                 () -> runNextBlock(operation), delay);
@@ -420,8 +427,11 @@ public final class EnderniumUtils {
 
     private static void finishOperation(VeinMiningOperation operation) {
         Map<UUID, VeinMiningOperation> operations = ACTIVE_OPERATIONS.get(operation.level.getServer());
-        if (operations != null && operations.remove(operation.player.getUUID(), operation) && operations.isEmpty()) {
-            ACTIVE_OPERATIONS.remove(operation.level.getServer());
+        if (operations != null && operations.remove(operation.player.getUUID(), operation)) {
+            EnderniumNetworking.sendVeinMiningState(operation.player, false, 0L, 0);
+            if (operations.isEmpty()) {
+                ACTIVE_OPERATIONS.remove(operation.level.getServer());
+            }
         }
         for (int taskId : operation.taskIds) {
             EnderniumTickScheduler.cancel(operation.level.getServer(), taskId);

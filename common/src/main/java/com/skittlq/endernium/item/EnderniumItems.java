@@ -4,12 +4,15 @@ import com.skittlq.endernium.item.armor.EnderniumBoots;
 import com.skittlq.endernium.item.armor.EnderniumChestplate;
 import com.skittlq.endernium.item.armor.EnderniumHelmet;
 import com.skittlq.endernium.item.armor.EnderniumLeggings;
+import com.skittlq.endernium.item.armor.EnderniumHorseArmor;
+import com.skittlq.endernium.item.armor.EnderniumNautilusArmor;
 import com.skittlq.endernium.item.armor.ModArmorMaterial;
 import com.skittlq.endernium.item.tools.EnderniumAxe;
 import com.skittlq.endernium.item.tools.EnderniumHoe;
 import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
+import com.skittlq.endernium.item.tools.EnderniumSpear;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -26,26 +29,15 @@ public enum EnderniumItems {
     ENDERNIUM_AXE("endernium_axe", properties -> new EnderniumAxe(properties.fireResistant())),
     ENDERNIUM_HOE("endernium_hoe", properties -> new EnderniumHoe(properties.fireResistant())),
     ENDERNIUM_SWORD("endernium_sword", properties -> new EnderniumSword(properties.fireResistant())),
-    ENDERNIUM_SPEAR("endernium_spear", properties -> new Item(properties.spear(
-            ModToolTiers.ENDERNIUM,
-            1.15F,
-            1.2F,
-            0.4F,
-            2.5F,
-            9.0F,
-            5.5F,
-            5.1F,
-            8.75F,
-            4.6F
-    ).fireResistant())),
+    ENDERNIUM_SPEAR("endernium_spear", EnderniumSpear::new),
     ENDERNIUM_HELMET("endernium_helmet", EnderniumHelmet::new),
     ENDERNIUM_CHESTPLATE("endernium_chestplate", EnderniumChestplate::new),
     ENDERNIUM_LEGGINGS("endernium_leggings", EnderniumLeggings::new),
     ENDERNIUM_BOOTS("endernium_boots", EnderniumBoots::new),
-    ENDERNIUM_HORSE_ARMOR("endernium_horse_armor", properties -> new Item(
+    ENDERNIUM_HORSE_ARMOR("endernium_horse_armor", properties -> new EnderniumHorseArmor(
             properties.horseArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()
     )),
-    ENDERNIUM_NAUTILUS_ARMOR("endernium_nautilus_armor", properties -> new Item(
+    ENDERNIUM_NAUTILUS_ARMOR("endernium_nautilus_armor", properties -> new EnderniumNautilusArmor(
             properties.nautilusArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()
     )),
     ENDERNIUM_DUST("endernium_dust", Item::new),

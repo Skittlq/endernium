@@ -10,6 +10,7 @@ import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
+import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
 import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -90,6 +91,15 @@ public class ModNetworking {
                     }
                 })
         );
+        registrar.playToClient(
+                VeinMiningStatePayload.TYPE,
+                VeinMiningStatePayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+                        EnderniumClientNetworkHandler.handleVeinMiningState(payload);
+                    }
+                })
+        );
         registrar.playToServer(
                 EnderniumAbilityPayload.TYPE,
                 EnderniumAbilityPayload.STREAM_CODEC,
@@ -106,6 +116,7 @@ public class ModNetworking {
         EnderniumNetworking.bindAbilityCooldownSyncSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindBlessingStateSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindGameplaySettingsSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindVeinMiningStateSender(PacketDistributor::sendToPlayer);
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

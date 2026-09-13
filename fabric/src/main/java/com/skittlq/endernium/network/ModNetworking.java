@@ -9,6 +9,7 @@ import com.skittlq.endernium.network.payloads.CameraLerpPayload;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
+import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -28,6 +29,7 @@ public final class ModNetworking {
         PayloadTypeRegistry.clientboundPlay().register(AbilityCooldownSyncPayload.TYPE, AbilityCooldownSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BlessingStatePayload.TYPE, BlessingStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(GameplaySettingsPayload.TYPE, GameplaySettingsPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(VeinMiningStatePayload.TYPE, VeinMiningStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(EnderniumAbilityPayload.TYPE, EnderniumAbilityPayload.STREAM_CODEC);
         ServerPlayNetworking.registerGlobalReceiver(EnderniumAbilityPayload.TYPE,
                 (payload, context) -> context.server().execute(() ->
@@ -41,6 +43,7 @@ public final class ModNetworking {
         EnderniumNetworking.bindAbilityCooldownSyncSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindBlessingStateSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindGameplaySettingsSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindVeinMiningStateSender(ServerPlayNetworking::send);
     }
 
     public static void registerClient() {
@@ -65,6 +68,9 @@ public final class ModNetworking {
         ClientPlayNetworking.registerGlobalReceiver(GameplaySettingsPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         EnderniumClientNetworkHandler.handleGameplaySettings(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(VeinMiningStatePayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientNetworkHandler.handleVeinMiningState(payload)));
     }
 
     public static void sendCameraLerp(ServerPlayer player, float targetYaw, float targetPitch, int durationTicks) {

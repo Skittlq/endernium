@@ -13,7 +13,6 @@ import com.skittlq.endernium.util.EnderniumTargeting;
 import com.skittlq.endernium.util.EnderniumCooldowns;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -169,7 +168,7 @@ public class EnderniumSword extends Item {
                 }
 
                 if (level instanceof ServerLevel effectsLevel) {
-                    effectsLevel.sendParticles(ParticleTypes.PORTAL,
+                    effectsLevel.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
                             player.getX(), player.getY() + 1.0D, player.getZ(),
                             32, 0.5D, 1.0D, 0.5D, 0.2D);
                     effectsLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -205,7 +204,7 @@ public class EnderniumSword extends Item {
                 EnderniumNetworking.sendCameraLerp(serverPlayer, yaw, pitch, 0);
 
                 if (level instanceof ServerLevel effectsLevel) {
-                    effectsLevel.sendParticles(ParticleTypes.PORTAL,
+                    effectsLevel.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
                             teleportPos.x, teleportPos.y + 1.0D, teleportPos.z,
                             32, 0.5D, 1.0D, 0.5D, 0.2D);
                     effectsLevel.playSound(null, teleportPos.x, teleportPos.y, teleportPos.z,
@@ -234,6 +233,7 @@ public class EnderniumSword extends Item {
                             attackSource,
                             activatedWeapon
                     );
+                    activatedWeapon.hurtAndBreak(2, serverPlayer, hand);
                     sequence.mobsHit++;
                 }
                 player.swing(hand, true);
