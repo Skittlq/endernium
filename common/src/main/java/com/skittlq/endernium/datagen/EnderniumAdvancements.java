@@ -19,7 +19,8 @@ public final class EnderniumAdvancements {
     }
 
     public static void generate(Consumer<AdvancementHolder> saver) {
-        Identifier freeTheEnd = Identifier.parse("minecraft:end/kill_dragon");
+        AdvancementHolder freeTheEnd = Advancement.Builder.advancement()
+                .build(Identifier.parse("minecraft:end/kill_dragon"));
 
         AdvancementHolder getIngot = save(Advancement.Builder.advancement()
                 .parent(freeTheEnd)

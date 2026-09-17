@@ -1,11 +1,12 @@
 #version 330
+#extension GL_ARB_separate_shader_objects : require
 
-#moj_import <minecraft:dynamictransforms.glsl>
+#include <minecraft:dynamictransforms.glsl>
 
-in vec4 vertexColor;
-in vec2 texCoord;
+layout(location = 0) in vec4 vertexColor;
+layout(location = 1) in vec2 texCoord;
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 // Java reserves negative U ranges for non-ribbon materials; normal ribbons use non-negative U.
 const float FACET_MATERIAL_MAX_U = -1.0;

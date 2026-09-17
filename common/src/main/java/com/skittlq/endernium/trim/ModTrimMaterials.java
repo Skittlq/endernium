@@ -11,6 +11,7 @@ import net.minecraft.util.Util;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 
 public final class ModTrimMaterials {
+    public static final Identifier ENDERNIUM_PALETTE = Identifier.fromNamespaceAndPath("endernium", "trim/endernium");
     public static final ResourceKey<TrimMaterial> ENDERNIUM = ResourceKey.create(
             Registries.TRIM_MATERIAL,
             Identifier.fromNamespaceAndPath("endernium", "endernium")
@@ -29,7 +30,7 @@ public final class ModTrimMaterials {
 
     private static void register(BootstrapContext<TrimMaterial> context, ResourceKey<TrimMaterial> trimKey, Style style) {
         TrimMaterial material = new TrimMaterial(
-                trimKey.identifier(),
+                ENDERNIUM_PALETTE,
                 Component.translatable(Util.makeDescriptionId("trim_material", trimKey.identifier())).withStyle(style)
         );
 

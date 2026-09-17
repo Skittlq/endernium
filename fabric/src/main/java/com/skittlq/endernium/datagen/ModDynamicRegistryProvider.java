@@ -42,7 +42,7 @@ public class ModDynamicRegistryProvider extends FabricDynamicRegistryProvider {
         entries.add(
                 ModTrimMaterials.ENDERNIUM,
                 new TrimMaterial(
-                        ModTrimMaterials.ENDERNIUM.identifier(),
+                        ModTrimMaterials.ENDERNIUM_PALETTE,
                         Component.translatable(Util.makeDescriptionId("trim_material", ModTrimMaterials.ENDERNIUM.identifier()))
                                 .withStyle(Style.EMPTY.withColor(TextColor.parseColor("#031cfc").getOrThrow()))
                 )
