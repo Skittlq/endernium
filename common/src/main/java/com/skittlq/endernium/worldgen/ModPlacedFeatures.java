@@ -6,7 +6,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
@@ -20,12 +20,12 @@ public final class ModPlacedFeatures {
     }
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
-        var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
+        var features = context.lookup(Registries.FEATURE);
 
         register(
                 context,
                 ENDERNIUM_ORE_PLACED_KEY,
-                configuredFeatures.getOrThrow(ModConfiguredFeatures.ENDERNIUM_ORE_KEY),
+                features.getOrThrow(ModConfiguredFeatures.ENDERNIUM_ORE_KEY),
                 ModOrePlacement.commonOrePlacement(
                         9,
                         HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(80)),
@@ -41,7 +41,7 @@ public final class ModPlacedFeatures {
     private static void register(
             BootstrapContext<PlacedFeature> context,
             ResourceKey<PlacedFeature> key,
-            Holder<ConfiguredFeature<?, ?>> configuration,
+            Holder<Feature> configuration,
             List<PlacementModifier> modifiers
     ) {
         context.register(key, new PlacedFeature(configuration, List.copyOf(modifiers)));

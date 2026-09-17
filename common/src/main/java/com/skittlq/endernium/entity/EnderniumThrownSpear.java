@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -131,7 +132,7 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
         if (player.getItemInHand(returnHand).isEmpty()) {
             player.setItemInHand(returnHand, returnedStack);
         } else if (!player.getInventory().add(returnedStack)) {
-            player.drop(returnedStack, false);
+            player.drop(returnedStack, false, Prediction.SERVER_ONLY);
         }
         EnderniumSpear.beginReturnCooldown(player);
 
@@ -158,7 +159,7 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
         if (player.getItemInHand(returnHand).isEmpty()) {
             player.setItemInHand(returnHand, returnedStack);
         } else if (!player.getInventory().add(returnedStack)) {
-            player.drop(returnedStack, false);
+            player.drop(returnedStack, false, Prediction.SERVER_ONLY);
         }
         EnderniumSpear.beginReturnCooldown(player);
 

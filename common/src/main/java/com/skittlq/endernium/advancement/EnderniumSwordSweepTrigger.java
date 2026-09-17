@@ -1,11 +1,12 @@
 package com.skittlq.endernium.advancement;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
 import net.minecraft.advancements.triggers.Criterion;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class EnderniumSwordSweepTrigger extends SimpleCriterionTrigger<Endernium
         return INSTANCE.createCriterion(new Instance(Optional.empty(), count));
     }
 
-    public record Instance(Optional<ContextAwarePredicate> player, int count) implements SimpleCriterionTrigger.SimpleInstance {
+    public record Instance(Optional<Holder<LootItemCondition>> player, int count) implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<Instance> CODEC = Codec.INT.fieldOf("count").xmap(
                 value -> new Instance(Optional.empty(), value),
                 Instance::count

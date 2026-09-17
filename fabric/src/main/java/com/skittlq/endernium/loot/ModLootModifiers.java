@@ -21,8 +21,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -115,7 +114,7 @@ public final class ModLootModifiers {
                                         HolderLookup.Provider registries) {
         List<LootModifierDefinition> definitions = MODIFIERS_BY_TABLE.getOrDefault(key.identifier(), Collections.emptyList());
         for (LootModifierDefinition definition : definitions) {
-            LootPool.Builder pool = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F));
+            LootPool.Builder pool = LootPool.lootPool().setRolls(ContextIntProviders.exactly(1));
             if (definition.requiresDragonDefeated()) {
                 pool.when(DragonDefeatedLootCondition.dragonDefeated());
             }
@@ -126,10 +125,10 @@ public final class ModLootModifiers {
             var itemBuilder = LootItem.lootTableItem(definition.item()).setWeight(1);
             if (definition.minCount() == definition.maxCount()) {
                 if (definition.minCount() != 1) {
-                    itemBuilder.apply(SetItemCountFunction.setCount(ConstantValue.exactly(definition.minCount())));
+                    itemBuilder.apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(definition.minCount())));
                 }
             } else {
-                itemBuilder.apply(SetItemCountFunction.setCount(UniformGenerator.between(definition.minCount(), definition.maxCount())));
+                itemBuilder.apply(SetItemCountFunction.setCount(ContextIntProviders.between(definition.minCount(), definition.maxCount())));
             }
 
             pool.add(itemBuilder);

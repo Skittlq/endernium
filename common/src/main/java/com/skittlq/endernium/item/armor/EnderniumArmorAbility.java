@@ -102,7 +102,7 @@ public final class EnderniumArmorAbility {
             }
             Vec3 pushVec = direction.scale(2.0D);
             target.push(pushVec.x, 1.0D, pushVec.z);
-            target.hurtMarked = true;
+            target.push(0.0D, 0.0D, 0.0D);
         }
 
         wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));

@@ -5,6 +5,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -18,17 +20,16 @@ public class DataGenerators {
     public static void gatherClientData(GatherDataEvent.Client event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        event.createWorldRegistryObjects(ModDatapackProvider.BUILDER);
+        event.createReloadableRegistryObjects(new RegistrySetBuilder().add(
+                Registries.ADVANCEMENT,
+                new AdvancementProvider(List.of(ModAdvancementProvider::new))
+        ));
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getWorldLookupProvider();
 
         generator.addProvider(true, new ModBlockTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModItemTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModModelProvider(packOutput));
-        generator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
-        generator.addProvider(true, new AdvancementProvider(
-                packOutput,
-                lookupProvider,
-                List.of(new ModAdvancementProvider()) // add your generator here
-        ));
         // Trim materials now handled inside ModDatapackProvider (single Registries provider)
     }
 
@@ -36,16 +37,15 @@ public class DataGenerators {
     public static void gatherServerData(GatherDataEvent.Server event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        event.createWorldRegistryObjects(ModDatapackProvider.BUILDER);
+        event.createReloadableRegistryObjects(new RegistrySetBuilder().add(
+                Registries.ADVANCEMENT,
+                new AdvancementProvider(List.of(ModAdvancementProvider::new))
+        ));
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getWorldLookupProvider();
 
         generator.addProvider(true, new ModBlockTagProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModModelProvider(packOutput));
-        generator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
         generator.addProvider(true, new ModItemTagProvider(packOutput, lookupProvider));
-        generator.addProvider(true, new AdvancementProvider(
-                packOutput,
-                lookupProvider,
-                List.of(new ModAdvancementProvider()) // add your generator here
-        ));
     }
 }

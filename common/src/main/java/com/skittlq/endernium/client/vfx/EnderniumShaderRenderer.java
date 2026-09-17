@@ -1,23 +1,23 @@
 package com.skittlq.endernium.client.vfx;
 
-import com.mojang.blaze3d.buffers.GpuBuffer;
-import com.mojang.blaze3d.PrimitiveTopology;
-import com.mojang.blaze3d.pipeline.BindGroupLayout;
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
-import com.mojang.blaze3d.pipeline.DepthStencilState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.commands.CommandEncoder;
+import com.mojang.renderpearl.api.commands.RenderPass;
+import com.mojang.renderpearl.api.pipeline.BindGroupLayout;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.CompareOp;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.UniformType;
+import com.mojang.renderpearl.api.textures.AddressMode;
+import com.mojang.renderpearl.api.textures.FilterMode;
+import com.mojang.renderpearl.api.textures.GpuSampler;
+import com.mojang.renderpearl.api.textures.GpuTexture;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.platform.CompareOp;
-import com.mojang.blaze3d.shaders.UniformType;
-import com.mojang.blaze3d.systems.CommandEncoder;
-import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.AddressMode;
-import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.textures.GpuSampler;
-import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -78,8 +78,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
     private static final double DISTANT_WAVE_CURVATURE_RADIUS = 900.0;
 
     private static final BindGroupLayout POST_BINDINGS = BindGroupLayout.builder()
-            .withSampler("Sampler0")
-            .withSampler("SamplerDepth")
+            .withUniform("Sampler0", UniformType.COMBINED_IMAGE_SAMPLER)
+            .withUniform("SamplerDepth", UniformType.COMBINED_IMAGE_SAMPLER)
             .withUniform("DragonPost", UniformType.UNIFORM_BUFFER)
             .build();
 
@@ -87,7 +87,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             .withLocation(Identifier.fromNamespaceAndPath("endernium", "pipeline/dragon_energy"))
             .withVertexShader(ENERGY_SHADER)
             .withFragmentShader(ENERGY_SHADER)
-            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
             .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
             .withCull(false)
             .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
@@ -99,7 +100,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             .withLocation(Identifier.fromNamespaceAndPath("endernium", "pipeline/dragon_wave"))
             .withVertexShader(WAVE_SHADER)
             .withFragmentShader(WAVE_SHADER)
-            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS)
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .withCull(false)
             .withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR)
@@ -172,14 +174,14 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     OptionalDouble.empty()
             )) {
                 if (energy != null) {
-                    pass.setPipeline(DRAGON_ENERGY);
+                    pass.setPipeline(RenderSystem.getCompiledPipeline(DRAGON_ENERGY));
                     RenderSystem.bindDefaultUniforms(pass);
                     pass.setUniform("DynamicTransforms", RenderSystem.getDynamicUniforms().writeTransform(new Matrix4f(modelViewMatrix)));
                     pass.setVertexBuffer(0, energy.buffer().slice());
                     pass.draw(energy.vertexCount(), 1, 0, 0);
                 }
                 if (wave != null) {
-                    pass.setPipeline(DRAGON_WAVE);
+                    pass.setPipeline(RenderSystem.getCompiledPipeline(DRAGON_WAVE));
                     RenderSystem.bindDefaultUniforms(pass);
                     pass.setUniform("DynamicTransforms", RenderSystem.getDynamicUniforms().writeTransform(new Matrix4f(modelViewMatrix)));
                     pass.setVertexBuffer(0, wave.buffer().slice());
@@ -255,10 +257,10 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     destination,
                     Optional.empty()
             )) {
-                pass.setPipeline(DRAGON_POST);
+                pass.setPipeline(RenderSystem.getCompiledPipeline(DRAGON_POST));
                 RenderSystem.bindDefaultUniforms(pass);
-                pass.bindTexture("Sampler0", sceneCopyView, sceneSampler);
-                pass.bindTexture("SamplerDepth", depth, depthSampler);
+                pass.setUniform("Sampler0", sceneCopyView, sceneSampler);
+                pass.setUniform("SamplerDepth", depth, depthSampler);
                 pass.setUniform("DragonPost", postUniform);
                 pass.draw(3, 1, 0, 0);
             }

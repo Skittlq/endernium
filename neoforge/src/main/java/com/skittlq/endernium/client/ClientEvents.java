@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class ClientEvents {
@@ -29,8 +28,8 @@ public class ClientEvents {
     );
     private static final KeyMapping ENDERNIUM_ABILITY_KEY = new KeyMapping(
             "key.endernium.activate_ability",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
+            InputConstants.Type.KEYBOARD,
+            InputConstants.KEY_R,
             ENDERNIUM_CATEGORY
     );
 

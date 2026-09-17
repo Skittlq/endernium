@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+
+import java.util.Optional;
 
 public class AddItemModifier extends LootModifier {
     public static final MapCodec<AddItemModifier> CODEC = RecordCodecBuilder.mapCodec(inst ->
@@ -24,7 +27,7 @@ public class AddItemModifier extends LootModifier {
     private final int minCount;
     private final int maxCount;
 
-    public AddItemModifier(LootItemCondition[] conditionsIn, int priority, Item item, int minCount, int maxCount) {
+    public AddItemModifier(Optional<Holder<LootItemCondition>> conditionsIn, int priority, Item item, int minCount, int maxCount) {
         super(conditionsIn, priority);
         this.item = item;
         this.minCount = Math.max(1, Math.min(64, minCount));

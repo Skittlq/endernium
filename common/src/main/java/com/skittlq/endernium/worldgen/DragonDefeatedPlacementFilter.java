@@ -7,9 +7,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
-import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
-public final class DragonDefeatedPlacementFilter extends PlacementFilter {
+public final class DragonDefeatedPlacementFilter implements PlacementFilter {
     public static final DragonDefeatedPlacementFilter INSTANCE = new DragonDefeatedPlacementFilter();
     public static final MapCodec<DragonDefeatedPlacementFilter> CODEC = MapCodec.unit(INSTANCE);
 
@@ -21,13 +20,13 @@ public final class DragonDefeatedPlacementFilter extends PlacementFilter {
     }
 
     @Override
-    protected boolean shouldPlace(PlacementContext context, RandomSource random, BlockPos pos) {
+    public boolean shouldPlace(PlacementContext context, RandomSource random, BlockPos pos) {
         ServerLevel level = context.getLevel().getLevel();
         return EnderniumDragonState.hasDragonBeenDefeated(level);
     }
 
     @Override
-    public PlacementModifierType<?> type() {
-        return EnderniumPlacementModifiers.dragonDefeatedType();
+    public MapCodec<DragonDefeatedPlacementFilter> codec() {
+        return CODEC;
     }
 }

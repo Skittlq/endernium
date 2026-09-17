@@ -29,11 +29,11 @@ public final class EnderniumThrownSpearRenderer
             CameraRenderState cameraState
     ) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot - 90.0F));
+        poseStack.rotateDegrees(Axis.YP, state.yRot - 90.0F);
         // The spear-in-hand texture is authored diagonally at 45 degrees and points
         // opposite the trident model's forward axis. Correct both offsets so the
         // spearhead, rather than the handle, leads along the projectile velocity.
-        poseStack.mulPose(Axis.ZP.rotationDegrees(state.xRot + 225.0F));
+        poseStack.rotateDegrees(Axis.ZP, state.xRot + 225.0F);
         poseStack.scale(1.5F, 1.5F, 1.5F);
         state.item.submit(
                 poseStack,
@@ -69,7 +69,7 @@ public final class EnderniumThrownSpearRenderer
     }
 
     @Override
-    protected AABB getBoundingBoxForCulling(EnderniumThrownSpear spear) {
-        return super.getBoundingBoxForCulling(spear).inflate(1.5);
+    protected AABB getBoundingBoxForCulling(EnderniumThrownSpear spear, float partialTick) {
+        return super.getBoundingBoxForCulling(spear, partialTick).inflate(1.5);
     }
 }

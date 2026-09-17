@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -212,7 +213,7 @@ public class EnderniumSword extends Item {
                 }
 
                 player.setDeltaMovement(player.getDeltaMovement().x, 0.42D, player.getDeltaMovement().z);
-                player.hurtMarked = true;
+                player.push(0.0D, 0.0D, 0.0D);
 
                 DamageSource attackSource = activatedWeapon.getDamageSource(player);
                 float baseAttackDamage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
@@ -236,7 +237,7 @@ public class EnderniumSword extends Item {
                     activatedWeapon.hurtAndBreak(2, serverPlayer, hand);
                     sequence.mobsHit++;
                 }
-                player.swing(hand, true);
+                player.swing(hand, SwingAnimation.DEFAULT, true);
 
                 if (level instanceof ServerLevel effectsLevel) {
                     effectsLevel.sendParticles(EnderniumParticles.ENDERNIUM_SWEEP.get(),

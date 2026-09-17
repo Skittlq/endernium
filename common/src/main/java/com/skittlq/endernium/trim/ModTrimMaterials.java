@@ -8,10 +8,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
-import net.minecraft.world.item.equipment.trim.MaterialAssetGroup;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
-
-import java.util.Map;
 
 public final class ModTrimMaterials {
     public static final ResourceKey<TrimMaterial> ENDERNIUM = ResourceKey.create(
@@ -31,11 +28,8 @@ public final class ModTrimMaterials {
     }
 
     private static void register(BootstrapContext<TrimMaterial> context, ResourceKey<TrimMaterial> trimKey, Style style) {
-        var assetInfo = new MaterialAssetGroup.AssetInfo(trimKey.identifier().getPath());
-        var assets = new MaterialAssetGroup(assetInfo, Map.of());
-
         TrimMaterial material = new TrimMaterial(
-                assets,
+                trimKey.identifier(),
                 Component.translatable(Util.makeDescriptionId("trim_material", trimKey.identifier())).withStyle(style)
         );
 

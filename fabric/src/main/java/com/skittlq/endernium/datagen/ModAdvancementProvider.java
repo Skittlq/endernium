@@ -16,6 +16,6 @@ public class ModAdvancementProvider extends FabricAdvancementProvider {
 
     @Override
     public void generateAdvancement(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver) {
-        EnderniumAdvancements.generate(registries, saver, id -> createPlaceholder(Identifier.parse(id)));
+        EnderniumAdvancements.generate(saver);
     }
 }

@@ -4,7 +4,7 @@ import com.skittlq.endernium.item.ModToolTiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Consumer;
 
-public class EnderniumAxe extends AxeItem {
+public class EnderniumAxe extends Item {
     public EnderniumAxe(Properties properties) {
-        super(ModToolTiers.ENDERNIUM, 5.0F, -3.0F, properties);
+        super(properties.axe(ModToolTiers.ENDERNIUM, 5.0F, -3.0F));
     }
 
     @Override

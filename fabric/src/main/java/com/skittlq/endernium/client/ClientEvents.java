@@ -23,7 +23,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
-import org.lwjgl.glfw.GLFW;
 
 public final class ClientEvents {
     private static final KeyMapping.Category ENDERNIUM_CATEGORY = KeyMapping.Category.register(
@@ -32,8 +31,8 @@ public final class ClientEvents {
     private static final Identifier COOLDOWN_HUD = Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "ability_cooldown_hud");
     private static final KeyMapping ENDERNIUM_ABILITY_KEY = new KeyMapping(
             "key.endernium.activate_ability",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
+            InputConstants.Type.KEYBOARD,
+            InputConstants.KEY_R,
             ENDERNIUM_CATEGORY
     );
     private static boolean registered;

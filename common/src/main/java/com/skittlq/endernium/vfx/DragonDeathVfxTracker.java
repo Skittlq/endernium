@@ -12,9 +12,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -243,17 +244,17 @@ public final class DragonDeathVfxTracker {
                 );
             }
 
-            List<EnderMan> candidates = new ArrayList<>();
+            List<Enderman> candidates = new ArrayList<>();
             for (UUID id : watchingEndermen) {
                 Entity entity = end.getEntity(id);
-                if (entity instanceof EnderMan enderman && enderman.isAlive()) {
+                if (entity instanceof Enderman enderman && enderman.isAlive()) {
                     candidates.add(enderman);
                 }
             }
             if (candidates.size() < MAX_REACTING_ENDERMEN) {
                 AABB searchBounds = AABB.ofSize(lastOrigin,
                         MAX_REACTION_RADIUS * 2.0D, 512.0D, MAX_REACTION_RADIUS * 2.0D);
-                for (EnderMan enderman : end.getEntitiesOfClass(EnderMan.class, searchBounds, EnderMan::isAlive)) {
+                for (Enderman enderman : end.getEntitiesOfClass(Enderman.class, searchBounds, Enderman::isAlive)) {
                     if (!watchingEndermen.contains(enderman.getUUID())) {
                         candidates.add(enderman);
                     }
@@ -262,7 +263,7 @@ public final class DragonDeathVfxTracker {
             candidates.sort(Comparator.comparingLong(enderman -> entityHash(sequenceSeed, enderman.getUUID())));
             int count = Math.min(MAX_REACTING_ENDERMEN, candidates.size());
             for (int i = 0; i < count; i++) {
-                EnderMan enderman = candidates.get(i);
+                Enderman enderman = candidates.get(i);
                 long hash = entityHash(sequenceSeed ^ 0x454E4445524D414EL, enderman.getUUID());
                 int arrival = Math.max(
                         1,
@@ -290,7 +291,7 @@ public final class DragonDeathVfxTracker {
         private void tickBuildupEndermen(ServerLevel end, Vec3 focus) {
             watchingEndermen.removeIf(id -> {
                 Entity entity = end.getEntity(id);
-                boolean remove = !(entity instanceof EnderMan enderman) || !enderman.isAlive();
+                boolean remove = !(entity instanceof Enderman enderman) || !enderman.isAlive();
                 if (remove) {
                     endermanAnchors.remove(id);
                 }
@@ -299,12 +300,12 @@ public final class DragonDeathVfxTracker {
             if (watchingEndermen.size() < MAX_REACTING_ENDERMEN && deathTicks % 10 == 0) {
                 AABB searchBounds = AABB.ofSize(lastOrigin,
                         MAX_REACTION_RADIUS * 2.0D, 512.0D, MAX_REACTION_RADIUS * 2.0D);
-                List<? extends EnderMan> candidates = new ArrayList<>(
-                        end.getEntitiesOfClass(EnderMan.class, searchBounds, EnderMan::isAlive));
+                List<? extends Enderman> candidates = new ArrayList<>(
+                        end.getEntitiesOfClass(Enderman.class, searchBounds, Enderman::isAlive));
                 candidates.sort(Comparator
-                        .comparingDouble((EnderMan enderman) -> horizontalDistanceSqr(enderman.position(), lastOrigin))
+                        .comparingDouble((Enderman enderman) -> horizontalDistanceSqr(enderman.position(), lastOrigin))
                         .thenComparingLong(enderman -> entityHash(sequenceSeed, enderman.getUUID())));
-                for (EnderMan enderman : candidates) {
+                for (Enderman enderman : candidates) {
                     if (watchingEndermen.size() >= MAX_REACTING_ENDERMEN) {
                         break;
                     }
@@ -316,7 +317,7 @@ public final class DragonDeathVfxTracker {
 
             for (UUID id : watchingEndermen) {
                 Entity entity = end.getEntity(id);
-                if (entity instanceof EnderMan enderman && enderman.isAlive()) {
+                if (entity instanceof Enderman enderman && enderman.isAlive()) {
                     holdEnderman(
                             enderman,
                             endermanAnchors.getOrDefault(id, enderman.position()),
@@ -357,7 +358,7 @@ public final class DragonDeathVfxTracker {
                         direction.y * 5.0 * exposureScale,
                         direction.z * 5.0 * exposureScale
                 );
-                player.hurtMarked = true;
+                player.push(0.0D, 0.0D, 0.0D);
                 pushedEntities.add(player.getUUID());
             }
         }
@@ -379,7 +380,7 @@ public final class DragonDeathVfxTracker {
                     direction.y * 5.0 * exposureScale,
                     direction.z * 5.0 * exposureScale
             );
-            entity.hurtMarked = true;
+            entity.push(0.0D, 0.0D, 0.0D);
             pushedEntities.add(entity.getUUID());
         }
 
@@ -420,7 +421,7 @@ public final class DragonDeathVfxTracker {
                     continue;
                 }
                 Entity entity = end.getEntity(reaction.endermanId);
-                if (!(entity instanceof EnderMan enderman) || !enderman.isAlive()) {
+                if (!(entity instanceof Enderman enderman) || !enderman.isAlive()) {
                     continue;
                 }
                 holdEnderman(enderman, reaction.anchor, lastOrigin);
@@ -431,7 +432,7 @@ public final class DragonDeathVfxTracker {
             }
         }
 
-        private void tryScatterTeleport(ServerLevel end, EnderMan enderman, long seed) {
+        private void tryScatterTeleport(ServerLevel end, Enderman enderman, long seed) {
             Vec3 outward = horizontalOutwardDirection(enderman.position(), seed);
             double baseAngle = Math.atan2(outward.z, outward.x);
             for (int attempt = 0; attempt < 8; attempt++) {
@@ -446,7 +447,8 @@ public final class DragonDeathVfxTracker {
                     if (!end.hasChunkAt(feet) || !isSafeStandingSpace(end, feet)) {
                         continue;
                     }
-                    if (enderman.randomTeleport(x + 0.5, y, z + 0.5, true)) {
+                    if (enderman.randomTeleport(x + 0.5, y, z + 0.5, true,
+                            BlockTags.ENDERMAN_DOES_NOT_TELEPORT_TO)) {
                         return;
                     }
                 }
@@ -473,7 +475,7 @@ public final class DragonDeathVfxTracker {
             return new Vec3(Math.cos(angle), 0.0, Math.sin(angle));
         }
 
-        private void holdEnderman(EnderMan enderman, Vec3 anchor, Vec3 focus) {
+        private void holdEnderman(Enderman enderman, Vec3 anchor, Vec3 focus) {
             enderman.getNavigation().stop();
             Vec3 movement = enderman.getDeltaMovement();
             enderman.setDeltaMovement(0.0, movement.y, 0.0);
@@ -503,7 +505,7 @@ public final class DragonDeathVfxTracker {
         private void releaseEndermen(ServerLevel end) {
             for (UUID id : watchingEndermen) {
                 Entity entity = end.getEntity(id);
-                if (entity instanceof EnderMan enderman && enderman.isAlive()) {
+                if (entity instanceof Enderman enderman && enderman.isAlive()) {
                     enderman.getNavigation().stop();
                     enderman.setDeltaMovement(enderman.getDeltaMovement().multiply(0.0D, 1.0D, 0.0D));
                 }

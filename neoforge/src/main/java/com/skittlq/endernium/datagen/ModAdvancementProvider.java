@@ -1,14 +1,16 @@
 package com.skittlq.endernium.datagen;
 
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 
-import java.util.function.Consumer;
+public class ModAdvancementProvider extends AdvancementSubProvider {
+    public ModAdvancementProvider(BootstrapContext<Advancement> output) {
+        super(output);
+    }
 
-public class ModAdvancementProvider implements AdvancementSubProvider {
     @Override
-    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver) {
-        EnderniumAdvancements.generate(registries, saver, AdvancementSubProvider::createPlaceholder);
+    public void generate() {
+        EnderniumAdvancements.generate(advancement -> advancement.register(output));
     }
 }

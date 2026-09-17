@@ -4,7 +4,7 @@ import com.skittlq.endernium.item.ModToolTiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Consumer;
 
-public class EnderniumHoe extends HoeItem {
+public class EnderniumHoe extends Item {
     public EnderniumHoe(Properties properties) {
-        super(ModToolTiers.ENDERNIUM, -4.0F, 0.0F, properties);
+        super(properties.hoe(ModToolTiers.ENDERNIUM, -4.0F, 0.0F));
     }
 
     @Override
