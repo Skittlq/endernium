@@ -11,7 +11,6 @@ import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
-import com.skittlq.endernium.util.EnderniumTargeting;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.api.distmarker.Dist;

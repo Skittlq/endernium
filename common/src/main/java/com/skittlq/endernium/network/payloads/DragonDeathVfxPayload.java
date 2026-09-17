@@ -22,6 +22,7 @@ public record DragonDeathVfxPayload(
             Identifier.fromNamespaceAndPath("endernium", "dragon_death_vfx")
     );
 
+    @SuppressWarnings("null")
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonDeathVfxPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT.map(Action::byId, Action::ordinal), DragonDeathVfxPayload::action,
             UUIDUtil.STREAM_CODEC, DragonDeathVfxPayload::dragonId,

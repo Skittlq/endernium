@@ -160,6 +160,7 @@ public final class DragonBlessingTracker {
         }
     }
 
+    @SuppressWarnings("null")
     private static void tickPassiveParticipation(ServerLevel end, FightSession fight) {
         for (ServerPlayer player : end.players()) {
             if (player.isSpectator() || !player.isAlive()) {
@@ -470,6 +471,7 @@ public final class DragonBlessingTracker {
             return 0.045 + distanceFactor * 0.055;
         }
 
+        @SuppressWarnings("unused")
         private void tickEmergence(ServerLevel level, int particleBudget) {
             double progress = age / (double)(EMERGENCE_END_TICK - 1);
             double contraction = 1.0 - smoothStep(progress) * 0.68;
@@ -490,6 +492,7 @@ public final class DragonBlessingTracker {
             }
         }
 
+        @SuppressWarnings("unused")
         private void tickGathering(ServerLevel level, int particleBudget) {
             double progress = (age - EMERGENCE_END_TICK) / (double)(GATHERING_END_TICK - EMERGENCE_END_TICK - 1);
             double clusterAngle = clusterAngle();
@@ -510,6 +513,7 @@ public final class DragonBlessingTracker {
             }
         }
 
+        @SuppressWarnings("unused")
         private void tickSeeking(ServerLevel level, Vec3 destination, int particleBudget) {
             double rawProgress = (age - GATHERING_END_TICK)
                     / (double)(SEEKING_END_TICK - GATHERING_END_TICK - 1);
@@ -547,6 +551,7 @@ public final class DragonBlessingTracker {
             }
         }
 
+        @SuppressWarnings("unused")
         private void tickLingering(
                 ServerLevel level,
                 Vec3 chestTarget,
@@ -579,6 +584,7 @@ public final class DragonBlessingTracker {
             }
         }
 
+        @SuppressWarnings("unused")
         private void tickOrbitAndAbsorb(
                 ServerLevel level,
                 Vec3 target,

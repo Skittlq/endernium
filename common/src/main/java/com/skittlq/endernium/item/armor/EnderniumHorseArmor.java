@@ -17,6 +17,7 @@ public final class EnderniumHorseArmor extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void appendHoverText(
             ItemStack stack,
             TooltipContext context,

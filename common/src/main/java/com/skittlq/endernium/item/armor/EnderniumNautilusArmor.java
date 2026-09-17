@@ -17,6 +17,7 @@ public final class EnderniumNautilusArmor extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void appendHoverText(
             ItemStack stack,
             TooltipContext context,

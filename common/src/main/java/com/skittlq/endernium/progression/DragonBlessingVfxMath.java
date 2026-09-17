@@ -204,10 +204,6 @@ public final class DragonBlessingVfxMath {
         return direction.lengthSqr() < 1.0E-6 ? new Vec3(0.0, 0.0, 1.0) : direction.normalize();
     }
 
-    private static double smoothStep(double value) {
-        return value * value * (3.0 - 2.0 * value);
-    }
-
     private static double smootherStep(double value) {
         return value * value * value * (value * (value * 6.0 - 15.0) + 10.0);
     }

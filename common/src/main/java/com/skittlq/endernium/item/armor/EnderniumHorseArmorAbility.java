@@ -5,6 +5,7 @@ import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.MinecraftServer;
@@ -181,7 +182,10 @@ public final class EnderniumHorseArmorAbility {
             double targetX = origin.x + offset.x;
             double targetZ = origin.z + offset.z;
             BlockPos targetBlock = BlockPos.containing(targetX, origin.y, targetZ);
-            if (!level.hasChunkAt(targetBlock) || !level.getWorldBorder().isWithinBounds(targetBlock)) {
+            if (!level.getChunkSource().hasChunk(
+                    SectionPos.blockToSectionCoord(targetBlock.getX()),
+                    SectionPos.blockToSectionCoord(targetBlock.getZ())
+            ) || !level.getWorldBorder().isWithinBounds(targetBlock)) {
                 continue;
             }
             for (double verticalOffset = MAX_LANDING_RISE;

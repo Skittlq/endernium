@@ -27,6 +27,7 @@ public class EnderniumAxe extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         EnderniumVeinMiningToolHelper.appendHoverText(stack, context, display, tooltipAdder, flag);

@@ -372,6 +372,7 @@ public class EnderniumSword extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         EnderniumGameplayConfig.Snapshot clientSettings = EnderniumClientGameplaySettings.get();

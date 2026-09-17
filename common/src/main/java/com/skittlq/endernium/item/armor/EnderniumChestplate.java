@@ -27,6 +27,7 @@ public class EnderniumChestplate extends Item {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltipAdder, TooltipFlag flag) {
         EnderniumArmorTooltipHelper.appendFullSetAbilityTooltip(tooltipAdder);

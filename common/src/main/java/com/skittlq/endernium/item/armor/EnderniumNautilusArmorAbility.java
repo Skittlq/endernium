@@ -5,6 +5,7 @@ import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -97,7 +98,10 @@ public final class EnderniumNautilusArmorAbility {
             Vec3 candidateCenter = center.add(direction.scale(distance));
             Vec3 candidate = candidateCenter.subtract(0.0, nautilus.getBbHeight() * 0.5, 0.0);
             BlockPos centerBlock = BlockPos.containing(candidateCenter);
-            if (!level.hasChunkAt(centerBlock)
+            if (!level.getChunkSource().hasChunk(
+                    SectionPos.blockToSectionCoord(centerBlock.getX()),
+                    SectionPos.blockToSectionCoord(centerBlock.getZ())
+            )
                     || !level.getWorldBorder().isWithinBounds(centerBlock)
                     || !level.getFluidState(centerBlock).is(FluidTags.WATER)) {
                 break;
