@@ -8,6 +8,7 @@ import com.skittlq.endernium.vfx.DragonDeathVfxTiming;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.PowerParticleOption;
@@ -428,7 +429,7 @@ public final class EnderniumVfxManager {
                 int z = candidate.z();
                 long hash = candidate.hash();
                 BlockPos probe = new BlockPos(x, Mth.floor(client.player.getY()), z);
-                if (!client.level.hasChunkAt(probe)) {
+                if (!hasChunk(client.level, probe)) {
                     continue;
                 }
                 int surfaceY = client.level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
@@ -546,7 +547,7 @@ public final class EnderniumVfxManager {
                 int x = Mth.floor(anchor.x + candidateDirection.x * radius);
                 int z = Mth.floor(anchor.z + candidateDirection.z * radius);
                 BlockPos probe = new BlockPos(x, Mth.floor(anchor.y), z);
-                if (!level.hasChunkAt(probe)) {
+                if (!hasChunk(level, probe)) {
                     continue;
                 }
                 int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
@@ -679,7 +680,7 @@ public final class EnderniumVfxManager {
                 int x = Mth.floor(42.0 * Math.cos(angle));
                 int z = Mth.floor(42.0 * Math.sin(angle));
                 BlockPos probe = new BlockPos(x, 64, z);
-                if (!level.hasChunkAt(probe)) {
+                if (!hasChunk(level, probe)) {
                     continue;
                 }
                 int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1;
@@ -854,6 +855,13 @@ public final class EnderniumVfxManager {
                 );
             }
         }
+    }
+
+    private static boolean hasChunk(ClientLevel level, BlockPos pos) {
+        return level.getChunkSource().hasChunk(
+                SectionPos.blockToSectionCoord(pos.getX()),
+                SectionPos.blockToSectionCoord(pos.getZ())
+        );
     }
 
     private static List<CometPath> createComets(long seed, int count) {

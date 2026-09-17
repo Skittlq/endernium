@@ -23,7 +23,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class ClientEvents {
-    private static final KeyMapping.Category ENDERNIUM_CATEGORY = KeyMapping.Category.register(
+    private static final KeyMapping.Category ENDERNIUM_CATEGORY = new KeyMapping.Category(
             Identifier.fromNamespaceAndPath(Endernium.MODID, "endernium")
     );
     private static final KeyMapping ENDERNIUM_ABILITY_KEY = new KeyMapping(
@@ -80,6 +80,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        event.registerCategory(ENDERNIUM_CATEGORY);
         event.register(ENDERNIUM_ABILITY_KEY);
         EnderniumKeyBindings.bindAbilityKeyName(ENDERNIUM_ABILITY_KEY::getTranslatedKeyMessage);
         EnderniumKeyBindings.bindSneakKeyName(

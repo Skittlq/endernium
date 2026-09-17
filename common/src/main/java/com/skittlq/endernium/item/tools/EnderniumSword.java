@@ -13,6 +13,7 @@ import com.skittlq.endernium.util.EnderniumTargeting;
 import com.skittlq.endernium.util.EnderniumCooldowns;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -186,7 +187,10 @@ public class EnderniumSword extends Item {
                 );
 
                 BlockPos teleportBlock = BlockPos.containing(teleportPos);
-                if (!serverLevel.hasChunkAt(teleportBlock)
+                if (!serverLevel.getChunkSource().hasChunk(
+                        SectionPos.blockToSectionCoord(teleportBlock.getX()),
+                        SectionPos.blockToSectionCoord(teleportBlock.getZ())
+                )
                         || !serverLevel.getWorldBorder().isWithinBounds(teleportBlock)
                         || !serverLevel.noCollision(player,
                         player.getBoundingBox().move(teleportPos.subtract(player.position())))) {
@@ -227,7 +231,11 @@ public class EnderniumSword extends Item {
                 normalAttackDamage += activatedWeapon.getItem().getAttackDamageBonus(
                         target, baseAttackDamage, attackSource);
                 float abilityDamageMultiplier = target instanceof Player ? 2.0F : 3.0F;
-                if (target.hurtOrSimulate(attackSource, normalAttackDamage * abilityDamageMultiplier)) {
+                if (target.hurtServer(
+                        serverPlayer.level(),
+                        attackSource,
+                        normalAttackDamage * abilityDamageMultiplier
+                )) {
                     EnchantmentHelper.doPostAttackEffectsWithItemSource(
                             serverPlayer.level(),
                             target,

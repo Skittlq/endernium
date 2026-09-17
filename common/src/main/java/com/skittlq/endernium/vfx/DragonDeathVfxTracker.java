@@ -4,6 +4,7 @@ import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -327,6 +328,7 @@ public final class DragonDeathVfxTracker {
             }
         }
 
+        @SuppressWarnings("null")
         private void tickAftermath(ServerLevel end) {
             pushPlayers(end);
             double diameter = MAX_REACTION_RADIUS * 2.0D;
@@ -444,7 +446,10 @@ public final class DragonDeathVfxTracker {
                 int startY = Mth.floor(enderman.getY()) + 4;
                 for (int y = startY; y >= startY - 10; y--) {
                     BlockPos feet = new BlockPos(x, y, z);
-                    if (!end.hasChunkAt(feet) || !isSafeStandingSpace(end, feet)) {
+                    if (!end.getChunkSource().hasChunk(
+                            SectionPos.blockToSectionCoord(feet.getX()),
+                            SectionPos.blockToSectionCoord(feet.getZ())
+                    ) || !isSafeStandingSpace(end, feet)) {
                         continue;
                     }
                     if (enderman.randomTeleport(x + 0.5, y, z + 0.5, true,
@@ -523,10 +528,6 @@ public final class DragonDeathVfxTracker {
                 && level.getFluidState(feet).isEmpty()
                 && level.getBlockState(feet.above()).getCollisionShape(level, feet.above()).isEmpty()
                 && level.getFluidState(feet.above()).isEmpty();
-    }
-
-    private static double horizontalDistance(Vec3 a, Vec3 b) {
-        return Math.sqrt(horizontalDistanceSqr(a, b));
     }
 
     private static double horizontalDistanceSqr(Vec3 a, Vec3 b) {
