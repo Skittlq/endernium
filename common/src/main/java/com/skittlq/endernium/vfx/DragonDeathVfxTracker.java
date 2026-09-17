@@ -328,7 +328,6 @@ public final class DragonDeathVfxTracker {
             }
         }
 
-        @SuppressWarnings("null")
         private void tickAftermath(ServerLevel end) {
             pushPlayers(end);
             double diameter = MAX_REACTION_RADIUS * 2.0D;

@@ -1,29 +1,24 @@
 package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.item.EnderniumTooltipProvider;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 
 import java.util.function.Consumer;
 
-public final class EnderniumHorseArmor extends Item {
+public final class EnderniumHorseArmor extends Item implements EnderniumTooltipProvider {
     public EnderniumHorseArmor(Properties properties) {
         super(properties);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void appendHoverText(
+    public void appendEnderniumTooltip(
             ItemStack stack,
-            TooltipContext context,
-            TooltipDisplay tooltipDisplay,
-            Consumer<Component> tooltipAdder,
-            TooltipFlag flag
+            Consumer<Component> tooltipAdder
     ) {
         if (!EnderniumBlessing.isClientBlessed()) {
             tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
@@ -45,6 +40,5 @@ public final class EnderniumHorseArmor extends Item {
             tooltipAdder.accept(Component.translatable("endernium.tooltip.horse_armor.description")
                     .withStyle(ChatFormatting.GRAY));
         }
-        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

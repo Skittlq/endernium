@@ -17,11 +17,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import java.util.function.Consumer;
@@ -99,8 +96,7 @@ public final class EnderniumVeinMiningToolHelper {
         return false;
     }
 
-    static void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
-                                Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    static void appendTooltip(ItemStack stack, Consumer<Component> tooltipAdder) {
         if (!EnderniumClientGameplaySettings.get().toolsVeinMiningEnabled()) {
             return;
         }

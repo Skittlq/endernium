@@ -2,6 +2,7 @@ package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.entity.EnderniumThrownSpear;
 import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.item.EnderniumTooltipProvider;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.network.EnderniumNetworking;
@@ -20,8 +21,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,7 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-public final class EnderniumSpear extends Item {
+public final class EnderniumSpear extends Item implements EnderniumTooltipProvider {
     private static final float THROW_VELOCITY = 2.75F;
     public static final int RETURN_COOLDOWN_TICKS = 8 * 20;
     private static final Map<net.minecraft.server.MinecraftServer, Map<UUID, Long>> COOLDOWN_END_TICKS =
@@ -142,13 +141,9 @@ public final class EnderniumSpear extends Item {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void appendHoverText(
+    public void appendEnderniumTooltip(
             ItemStack stack,
-            TooltipContext context,
-            TooltipDisplay tooltipDisplay,
-            Consumer<Component> tooltipAdder,
-            TooltipFlag flag
+            Consumer<Component> tooltipAdder
     ) {
         if (!EnderniumBlessing.isClientBlessed()) {
             tooltipAdder.accept(Component.translatable("endernium.tooltip.ability.locked")
@@ -166,6 +161,5 @@ public final class EnderniumSpear extends Item {
             tooltipAdder.accept(Component.translatable("endernium.tooltip.spear.description")
                     .withStyle(ChatFormatting.GRAY));
         }
-        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

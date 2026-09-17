@@ -160,7 +160,6 @@ public final class DragonBlessingTracker {
         }
     }
 
-    @SuppressWarnings("null")
     private static void tickPassiveParticipation(ServerLevel end, FightSession fight) {
         for (ServerPlayer player : end.players()) {
             if (player.isSpectator() || !player.isAlive()) {
@@ -471,180 +470,6 @@ public final class DragonBlessingTracker {
             return 0.045 + distanceFactor * 0.055;
         }
 
-        @SuppressWarnings("unused")
-        private void tickEmergence(ServerLevel level, int particleBudget) {
-            double progress = age / (double)(EMERGENCE_END_TICK - 1);
-            double contraction = 1.0 - smoothStep(progress) * 0.68;
-            int count = Math.min(7, particleBudget);
-            for (int stream = 0; stream < count; stream++) {
-                double angle = phase + stream * 2.39996 + age * 0.31;
-                double horizontalRadius = (2.2 + noise(stream, 0) * 4.1) * contraction;
-                double verticalOffset = (noise(stream, 1) * 2.0 - 1.0) * 2.8 * contraction;
-                Vec3 radial = new Vec3(Math.cos(angle), 0.0, Math.sin(angle));
-                Vec3 point = origin.add(
-                        radial.x * horizontalRadius,
-                        verticalOffset,
-                        radial.z * horizontalRadius
-                );
-                double release = progress < 0.45 ? 0.075 : -0.045 * progress;
-                Vec3 velocity = radial.scale(release).add(0.0, 0.035 + noise(stream, 2) * 0.035, 0.0);
-                spawnBit(level, point, velocity);
-            }
-        }
-
-        @SuppressWarnings("unused")
-        private void tickGathering(ServerLevel level, int particleBudget) {
-            double progress = (age - EMERGENCE_END_TICK) / (double)(GATHERING_END_TICK - EMERGENCE_END_TICK - 1);
-            double clusterAngle = clusterAngle();
-            Vec3 separation = new Vec3(Math.cos(clusterAngle), 0.0, Math.sin(clusterAngle))
-                    .scale(0.35 + smoothStep(progress) * 2.2);
-            Vec3 clusterCenter = origin.add(separation).add(0.0, 0.35 + progress * 0.45, 0.0);
-            int count = Math.min(8, particleBudget);
-            for (int stream = 0; stream < count; stream++) {
-                double angle = phase + stream * Mth.TWO_PI / Math.max(1, count) + age * (0.34 + recipientIndex * 0.006);
-                double radius = 1.35 - progress * 0.55;
-                Vec3 point = clusterCenter.add(
-                        Math.cos(angle) * radius,
-                        Math.sin(angle * 1.6) * 0.48,
-                        Math.sin(angle) * radius
-                );
-                Vec3 tangent = new Vec3(-Math.sin(angle), 0.18 * Math.cos(angle * 1.6), Math.cos(angle)).scale(0.055);
-                spawnBit(level, point, tangent);
-            }
-        }
-
-        @SuppressWarnings("unused")
-        private void tickSeeking(ServerLevel level, Vec3 destination, int particleBudget) {
-            double rawProgress = (age - GATHERING_END_TICK)
-                    / (double)(SEEKING_END_TICK - GATHERING_END_TICK - 1);
-            double clusterAngle = clusterAngle();
-            Vec3 start = origin.add(Math.cos(clusterAngle) * 2.55, 0.8, Math.sin(clusterAngle) * 2.55);
-            Vec3 direct = destination.subtract(start);
-            double distance = direct.length();
-            Vec3 sideways = horizontalPerpendicular(direct, clusterAngle);
-            double curveDirection = (recipientIndex & 1) == 0 ? 1.0 : -1.0;
-            double curveScale = 4.5 + Math.min(14.0, distance * 0.18);
-            Vec3 controlOne = start
-                    .add(sideways.scale(curveScale * curveDirection))
-                    .add(0.0, 5.0 + Math.min(9.0, distance * 0.14), 0.0);
-            Vec3 controlTwo = destination
-                    .add(sideways.scale(-curveScale * 0.72 * curveDirection))
-                    .add(0.0, 3.0 + Math.min(5.5, distance * 0.07), 0.0);
-
-            int rhythmicCount = 3 + ((age + recipientIndex) % 3 == 0 ? 2 : 0);
-            int count = Math.min(rhythmicCount, particleBudget);
-            for (int stream = 0; stream < count; stream++) {
-                double staggered = Mth.clamp(rawProgress - stream * 0.012, 0.0, 1.0);
-                double t = pacedSeekingProgress(staggered);
-                Vec3 point = cubicBezier(start, controlOne, controlTwo, destination, t);
-                Vec3 tangent = cubicBezierTangent(start, controlOne, controlTwo, destination, t).normalize();
-                Vec3 ribbonSide = horizontalPerpendicular(tangent, clusterAngle + stream);
-                double arcEnvelope = Math.sin(Math.PI * t);
-                double ribbon = Math.sin(phase + stream * 2.1 + age * 0.82)
-                        * (0.18 + arcEnvelope * 0.46)
-                        * (1.0 - t * 0.58);
-                double verticalWeave = Math.cos(phase * 0.7 + stream * 1.73 + age * 0.58)
-                        * arcEnvelope * 0.34;
-                point = point.add(ribbonSide.scale(ribbon)).add(0.0, verticalWeave, 0.0);
-                double surge = 0.055 + Math.sin(Math.PI * staggered) * 0.075;
-                spawnBit(level, point, tangent.scale(surge));
-            }
-        }
-
-        @SuppressWarnings("unused")
-        private void tickLingering(
-                ServerLevel level,
-                Vec3 chestTarget,
-                Vec3 frontTarget,
-                int particleBudget
-        ) {
-            double progress = (age - SEEKING_END_TICK)
-                    / (double)(LINGER_END_TICK - SEEKING_END_TICK - 1);
-            Vec3 forward = frontTarget.subtract(chestTarget).normalize();
-            Vec3 right = horizontalPerpendicular(forward, phase);
-            Vec3 center = frontTarget.lerp(
-                            DragonBlessingVfxMath.orbitEntry(chestTarget, frontTarget),
-                            smootherStep(progress)
-                    )
-                    .add(0.0, Math.sin(progress * Math.PI) * 0.12, 0.0);
-            int count = Math.min(8, particleBudget);
-            for (int stream = 0; stream < count; stream++) {
-                double angle = phase
-                        + stream * Mth.TWO_PI / Math.max(1, count)
-                        + (age - SEEKING_END_TICK) * 0.52;
-                double radius = 0.62 - smoothStep(progress) * 0.12;
-                Vec3 point = center
-                        .add(right.scale(Math.cos(angle) * radius))
-                        .add(0.0, Math.sin(angle * 2.0) * 0.31, 0.0)
-                        .add(forward.scale(Math.sin(angle) * 0.18));
-                Vec3 inward = center.subtract(point).scale(0.035);
-                Vec3 tangent = right.scale(-Math.sin(angle) * 0.032)
-                        .add(forward.scale(Math.cos(angle) * 0.018));
-                spawnBit(level, point, inward.add(tangent));
-            }
-        }
-
-        @SuppressWarnings("unused")
-        private void tickOrbitAndAbsorb(
-                ServerLevel level,
-                Vec3 target,
-                Vec3 frontTarget,
-                int particleBudget
-        ) {
-            double progress = (age - LINGER_END_TICK) / (double)(BLESSING_TICKS - LINGER_END_TICK - 1);
-            double orbitProgress = smootherStep(Mth.clamp(
-                    progress / DragonBlessingVfxMath.ORBIT_END_PROGRESS,
-                    0.0,
-                    1.0
-            ));
-            double absorbProgress = smootherStep(Mth.clamp(
-                    (progress - DragonBlessingVfxMath.ORBIT_END_PROGRESS)
-                            / (1.0 - DragonBlessingVfxMath.ORBIT_END_PROGRESS),
-                    0.0,
-                    1.0
-            ));
-            Vec3 forward = frontTarget.subtract(target);
-            forward = new Vec3(forward.x, 0.0, forward.z).normalize();
-            double frontAngle = Math.atan2(forward.z, forward.x);
-            double orbitAngle = orbitProgress * Mth.TWO_PI * DragonBlessingVfxMath.ORBIT_TURNS;
-            double mainAngle = frontAngle + orbitAngle;
-            double radius = DragonBlessingVfxMath.ORBIT_RADIUS * (1.0 - absorbProgress);
-            double spread = smoothStep(Mth.clamp(progress / 0.20, 0.0, 1.0)) * (1.0 - absorbProgress);
-            int count = Math.min(8, particleBudget);
-            for (int stream = 0; stream < count; stream++) {
-                double streamOffset = stream * Mth.TWO_PI / Math.max(1, count) * spread;
-                double angle = mainAngle + streamOffset;
-                Vec3 point = target.add(
-                        Math.cos(angle) * radius,
-                        Math.sin(orbitAngle + streamOffset) * radius * 0.38,
-                        Math.sin(angle) * radius
-                );
-                Vec3 tangent = new Vec3(-Math.sin(angle), 0.12 * Math.cos(angle * 1.35), Math.cos(angle))
-                        .scale(0.035 * (1.0 - absorbProgress));
-                Vec3 inward = target.subtract(point).scale(0.11 + absorbProgress * 0.16);
-                spawnBit(level, point, tangent.add(inward));
-            }
-            if (age == BLESSING_TICKS - 1) {
-                tickBlessingPulse(level, target, particleBudget);
-                level.playSound(
-                        null,
-                        target.x, target.y, target.z,
-                        SoundEvents.ENDER_EYE_DEATH,
-                        SoundSource.PLAYERS,
-                        0.72F,
-                        1.42F
-                );
-                level.playSound(
-                        null,
-                        target.x, target.y, target.z,
-                        SoundEvents.END_PORTAL_FRAME_FILL,
-                        SoundSource.PLAYERS,
-                        0.38F,
-                        1.72F
-                );
-            }
-        }
-
         private void tickBlessingPulse(ServerLevel level, Vec3 target, int particleBudget) {
             int count = particleBudget;
             for (int stream = 0; stream < count; stream++) {
@@ -672,10 +497,6 @@ public final class DragonBlessingTracker {
             );
         }
 
-        private double clusterAngle() {
-            return phase + recipientIndex * Mth.TWO_PI / recipientCount;
-        }
-
         private double noise(int stream, int salt) {
             double value = Math.sin(
                     phase * 17.0
@@ -687,45 +508,9 @@ public final class DragonBlessingTracker {
             return value - Math.floor(value);
         }
 
-        private static Vec3 horizontalPerpendicular(Vec3 direction, double fallbackAngle) {
-            Vec3 perpendicular = new Vec3(-direction.z, 0.0, direction.x);
-            if (perpendicular.lengthSqr() < 1.0E-6) {
-                return new Vec3(Math.cos(fallbackAngle), 0.0, Math.sin(fallbackAngle));
-            }
-            return perpendicular.normalize();
-        }
-
         private static double smoothStep(double value) {
             return value * value * (3.0 - 2.0 * value);
         }
 
-        private static double smootherStep(double value) {
-            return value * value * value * (value * (value * 6.0 - 15.0) + 10.0);
-        }
-
-        private static double pacedSeekingProgress(double value) {
-            if (value < 0.22) {
-                return 0.10 * smootherStep(value / 0.22);
-            }
-            if (value < 0.72) {
-                return 0.10 + 0.76 * smootherStep((value - 0.22) / 0.50);
-            }
-            return 0.86 + 0.14 * smootherStep((value - 0.72) / 0.28);
-        }
-
-        private static Vec3 cubicBezier(Vec3 a, Vec3 b, Vec3 c, Vec3 d, double t) {
-            double inverse = 1.0 - t;
-            return a.scale(inverse * inverse * inverse)
-                    .add(b.scale(3.0 * inverse * inverse * t))
-                    .add(c.scale(3.0 * inverse * t * t))
-                    .add(d.scale(t * t * t));
-        }
-
-        private static Vec3 cubicBezierTangent(Vec3 a, Vec3 b, Vec3 c, Vec3 d, double t) {
-            double inverse = 1.0 - t;
-            return b.subtract(a).scale(3.0 * inverse * inverse)
-                    .add(c.subtract(b).scale(6.0 * inverse * t))
-                    .add(d.subtract(c).scale(3.0 * t * t));
-        }
     }
 }

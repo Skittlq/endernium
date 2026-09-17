@@ -4,6 +4,7 @@ import com.skittlq.endernium.advancement.EnderniumSwordSweepTrigger;
 import com.skittlq.endernium.client.EnderniumKeyBindings;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
+import com.skittlq.endernium.item.EnderniumTooltipProvider;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
@@ -28,8 +29,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.SwingAnimation;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -43,7 +42,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class EnderniumSword extends Item {
+public class EnderniumSword extends Item implements EnderniumTooltipProvider {
     private static final int TARGET_BUFFER_TICKS = 10;
     private static final Map<MinecraftServer, Map<UUID, AbilitySequence>> ACTIVE_SEQUENCES = new HashMap<>();
 
@@ -380,9 +379,7 @@ public class EnderniumSword extends Item {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay,
-                                Consumer<Component> tooltipAdder, TooltipFlag flag) {
+    public void appendEnderniumTooltip(ItemStack stack, Consumer<Component> tooltipAdder) {
         EnderniumGameplayConfig.Snapshot clientSettings = EnderniumClientGameplaySettings.get();
         if (clientSettings.swordAbilityEnabled()) {
             if (!EnderniumBlessing.isClientBlessed()) {
@@ -404,6 +401,5 @@ public class EnderniumSword extends Item {
                 tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
             }
         }
-        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

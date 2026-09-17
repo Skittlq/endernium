@@ -12,7 +12,6 @@ public record CameraLerpPayload(float targetYaw, float targetPitch, int duration
     public static final Type<CameraLerpPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(
             EnderniumConstants.MOD_ID, "camera_lerp"));
 
-    @SuppressWarnings("null")
     public static final StreamCodec<RegistryFriendlyByteBuf, CameraLerpPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, CameraLerpPayload::targetYaw,
             ByteBufCodecs.FLOAT, CameraLerpPayload::targetPitch,

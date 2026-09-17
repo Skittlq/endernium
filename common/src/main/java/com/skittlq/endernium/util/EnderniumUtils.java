@@ -268,7 +268,6 @@ public final class EnderniumUtils {
         }
     }
 
-    @SuppressWarnings("null")
     private static Set<UUID> nearbyDropIds(ServerLevel level, BlockPos pos) {
         AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos),
                 DROP_COLLECTION_RADIUS * 2.0D,

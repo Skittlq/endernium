@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
+import com.skittlq.endernium.item.EnderniumTooltipProvider;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -19,6 +20,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class ClientEvents {
@@ -38,6 +40,11 @@ public class ClientEvents {
         EnderniumClientBehavior.tickClient(client);
         EnderniumAbilityKeyHandler.tick(client, ENDERNIUM_ABILITY_KEY,
                 () -> ClientPacketDistributor.sendToServer(EnderniumAbilityPayload.INSTANCE));
+    }
+
+    @SubscribeEvent
+    public static void appendItemTooltip(ItemTooltipEvent event) {
+        EnderniumTooltipProvider.appendTooltip(event.getItemStack(), event.getToolTip());
     }
 
     @SubscribeEvent

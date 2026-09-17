@@ -4,7 +4,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
+import com.skittlq.endernium.item.EnderniumTooltipProvider;
 import com.skittlq.endernium.network.ModNetworking;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
@@ -47,6 +49,8 @@ public final class ClientEvents {
         EnderniumKeyBindings.bindAbilityKeyName(ENDERNIUM_ABILITY_KEY::getTranslatedKeyMessage);
         EnderniumKeyBindings.bindSneakKeyName(
                 () -> Minecraft.getInstance().options.keyShift.getTranslatedKeyMessage());
+        ItemTooltipCallback.EVENT.register((stack, context, flag, tooltip) ->
+                EnderniumTooltipProvider.appendTooltip(stack, tooltip));
         ClientTickEvents.END_CLIENT_TICK.register(EnderniumClientBehavior::tickClient);
         ClientLifecycleEvents.CLIENT_STOPPING.register(client ->
                 EnderniumShaderRenderer.instance().close());
