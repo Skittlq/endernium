@@ -7,13 +7,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.skittlq.endernium.Endernium;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -45,18 +45,10 @@ public final class ModLootModifiers {
         }
         registered = true;
 
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(
-                new SimpleSynchronousResourceReloadListener() {
-                    @Override
-                    public Identifier getFabricId() {
-                        return Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "loot_modifiers");
-                    }
-
-                    @Override
-                    public void onResourceManagerReload(ResourceManager manager) {
-                        reloadModifiers(manager);
-                    }
-                });
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+                Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "loot_modifiers"),
+                (ResourceManagerReloadListener) ModLootModifiers::reloadModifiers
+        );
         LootTableEvents.MODIFY.register(ModLootModifiers::modifyLootTable);
     }
 

@@ -5,7 +5,6 @@ import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
-import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;

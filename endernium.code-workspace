@@ -9,7 +9,7 @@
   ],
   "settings": {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.compile.nullAnalysis.mode": "automatic",
+    "java.compile.nullAnalysis.mode": "disabled",
     "java.jdt.ls.java.home": "C:/Program Files/Eclipse Adoptium/jdk-25.0.2.10-hotspot",
     "java.import.gradle.java.home": "C:/Program Files/Eclipse Adoptium/jdk-25.0.2.10-hotspot",
     "java.configuration.runtimes": [

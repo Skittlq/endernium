@@ -5,12 +5,10 @@ import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.network.ModNetworking;
-import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -22,7 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 public final class ClientEvents {
     private static final KeyMapping.Category ENDERNIUM_CATEGORY = KeyMapping.Category.register(
@@ -62,15 +60,13 @@ public final class ClientEvents {
                 Minecraft.getInstance().gameRenderer.mainCamera().position()));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
                 EnderniumClientBehavior.resetSessionState());
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-            public Identifier getFabricId() {
-                return Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "shader_framework_reload");
-            }
-            public void onResourceManagerReload(ResourceManager manager) {
-                EnderniumVfxManager.clear();
-                EnderniumShaderRenderer.instance().resetBuffers();
-            }
-        });
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
+                Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "shader_framework_reload"),
+                (ResourceManagerReloadListener) manager -> {
+                    EnderniumVfxManager.clear();
+                    EnderniumShaderRenderer.instance().resetBuffers();
+                }
+        );
         HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, COOLDOWN_HUD, ClientEvents::renderCooldownHuds);
     }
 

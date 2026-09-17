@@ -5,7 +5,6 @@ import com.skittlq.endernium.Endernium;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public final class ModLootConditions {
     public static final MapCodec<DragonDefeatedLootCondition> DRAGON_DEFEATED = registerDragonDefeated();
@@ -22,6 +21,5 @@ public final class ModLootConditions {
     }
 
     public static void register() {
-        MapCodec<? extends LootItemCondition> ignored = DRAGON_DEFEATED;
     }
 }

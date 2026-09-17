@@ -5,7 +5,6 @@ import com.skittlq.endernium.Endernium;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class ModFeatures {
     public static final MapCodec<SurfaceEnderniumOreFeature> SURFACE_ENDERNIUM_ORE = registerSurfaceEnderniumOre();
