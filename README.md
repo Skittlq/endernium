@@ -3,7 +3,7 @@ Endernium is an advanced material, surpassing Netherite in both strength and rar
 
 ## Requirements
 
-- Minecraft 26.2
+- Minecraft 26.3
 - Java 25 or newer
 - Fabric or NeoForge
 
