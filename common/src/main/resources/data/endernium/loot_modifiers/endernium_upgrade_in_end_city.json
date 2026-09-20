@@ -1,18 +1,21 @@
 {
   "type": "endernium:add_item",
-  "conditions": [
+  "condition": {
+    "type": "minecraft:all_of",
+    "terms": [
     {
-      "condition": "neoforge:loot_table_id",
+        "type": "neoforge:loot_table_id",
       "loot_table_id": "minecraft:chests/end_city_treasure"
     },
     {
-      "condition": "endernium:dragon_defeated"
+        "type": "endernium:dragon_defeated"
     },
     {
-      "chance": 0.15,
-        "condition": "minecraft:random_chance"
+        "type": "minecraft:random_chance",
+      "chance": 0.15
     }
-  ],
+    ]
+  },
   "item": "endernium:endernium_upgrade_smithing_template"
 }
 

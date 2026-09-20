@@ -16,6 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -216,7 +217,7 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
                 }
 
                 player.setDeltaMovement(player.getDeltaMovement().x, 0.42D, player.getDeltaMovement().z);
-                player.push(0.0D, 0.0D, 0.0D);
+                serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(serverPlayer));
 
                 DamageSource attackSource = activatedWeapon.getDamageSource(player);
                 float baseAttackDamage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);

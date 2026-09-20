@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.skittlq.endernium.Endernium;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.reloader.ResourceReloaderKeys;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -33,6 +34,8 @@ public final class ModLootModifiers {
     private static final Gson GSON = new GsonBuilder().create();
     private static final Identifier GLOBAL_LOOT_MODIFIERS_INDEX =
             Identifier.fromNamespaceAndPath("neoforge", "loot_modifiers/global_loot_modifiers.json");
+    private static final Identifier RELOAD_LISTENER_ID =
+            Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "loot_modifiers");
     private static final Map<Identifier, List<LootModifierDefinition>> MODIFIERS_BY_TABLE = new HashMap<>();
     private static boolean registered;
 
@@ -45,10 +48,12 @@ public final class ModLootModifiers {
         }
         registered = true;
 
-        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
-                Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "loot_modifiers"),
+        ResourceLoader resourceLoader = ResourceLoader.get(PackType.SERVER_DATA);
+        resourceLoader.registerReloadListener(
+                RELOAD_LISTENER_ID,
                 (ResourceManagerReloadListener) ModLootModifiers::reloadModifiers
         );
+        resourceLoader.addListenerOrdering(RELOAD_LISTENER_ID, ResourceReloaderKeys.BEFORE_VANILLA);
         LootTableEvents.MODIFY.register(ModLootModifiers::modifyLootTable);
     }
 
@@ -137,13 +142,13 @@ public final class ModLootModifiers {
         Identifier lootTableId = null;
         float chance = 1.0F;
         boolean requiresDragonDefeated = false;
-        JsonArray conditions = GsonHelper.getAsJsonArray(json, "conditions", new JsonArray());
+        JsonArray conditions = unpackConditions(json);
         for (JsonElement element : conditions) {
             if (!element.isJsonObject()) {
                 continue;
             }
             JsonObject condition = element.getAsJsonObject();
-            String conditionType = GsonHelper.getAsString(condition, "condition", "");
+            String conditionType = conditionType(condition);
             if ("neoforge:loot_table_id".equals(conditionType)) {
                 lootTableId = Identifier.parse(GsonHelper.getAsString(condition, "loot_table_id"));
             } else if ("minecraft:random_chance".equals(conditionType)) {
@@ -188,6 +193,26 @@ public final class ModLootModifiers {
         minCount = Math.max(1, Math.min(64, minCount));
         maxCount = Math.max(minCount, Math.min(64, maxCount));
         return new LootModifierDefinition(lootTableId, item, chance, minCount, maxCount, requiresDragonDefeated);
+    }
+
+    private static JsonArray unpackConditions(JsonObject json) {
+        if (json.has("condition") && json.get("condition").isJsonObject()) {
+            JsonObject condition = json.getAsJsonObject("condition");
+            if ("minecraft:all_of".equals(conditionType(condition))) {
+                return GsonHelper.getAsJsonArray(condition, "terms", new JsonArray());
+            }
+
+            JsonArray conditions = new JsonArray();
+            conditions.add(condition);
+            return conditions;
+        }
+
+        return GsonHelper.getAsJsonArray(json, "conditions", new JsonArray());
+    }
+
+    private static String conditionType(JsonObject condition) {
+        return GsonHelper.getAsString(condition, "type",
+                GsonHelper.getAsString(condition, "condition", ""));
     }
 
     private record LootModifierDefinition(Identifier lootTableId, Item item, float chance, int minCount, int maxCount, boolean requiresDragonDefeated) {

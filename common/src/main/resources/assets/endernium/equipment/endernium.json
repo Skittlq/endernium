@@ -25,5 +25,13 @@
         "texture": "endernium:endernium"
       }
     ]
-  }
+  },
+  "trim_overrides": [
+    {
+      "palette": "endernium:trim/endernium_darker",
+      "when": {
+        "material": "endernium:endernium"
+      }
+    }
+  ]
 }

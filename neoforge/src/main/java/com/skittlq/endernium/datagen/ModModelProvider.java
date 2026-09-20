@@ -8,9 +8,6 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.Identifier;
-
-import java.util.Map;
 
 public class ModModelProvider extends ModelProvider {
     public ModModelProvider(PackOutput output) {
@@ -35,10 +32,10 @@ public class ModModelProvider extends ModelProvider {
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_BLOCK.get());
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_ORE.get());
 
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/helmet_trim"), false, Map.of());
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/chestplate_trim"), false, Map.of());
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/leggings_trim"), false, Map.of());
-        itemModels.generateTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), Identifier.fromNamespaceAndPath("minecraft", "trims/items/boots_trim"), false, Map.of());
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), ItemModelGenerators.TRIM_PREFIX_HELMET);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_HORSE_ARMOR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_NAUTILUS_ARMOR.get(), ModelTemplates.FLAT_ITEM);
     }

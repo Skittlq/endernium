@@ -69,7 +69,7 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
                 .add(itemKey(ModItems.ENDERNIUM_LEGGINGS))
                 .add(itemKey(ModItems.ENDERNIUM_BOOTS));
         builder(ItemTags.TRIM_MATERIALS)
-                .add(itemKey(ModItems.ENDERNIUM_INGOT));
+                .add(itemKey(ModItems.ENDERNIUM_SHARD));
     }
 
     private static ResourceKey<Item> itemKey(Item item) {

@@ -114,6 +114,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             .withVertexShader("core/screenquad")
             .withFragmentShader(POST_SHADER)
             .withBindGroupLayout(POST_BINDINGS)
+            .withColorTargetState(ColorTargetState.DEFAULT)
             .withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
             .build();
 

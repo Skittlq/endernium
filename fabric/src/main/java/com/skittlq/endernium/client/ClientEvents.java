@@ -57,11 +57,12 @@ public final class ClientEvents {
         ClientTickEvents.END_CLIENT_TICK.register(client ->
                 EnderniumAbilityKeyHandler.tick(client, ENDERNIUM_ABILITY_KEY, ModNetworking::sendAbilityActivation));
         LevelExtractionEvents.END_EXTRACTION.register(context -> EnderniumVfxManager.extract(Minecraft.getInstance()));
-        LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> EnderniumShaderRenderer.instance().render(
-                context.levelState().cameraRenderState.viewRotationMatrix,
-                Minecraft.getInstance().gameRenderer.mainCamera().position()));
-        LevelRenderEvents.END_MAIN.register(context -> EnderniumShaderRenderer.instance().renderPost(
-                Minecraft.getInstance().gameRenderer.mainCamera().position()));
+        LevelRenderEvents.END_MAIN.register(context -> {
+            EnderniumShaderRenderer renderer = EnderniumShaderRenderer.instance();
+            var camera = Minecraft.getInstance().gameRenderer.mainCamera();
+            renderer.render(context.levelState().cameraRenderState.viewRotationMatrix, camera.position());
+            renderer.renderPost(camera.position());
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
                 EnderniumClientBehavior.resetSessionState());
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(

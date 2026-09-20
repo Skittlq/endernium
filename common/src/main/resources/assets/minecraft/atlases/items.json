@@ -4,7 +4,8 @@
       "type": "minecraft:paletted_permutations",
       "palette_key": "minecraft:trim_base",
       "permutations": {
-        "endernium": "endernium:trim/endernium"
+        "endernium": "endernium:trim/endernium",
+        "endernium_darker": "endernium:trim/endernium_darker"
       },
       "textures": [
         "minecraft:trims/items/helmet_trim",

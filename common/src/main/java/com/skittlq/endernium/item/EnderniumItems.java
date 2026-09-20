@@ -13,6 +13,7 @@ import com.skittlq.endernium.item.tools.EnderniumPickaxe;
 import com.skittlq.endernium.item.tools.EnderniumShovel;
 import com.skittlq.endernium.item.tools.EnderniumSword;
 import com.skittlq.endernium.item.tools.EnderniumSpear;
+import com.skittlq.endernium.trim.ModTrimMaterials;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -41,7 +42,7 @@ public enum EnderniumItems {
             properties.nautilusArmor(ModArmorMaterial.ENDERNIUM_ARMOR_MATERIAL).fireResistant()
     )),
     ENDERNIUM_DUST("endernium_dust", Item::new),
-    ENDERNIUM_SHARD("endernium_shard", Item::new),
+    ENDERNIUM_SHARD("endernium_shard", properties -> new Item(properties.trimMaterial(ModTrimMaterials.ENDERNIUM))),
     ENDERNIUM_INGOT("endernium_ingot", properties -> new Item(properties.fireResistant())),
     ENDERNIUM_UPGRADE_SMITHING_TEMPLATE("endernium_upgrade_smithing_template", EnderniumItems::createEnderniumUpgradeTemplate);
 

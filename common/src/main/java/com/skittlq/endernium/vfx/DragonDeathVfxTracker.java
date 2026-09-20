@@ -5,6 +5,7 @@ import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -359,7 +360,7 @@ public final class DragonDeathVfxTracker {
                         direction.y * 5.0 * exposureScale,
                         direction.z * 5.0 * exposureScale
                 );
-                player.push(0.0D, 0.0D, 0.0D);
+                player.connection.send(new ClientboundSetEntityMotionPacket(player));
                 pushedEntities.add(player.getUUID());
             }
         }

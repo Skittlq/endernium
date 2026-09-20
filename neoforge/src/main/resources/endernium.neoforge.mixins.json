@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.skittlq.endernium.mixin.neoforge",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "TrimmedArmorModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

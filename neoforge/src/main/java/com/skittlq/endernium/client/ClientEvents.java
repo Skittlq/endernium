@@ -53,15 +53,11 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void renderVfx(RenderLevelStageEvent.AfterTranslucentBlocks event) {
-        Minecraft client = Minecraft.getInstance();
-        EnderniumShaderRenderer.instance().render(event.getModelViewMatrix(), client.gameRenderer.mainCamera().position());
-    }
-
-    @SubscribeEvent
     public static void renderVfxPost(RenderLevelStageEvent.AfterLevel event) {
         Minecraft client = Minecraft.getInstance();
-        EnderniumShaderRenderer.instance().renderPost(client.gameRenderer.mainCamera().position());
+        EnderniumShaderRenderer renderer = EnderniumShaderRenderer.instance();
+        renderer.render(event.getModelViewMatrix(), client.gameRenderer.mainCamera().position());
+        renderer.renderPost(client.gameRenderer.mainCamera().position());
     }
 
     @SubscribeEvent
