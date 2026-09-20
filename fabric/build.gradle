@@ -24,6 +24,10 @@ sourceSets {
 	}
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/endernium.accesswidener")
+}
+
 repositories {
 	maven {
 		name = "Modrinth"

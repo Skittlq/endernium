@@ -1,6 +1,7 @@
 package com.skittlq.endernium;
 
 import com.skittlq.endernium.client.ClientEvents;
+import com.skittlq.endernium.client.render.FabricTrimItemModels;
 import com.skittlq.endernium.client.vfx.EnderniumShaderRenderer;
 import com.skittlq.endernium.client.vfx.EnderniumVfxCompatibility;
 import com.skittlq.endernium.config.EnderniumConfigManager;
@@ -16,6 +17,7 @@ public class EnderniumClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Endernium.LOGGER.info("Initializing Endernium client");
+        FabricTrimItemModels.register();
         EnderniumVfxCompatibility.bindPreference(() -> EnderniumConfigManager.getConfig().vfxRenderMode);
         EnderniumShaderRenderer.pipelines().forEach(RenderPipelines::register);
         ModParticles.registerClient();
