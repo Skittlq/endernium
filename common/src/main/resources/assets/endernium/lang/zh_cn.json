@@ -102,5 +102,8 @@
   "endernium.config.vfx_render_mode.particles": "粒子",
   "endernium.configuration.vfxRenderMode": "Endernium 特效渲染模式",
   "tag.item.minecraft.trim_materials": "Trim Materials",
-  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+  "tag.item.endernium.transformable_items": "可转化为终影装备的物品",
+  "tag.item.endernium.endernium_repairable": "可修复的终影物品",
+  "tag.item.endernium.ingots.endernium": "终影锭"
 }

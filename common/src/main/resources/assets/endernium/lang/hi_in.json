@@ -102,5 +102,8 @@
   "endernium.config.vfx_render_mode.particles": "पार्टिकल",
   "endernium.configuration.vfxRenderMode": "Endernium VFX रेंडरर",
   "tag.item.minecraft.trim_materials": "Trim Materials",
-  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+  "tag.item.endernium.transformable_items": "एंडर्नियम में परिवर्तनीय वस्तुएँ",
+  "tag.item.endernium.endernium_repairable": "मरम्मत योग्य एंडर्नियम वस्तुएँ",
+  "tag.item.endernium.ingots.endernium": "एंडर्नियम सिल्लियाँ"
 }

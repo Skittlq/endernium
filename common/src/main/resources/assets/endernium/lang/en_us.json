@@ -11,6 +11,9 @@
 
   "tag.item.minecraft.trim_materials": "Trim Materials",
   "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+  "tag.item.endernium.transformable_items": "Endernium Transformable Items",
+  "tag.item.endernium.endernium_repairable": "Endernium Repairable Items",
+  "tag.item.endernium.ingots.endernium": "Endernium Ingots",
 
   "item.endernium.endernium_pickaxe": "\u00A7dEndernium Pickaxe",
   "item.endernium.endernium_axe": "\u00A7dEndernium Axe",

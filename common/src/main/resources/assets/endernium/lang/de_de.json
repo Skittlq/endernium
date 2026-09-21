@@ -102,5 +102,8 @@
   "endernium.config.vfx_render_mode.particles": "Partikel",
   "endernium.configuration.vfxRenderMode": "Endernium-VFX-Renderer",
   "tag.item.minecraft.trim_materials": "Trim Materials",
-  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+  "tag.item.endernium.transformable_items": "In Endernium umwandelbare Gegenstände",
+  "tag.item.endernium.endernium_repairable": "Reparierbare Enderniumgegenstände",
+  "tag.item.endernium.ingots.endernium": "Enderniumbarren"
 }

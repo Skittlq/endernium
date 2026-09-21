@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "26.3"
+  pull_request:
+    branches:
+      - "26.3"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.loader }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        loader:
+          - fabric
+          - neoforge
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.loader }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+          cache-dependency-path: |
+            fabric/**/*.gradle*
+            fabric/gradle/wrapper/gradle-wrapper.properties
+            neoforge/**/*.gradle*
+            neoforge/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Build
+        run: ./gradlew build --no-daemon
+
+      - name: Run NeoForge GameTests
+        if: matrix.loader == 'neoforge'
+        run: ./gradlew runGameTestServer --no-daemon

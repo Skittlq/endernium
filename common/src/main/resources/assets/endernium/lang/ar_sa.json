@@ -102,5 +102,8 @@
   "endernium.config.vfx_render_mode.particles": "جسيمات",
   "endernium.configuration.vfxRenderMode": "عارض مؤثرات Endernium",
   "tag.item.minecraft.trim_materials": "Trim Materials",
-  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+  "tag.item.endernium.transformable_items": "العناصر القابلة للتحويل إلى الإندرنيوم",
+  "tag.item.endernium.endernium_repairable": "عناصر الإندرنيوم القابلة للإصلاح",
+  "tag.item.endernium.ingots.endernium": "سبائك الإندرنيوم"
 }

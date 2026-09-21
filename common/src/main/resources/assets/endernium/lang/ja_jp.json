@@ -102,5 +102,8 @@
   "endernium.config.vfx_render_mode.particles": "パーティクル",
   "endernium.configuration.vfxRenderMode": "Endernium VFX レンダラー",
   "tag.item.minecraft.trim_materials": "Trim Materials",
-  "tag.item.minecraft.trimmable_armor": "Trimmable Armor"
+  "tag.item.minecraft.trimmable_armor": "Trimmable Armor",
+  "tag.item.endernium.transformable_items": "エンダニウムに変換可能なアイテム",
+  "tag.item.endernium.endernium_repairable": "修理可能なエンダニウムのアイテム",
+  "tag.item.endernium.ingots.endernium": "エンダニウムインゴット"
 }
