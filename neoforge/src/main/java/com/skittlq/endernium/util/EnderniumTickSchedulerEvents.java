@@ -1,6 +1,7 @@
 package com.skittlq.endernium.util;
 
 import com.skittlq.endernium.Endernium;
+import com.skittlq.endernium.item.tools.EnderniumSpearPendingReturns;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -16,6 +17,7 @@ public final class EnderniumTickSchedulerEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         EnderniumServerLifecycle.onEndTick(event.getServer());
+        EnderniumSpearPendingReturns.onServerTick(event.getServer());
     }
 
     @SubscribeEvent
@@ -26,7 +28,15 @@ public final class EnderniumTickSchedulerEvents {
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            EnderniumSpearPendingReturns.onDisconnect(player);
             EnderniumServerLifecycle.cancelPlayerState(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            EnderniumSpearPendingReturns.onLogin(player);
         }
     }
 

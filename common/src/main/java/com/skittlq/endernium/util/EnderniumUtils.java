@@ -47,7 +47,7 @@ public final class EnderniumUtils {
     public static final String VEIN_MINING_SESSION_ID_KEY = "VeinMiningSessionId";
     public static final int DEFAULT_MAX_BLOCKS = 64;
     private static final double DROP_COLLECTION_RADIUS = 1.25D;
-    private static final double MAX_OPERATION_DISTANCE_SQUARED = 64.0D;
+    private static final double MAX_OPERATION_DISTANCE_SQUARED = 16.0D * 16.0D;
     private static final Map<net.minecraft.server.MinecraftServer, Map<UUID, VeinMiningOperation>> ACTIVE_OPERATIONS =
             new HashMap<>();
     private static final ThreadLocal<Set<UUID>> BREAKING_ADDITIONAL_BLOCK =
@@ -361,6 +361,7 @@ public final class EnderniumUtils {
             int delay = Math.max(0, (int) Math.floor((step * (double) totalTicks) / steps));
             int taskId = EnderniumTickScheduler.schedule(operation.level.getServer(), operation.player.getUUID(), () -> {
                 if (!isCurrentOperation(operation) || !isPlayerStateValid(operation)
+                        || !isTargetWithinRange(operation.player, pos)
                         || operation.level.getBlockState(pos).isAir()) {
                     operation.level.destroyBlockProgress(breakerId, pos, -1);
                     return;
@@ -372,7 +373,15 @@ public final class EnderniumUtils {
     }
 
     private static void scheduleNextBlock(VeinMiningOperation operation) {
-        if (!isPlayerStateValid(operation) || operation.nextIndex >= operation.targets.size()) {
+        if (!isPlayerStateValid(operation)) {
+            finishOperation(operation);
+            return;
+        }
+        while (operation.nextIndex < operation.targets.size()
+                && !isTargetWithinRange(operation.player, operation.targets.get(operation.nextIndex).pos)) {
+            operation.nextIndex++;
+        }
+        if (operation.nextIndex >= operation.targets.size()) {
             finishOperation(operation);
             return;
         }
@@ -400,7 +409,9 @@ public final class EnderniumUtils {
         }
         TargetBlock target = operation.targets.get(operation.nextIndex++);
         BlockState currentState = operation.level.getBlockState(target.pos);
-        if (currentState.equals(target.state) && canVeinMineBlock(operation.tool, currentState)) {
+        if (isTargetWithinRange(operation.player, target.pos)
+                && currentState.equals(target.state)
+                && canVeinMineBlock(operation.tool, currentState)) {
             handleBlockMine(operation.tool, operation.level, currentState, target.pos, operation.player);
         }
         clearVeinMiningBlockProgress(operation.level, target.pos, operation.player);
@@ -413,11 +424,14 @@ public final class EnderniumUtils {
                 && !player.isRemoved()
                 && !player.isSpectator()
                 && player.level() == operation.level
-                && player.distanceToSqr(Vec3.atCenterOf(operation.currentTargetPos())) <= MAX_OPERATION_DISTANCE_SQUARED
                 && (player.getMainHandItem() == operation.tool || player.getOffhandItem() == operation.tool)
                 && !operation.tool.isEmpty()
                 && EnderniumGameplayConfig.toolsVeinMiningEnabled()
                 && EnderniumBlessing.isBlessed(player);
+    }
+
+    private static boolean isTargetWithinRange(ServerPlayer player, BlockPos pos) {
+        return player.distanceToSqr(Vec3.atCenterOf(pos)) <= MAX_OPERATION_DISTANCE_SQUARED;
     }
 
     private static boolean isCurrentOperation(VeinMiningOperation operation) {
@@ -464,7 +478,6 @@ public final class EnderniumUtils {
         private final ServerLevel level;
         private final ServerPlayer player;
         private final ItemStack tool;
-        private final BlockPos origin;
         private final List<TargetBlock> targets;
         private final List<Integer> taskIds = new ArrayList<>();
         private int nextIndex;
@@ -475,13 +488,8 @@ public final class EnderniumUtils {
             this.level = level;
             this.player = player;
             this.tool = tool;
-            this.origin = origin;
             this.targets = List.copyOf(targets);
             this.currentProgressPos = origin;
-        }
-
-        private BlockPos currentTargetPos() {
-            return nextIndex < targets.size() ? targets.get(nextIndex).pos : origin;
         }
     }
 }
