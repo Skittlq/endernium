@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LootModifierResourceTest {
@@ -45,6 +46,18 @@ class LootModifierResourceTest {
                     .anyMatch(term -> "neoforge:loot_table_id".equals(term.get("type").getAsString())
                             && "minecraft:chests/end_city_treasure".equals(term.get("loot_table_id").getAsString())),
                     modifier);
+        }
+    }
+
+    @Test
+    void fabricDoesNotDependOnSharedNeoForgeLootIndex() {
+        assertNull(LootModifierResourceTest.class.getResource(
+                "/data/neoforge/loot_modifiers/global_loot_modifiers.json"
+        ));
+        for (String modifier : MODIFIERS) {
+            assertNotNull(LootModifierResourceTest.class.getResource(
+                    "/data/endernium/loot_modifiers/" + modifier + ".json"
+            ));
         }
     }
 }

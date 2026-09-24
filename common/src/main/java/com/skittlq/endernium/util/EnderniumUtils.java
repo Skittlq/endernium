@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -44,9 +43,7 @@ import java.util.UUID;
 import java.util.Objects;
 
 public final class EnderniumUtils {
-    public static final String VEIN_MINING_SESSION_ID_KEY = "VeinMiningSessionId";
     public static final int DEFAULT_MAX_BLOCKS = 64;
-    private static final double DROP_COLLECTION_RADIUS = 1.25D;
     private static final double MAX_OPERATION_DISTANCE_SQUARED = 16.0D * 16.0D;
     private static final Map<net.minecraft.server.MinecraftServer, Map<UUID, VeinMiningOperation>> ACTIVE_OPERATIONS =
             new HashMap<>();
@@ -61,32 +58,41 @@ public final class EnderniumUtils {
         safeBlockBreaker = Objects.requireNonNull(breaker);
     }
 
-    public static void onAutoCollectToolBlockBreak(Level level, Player player, BlockPos pos, BlockState state, boolean allowVeinMiningFallback) {
-        if (level.isClientSide() || player.isCreative() || !EnderniumBlessing.isBlessed(player)) {
+    public static void onAutoCollectToolBlockBreak(
+            Level level,
+            Player player,
+            BlockPos pos,
+            BlockState state,
+            List<ItemEntity> drops,
+            boolean allowVeinMiningFallback
+    ) {
+        if (level.isClientSide() || !isAutoCollectEligible(player)) {
             return;
         }
 
         ItemStack stack = player.getMainHandItem();
-        if (stack.isEmpty() || !isEnderniumAutoCollectTool(stack)) {
-            return;
-        }
-        if (BREAKING_ADDITIONAL_BLOCK.get().contains(player.getUUID())) {
-            return;
-        }
+        playEnderniumBreakEffects(level, pos);
+        scheduleDropCollection(level, player, drops);
 
-        if (allowVeinMiningFallback) {
-            playEnderniumBreakEffects(level, pos);
-            scheduleDropCollection(level, pos, player);
-
+        if (allowVeinMiningFallback && !BREAKING_ADDITIONAL_BLOCK.get().contains(player.getUUID())) {
             if (isEnderniumVeinMiningTool(stack)
                     && EnderniumVeinMiningToolHelper.isVeinMiningEnabled(stack)
                     && !hasActiveVeinMiningOperation(player, stack)) {
                 veinMineBlocks(stack, level, pos, state, player, DEFAULT_MAX_BLOCKS);
             }
-            return;
         }
+    }
 
-        scheduleVerifiedDropCollection(level, pos, player);
+    public static boolean isAutoCollectEligible(Player player) {
+        ItemStack stack = player.getMainHandItem();
+        return !player.isCreative()
+                && EnderniumBlessing.isBlessed(player)
+                && !stack.isEmpty()
+                && isEnderniumAutoCollectTool(stack);
+    }
+
+    public static boolean isBreakingAdditionalBlock(Player player) {
+        return BREAKING_ADDITIONAL_BLOCK.get().contains(player.getUUID());
     }
 
     public static boolean handleBlockMine(ItemStack stack, Level level, BlockState state, BlockPos pos,
@@ -102,8 +108,6 @@ public final class EnderniumUtils {
         }
 
         clearVeinMiningBlockProgress(level, pos, player);
-        ServerLevel serverLevel = (ServerLevel) serverPlayer.level();
-        Set<UUID> existingDrops = nearbyDropIds(serverLevel, pos);
         Set<UUID> breakingPlayers = BREAKING_ADDITIONAL_BLOCK.get();
         breakingPlayers.add(player.getUUID());
         boolean broken;
@@ -118,8 +122,6 @@ public final class EnderniumUtils {
         if (!broken) {
             return false;
         }
-        playEnderniumBreakEffects(level, pos);
-        collectNewDrops(serverLevel, pos, player, existingDrops);
         return true;
     }
 
@@ -178,7 +180,6 @@ public final class EnderniumUtils {
             return;
         }
 
-        clearLegacyOperationTag(stack);
         VeinMiningOperation operation = new VeinMiningOperation(serverLevel, serverPlayer, stack,
                 origin.immutable(), blocksToMine);
         ACTIVE_OPERATIONS.computeIfAbsent(serverLevel.getServer(), ignored -> new HashMap<>())
@@ -189,14 +190,12 @@ public final class EnderniumUtils {
     public static void cancelVeinMining(Player player, ItemStack stack) {
         Map<UUID, VeinMiningOperation> operations = ACTIVE_OPERATIONS.get(player.level().getServer());
         if (operations == null) {
-            clearLegacyOperationTag(stack);
             return;
         }
         VeinMiningOperation operation = operations.get(player.getUUID());
         if (operation != null && operation.tool == stack) {
             finishOperation(operation);
         }
-        clearLegacyOperationTag(stack);
     }
 
     public static boolean hasActiveVeinMiningOperation(Player player, ItemStack stack) {
@@ -217,9 +216,6 @@ public final class EnderniumUtils {
             if (operation != null) {
                 finishOperation(operation);
             }
-        }
-        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
-            clearLegacyOperationTag(player.getInventory().getItem(index));
         }
     }
 
@@ -248,53 +244,6 @@ public final class EnderniumUtils {
         return false;
     }
 
-    public static void collectNearbyDrops(Level level, BlockPos pos, Player player) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos),
-                DROP_COLLECTION_RADIUS * 2.0D,
-                DROP_COLLECTION_RADIUS * 2.0D,
-                DROP_COLLECTION_RADIUS * 2.0D);
-        List<ItemEntity> itemEntities = serverLevel.getEntitiesOfClass(ItemEntity.class, dropBox,
-                item -> item.isAlive() && item.tickCount <= 2);
-        for (ItemEntity itemEntity : itemEntities) {
-            ItemStack itemStack = itemEntity.getItem();
-            player.getInventory().add(itemStack);
-            if (itemStack.isEmpty()) {
-                itemEntity.discard();
-            }
-        }
-    }
-
-    private static Set<UUID> nearbyDropIds(ServerLevel level, BlockPos pos) {
-        AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos),
-                DROP_COLLECTION_RADIUS * 2.0D,
-                DROP_COLLECTION_RADIUS * 2.0D,
-                DROP_COLLECTION_RADIUS * 2.0D);
-        Set<UUID> ids = new HashSet<>();
-        for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, dropBox, ItemEntity::isAlive)) {
-            ids.add(item.getUUID());
-        }
-        return ids;
-    }
-
-    private static void collectNewDrops(ServerLevel level, BlockPos pos, Player player, Set<UUID> existingDrops) {
-        AABB dropBox = AABB.ofSize(Vec3.atCenterOf(pos),
-                DROP_COLLECTION_RADIUS * 2.0D,
-                DROP_COLLECTION_RADIUS * 2.0D,
-                DROP_COLLECTION_RADIUS * 2.0D);
-        for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, dropBox,
-                candidate -> candidate.isAlive() && !existingDrops.contains(candidate.getUUID()))) {
-            ItemStack droppedStack = item.getItem();
-            player.getInventory().add(droppedStack);
-            if (droppedStack.isEmpty()) {
-                item.discard();
-            }
-        }
-    }
-
     private static void playEnderniumBreakEffects(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
@@ -304,19 +253,17 @@ public final class EnderniumUtils {
         level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.BLOCKS, 0.04F, 1.5F);
     }
 
-    private static void scheduleDropCollection(Level level, BlockPos pos, Player player) {
+    private static void scheduleDropCollection(Level level, Player player, List<ItemEntity> drops) {
+        List<ItemEntity> attributedDrops = List.copyOf(drops);
         EnderniumTickScheduler.schedule(level.getServer(), player.getUUID(), () -> {
-            if (!player.isRemoved()) {
-                collectNearbyDrops(level, pos, player);
+            if (player.isRemoved()) {
+                return;
             }
-        }, 1);
-    }
-
-    private static void scheduleVerifiedDropCollection(Level level, BlockPos pos, Player player) {
-        EnderniumTickScheduler.schedule(level.getServer(), player.getUUID(), () -> {
-            if (!player.isRemoved() && level.getBlockState(pos).isAir()) {
-                playEnderniumBreakEffects(level, pos);
-                collectNearbyDrops(level, pos, player);
+            for (ItemEntity drop : attributedDrops) {
+                if (drop.isAlive() && drop.level() == level && level.getEntity(drop.getId()) == drop) {
+                    drop.setNoPickUpDelay();
+                    drop.playerTouch(player);
+                }
             }
         }, 1);
     }
@@ -451,14 +398,6 @@ public final class EnderniumUtils {
             EnderniumTickScheduler.cancel(operation.level.getServer(), taskId);
         }
         clearVeinMiningBlockProgress(operation.level, operation.currentProgressPos, operation.player);
-    }
-
-    private static void clearLegacyOperationTag(ItemStack stack) {
-        CompoundTag tag = getOrCreateCustomDataTag(stack);
-        if (tag.contains(VEIN_MINING_SESSION_ID_KEY)) {
-            tag.remove(VEIN_MINING_SESSION_ID_KEY);
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        }
     }
 
     private static void clearVeinMiningBlockProgress(Level level, BlockPos pos, Player player) {

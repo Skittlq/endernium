@@ -1,7 +1,5 @@
 package com.skittlq.endernium.client.render;
 
-import com.skittlq.endernium.item.ModItems;
-import com.skittlq.endernium.trim.ModTrimMaterials;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -25,7 +23,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ItemOwner;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
@@ -34,21 +31,13 @@ import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 /**
- * Adds trim item layers at runtime instead of enumerating trim materials in item JSON.
- * This keeps Endernium armor compatible with trim materials registered by other mods and
- * makes the Endernium trim visible on standard armor items supplied by other mods.
+ * Adds runtime trim layers only to conventional armor models. Endernium armor accepts
+ * trim materials from other mods, while the Endernium trim remains visible on their armor.
  */
 public final class FabricTrimItemModels {
     private static final ModelDebugName DEBUG_NAME = () -> "Endernium dynamic armor trim";
-    private static final Set<Item> ENDERNIUM_ARMOR = Set.of(
-            ModItems.ENDERNIUM_HELMET,
-            ModItems.ENDERNIUM_CHESTPLATE,
-            ModItems.ENDERNIUM_LEGGINGS,
-            ModItems.ENDERNIUM_BOOTS
-    );
 
     private FabricTrimItemModels() {
     }
@@ -57,10 +46,10 @@ public final class FabricTrimItemModels {
         ModelLoadingPlugin.register(context -> context.modifyItemModelAfterBake().register(
                 ModelModifier.WRAP_PHASE,
                 (model, bakeContext) -> new DynamicTrimModel(
-                        model,
-                        bakeContext.bakingContext(),
-                        bakeContext.transformation()
-                )
+                            model,
+                            bakeContext.bakingContext(),
+                            bakeContext.transformation()
+                    )
         ));
     }
 
@@ -76,7 +65,8 @@ public final class FabricTrimItemModels {
     }
 
     private static final class DynamicTrimModel extends WrapperBakedItemModel {
-        private final Object2ObjectMap<TrimLayerKey, ItemModel> trimLayers = new Object2ObjectOpenHashMap<>();
+        @Nullable
+        private Object2ObjectMap<TrimLayerKey, ItemModel> trimLayers;
         private final ItemModel.BakingContext bakingContext;
         private final Matrix4fc transformation;
         private final ItemTransforms itemTransforms;
@@ -109,33 +99,24 @@ public final class FabricTrimItemModels {
             ArmorTrim trim = stack.get(DataComponents.TRIM);
             Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
             Identifier baseTrimTexture = equippable == null ? null : trimTexture(equippable.slot());
-            if (trim == null || equippable == null || baseTrimTexture == null || equippable.assetId().isEmpty()) {
+            if (trim == null
+                    || equippable == null
+                    || baseTrimTexture == null
+                    || !EnderniumTrimRendering.shouldHandle(stack, trim)) {
                 return;
             }
 
-            Identifier paletteId = trim.material().value().paletteId();
-            boolean enderniumTrim = trim.material().unwrapKey()
-                    .map(ModTrimMaterials.ENDERNIUM::equals)
-                    .orElse(false)
-                    || paletteId.equals(ModTrimMaterials.ENDERNIUM_PALETTE);
-            if (!ENDERNIUM_ARMOR.contains(stack.getItem()) && !enderniumTrim) {
-                return;
+            if (this.trimLayers == null) {
+                this.trimLayers = new Object2ObjectOpenHashMap<>();
             }
-
-            String palettePath = paletteId.getPath();
-            String suffix = palettePath.substring(palettePath.lastIndexOf('/') + 1);
-
-            boolean sameMaterial = trim.material().unwrapKey()
-                    .map(material -> material.identifier().equals(equippable.assetId().get().identifier()))
-                    .orElse(false)
-                    || enderniumTrim && equippable.assetId().get().identifier()
-                            .equals(ModTrimMaterials.ENDERNIUM.identifier());
-            if (sameMaterial) {
-                suffix += "_darker";
-            }
-
-            this.trimLayers.computeIfAbsent(new TrimLayerKey(baseTrimTexture, suffix), this::createTrimLayer)
-                    .update(state, stack, resolver, displayContext, level, owner, seed);
+            Object2ObjectMap<TrimLayerKey, ItemModel> layers = this.trimLayers;
+            EnderniumTrimRendering.suffix(stack, trim, equippable).ifPresent(suffix ->
+                    layers.computeIfAbsent(
+                                    new TrimLayerKey(baseTrimTexture, suffix),
+                                    this::createTrimLayer
+                            )
+                            .update(state, stack, resolver, displayContext, level, owner, seed)
+            );
         }
 
         private ItemModel createTrimLayer(TrimLayerKey key) {

@@ -1,9 +1,10 @@
 package com.skittlq.endernium.util;
 
 import com.skittlq.endernium.Endernium;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
 @EventBusSubscriber(modid = Endernium.MODID)
 public final class EnderniumUtilsEvents {
@@ -11,12 +12,17 @@ public final class EnderniumUtilsEvents {
     }
 
     @SubscribeEvent
-    public static void onBlockBreak(BreakBlockEvent event) {
+    public static void onBlockDrops(BlockDropsEvent event) {
+        if (!(event.getBreaker() instanceof Player player)) {
+            return;
+        }
+
         EnderniumUtils.onAutoCollectToolBlockBreak(
-                event.getPlayer().level(),
-                event.getPlayer(),
+                event.getLevel(),
+                player,
                 event.getPos().immutable(),
                 event.getState(),
+                event.getDrops(),
                 false
         );
     }
