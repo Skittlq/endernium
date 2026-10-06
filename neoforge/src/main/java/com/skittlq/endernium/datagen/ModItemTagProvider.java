@@ -18,46 +18,46 @@ public class ModItemTagProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(ModTags.Items.ENDERNIUM_REPAIRABLE)
-                .add(ModItems.ENDERNIUM_INGOT.getKey());
+                .add(ModItems.ENDERNIUM_INGOT.key());
         tag(ModTags.Items.INGOTS_ENDERNIUM)
-                .add(ModItems.ENDERNIUM_INGOT.getKey());
+                .add(ModItems.ENDERNIUM_INGOT.key());
         tag(ItemTags.BEACON_PAYMENT_ITEMS)
-                .add(ModItems.ENDERNIUM_INGOT.getKey());
+                .add(ModItems.ENDERNIUM_INGOT.key());
 
         tag(ItemTags.SWORDS)
-                .add(ModItems.ENDERNIUM_SWORD.getKey());
+                .add(ModItems.ENDERNIUM_SWORD.key());
         tag(ItemTags.SPEARS)
-                .add(ModItems.ENDERNIUM_SPEAR.getKey());
+                .add(ModItems.ENDERNIUM_SPEAR.key());
         tag(ItemTags.PICKAXES)
-                .add(ModItems.ENDERNIUM_PICKAXE.getKey());
+                .add(ModItems.ENDERNIUM_PICKAXE.key());
         tag(ItemTags.SHOVELS)
-                .add(ModItems.ENDERNIUM_SHOVEL.getKey());
+                .add(ModItems.ENDERNIUM_SHOVEL.key());
         tag(ItemTags.AXES)
-                .add(ModItems.ENDERNIUM_AXE.getKey());
+                .add(ModItems.ENDERNIUM_AXE.key());
         tag(ItemTags.HOES)
-                .add(ModItems.ENDERNIUM_HOE.getKey());
+                .add(ModItems.ENDERNIUM_HOE.key());
 
         tag(ItemTags.ARMOR_ENCHANTABLE)
-                .add(ModItems.ENDERNIUM_HELMET.getKey())
-                .add(ModItems.ENDERNIUM_CHESTPLATE.getKey())
-                .add(ModItems.ENDERNIUM_LEGGINGS.getKey())
-                .add(ModItems.ENDERNIUM_BOOTS.getKey());
+                .add(ModItems.ENDERNIUM_HELMET.key())
+                .add(ModItems.ENDERNIUM_CHESTPLATE.key())
+                .add(ModItems.ENDERNIUM_LEGGINGS.key())
+                .add(ModItems.ENDERNIUM_BOOTS.key());
         tag(ItemTags.HEAD_ARMOR)
-                .add(ModItems.ENDERNIUM_HELMET.getKey());
+                .add(ModItems.ENDERNIUM_HELMET.key());
         tag(ItemTags.CHEST_ARMOR)
-                .add(ModItems.ENDERNIUM_CHESTPLATE.getKey());
+                .add(ModItems.ENDERNIUM_CHESTPLATE.key());
         tag(ItemTags.LEG_ARMOR)
-                .add(ModItems.ENDERNIUM_LEGGINGS.getKey());
+                .add(ModItems.ENDERNIUM_LEGGINGS.key());
         tag(ItemTags.FOOT_ARMOR)
-                .add(ModItems.ENDERNIUM_BOOTS.getKey());
+                .add(ModItems.ENDERNIUM_BOOTS.key());
         tag(ItemTags.HEAD_ARMOR_ENCHANTABLE)
-                .add(ModItems.ENDERNIUM_HELMET.getKey());
+                .add(ModItems.ENDERNIUM_HELMET.key());
         tag(ItemTags.CHEST_ARMOR_ENCHANTABLE)
-                .add(ModItems.ENDERNIUM_CHESTPLATE.getKey());
+                .add(ModItems.ENDERNIUM_CHESTPLATE.key());
         tag(ItemTags.LEG_ARMOR_ENCHANTABLE)
-                .add(ModItems.ENDERNIUM_LEGGINGS.getKey());
+                .add(ModItems.ENDERNIUM_LEGGINGS.key());
         tag(ItemTags.FOOT_ARMOR_ENCHANTABLE)
-                .add(ModItems.ENDERNIUM_BOOTS.getKey());
+                .add(ModItems.ENDERNIUM_BOOTS.key());
 
     }
 }

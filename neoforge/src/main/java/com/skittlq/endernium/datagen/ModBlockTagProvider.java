@@ -18,7 +18,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.BEACON_BASE_BLOCKS)
-                .add(ModBlocks.ENDERNIUM_BLOCK.getKey());
+                .add(ModBlocks.ENDERNIUM_BLOCK.key());
 
         tag(ModTags.Blocks.NEEDS_ENDERNIUM_TOOL);
         tag(ModTags.Blocks.INCORRECT_FOR_ENDERNIUM_TOOL);

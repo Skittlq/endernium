@@ -68,7 +68,7 @@ public class Endernium {
         EnderniumBlessingHandler.register();
 
         modEventBus.addListener(this::addCreative);
-        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SYNCED, Config.SPEC);
         Config.bindGameplayConfig();
     }
 
