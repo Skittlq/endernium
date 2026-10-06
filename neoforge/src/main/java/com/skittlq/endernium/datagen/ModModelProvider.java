@@ -32,10 +32,10 @@ public class ModModelProvider extends ModelProvider {
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_BLOCK.get());
         blockModels.createTrivialCube(ModBlocks.ENDERNIUM_ORE.get());
 
-        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), ItemModelGenerators.TRIM_PREFIX_HELMET);
-        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE);
-        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS);
-        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_HELMET.get(), ItemModelGenerators.TRIM_PREFIX_HELMET, null);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_CHESTPLATE.get(), ItemModelGenerators.TRIM_PREFIX_CHESTPLATE, null);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_LEGGINGS.get(), ItemModelGenerators.TRIM_PREFIX_LEGGINGS, null);
+        itemModels.generateDynamicTrimmableItem(ModItems.ENDERNIUM_BOOTS.get(), ItemModelGenerators.TRIM_PREFIX_BOOTS, null);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_HORSE_ARMOR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.ENDERNIUM_NAUTILUS_ARMOR.get(), ModelTemplates.FLAT_ITEM);
     }
