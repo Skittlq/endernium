@@ -14,10 +14,12 @@ class EnderniumConfigTest {
         assertTrue(config.enderniumArmorAbility);
         assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_THRESHOLD,
                 config.enderniumArmorAbilityThreshold);
-        assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS,
-                config.enderniumArmorAbilityCooldown);
-        assertEquals(EnderniumGameplayConfig.DEFAULT_SWORD_ABILITY_BASE_COOLDOWN_SECONDS,
-                config.enderniumSwordAbilityBaseCooldown);
+        assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_MAX_STORED_DAMAGE,
+                config.enderniumArmorMaxStoredDamage);
+        assertEquals(EnderniumGameplayConfig.DEFAULT_SWORD_DAMAGE_PER_STRIKE_MULTIPLIER,
+                config.enderniumSwordDamagePerStrikeMultiplier);
+        assertEquals(EnderniumGameplayConfig.DEFAULT_SWORD_MAX_STRIKES,
+                config.enderniumSwordMaxStrikes);
         assertEquals(EnderniumVfxRenderMode.AUTO, config.vfxRenderMode);
     }
 
@@ -41,17 +43,23 @@ class EnderniumConfigTest {
 
         EnderniumConfig invalid = new EnderniumConfig();
         invalid.enderniumArmorAbilityThreshold = Integer.MAX_VALUE;
-        invalid.enderniumArmorAbilityCooldown = Long.MAX_VALUE;
-        invalid.enderniumSwordAbilityBaseCooldown = -1;
-        invalid.enderniumSwordAbilityPerMobCooldown = Integer.MAX_VALUE;
+        invalid.enderniumArmorMaxStoredDamage = Double.POSITIVE_INFINITY;
+        invalid.enderniumSwordDamagePerStrikeMultiplier = -1.0D;
+        invalid.enderniumSwordMaxStrikes = Integer.MAX_VALUE;
+        invalid.enderniumSpearStrainDurationSeconds = Integer.MAX_VALUE;
+        invalid.enderniumSpearMaximumHealthCostPercent = 200.0D;
         invalid.vfxRenderMode = null;
         EnderniumConfig sanitized = EnderniumConfig.sanitize(invalid);
 
         assertEquals(2048, sanitized.enderniumArmorAbilityThreshold);
-        assertEquals(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS, sanitized.enderniumArmorAbilityCooldown);
-        assertEquals(0, sanitized.enderniumSwordAbilityBaseCooldown);
-        assertEquals(EnderniumGameplayConfig.MAX_COOLDOWN_SECONDS,
-                sanitized.enderniumSwordAbilityPerMobCooldown);
+        assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_MAX_STORED_DAMAGE,
+                sanitized.enderniumArmorMaxStoredDamage);
+        assertEquals(EnderniumGameplayConfig.MIN_SWORD_DAMAGE_PER_STRIKE_MULTIPLIER,
+                sanitized.enderniumSwordDamagePerStrikeMultiplier);
+        assertEquals(EnderniumGameplayConfig.MAX_SWORD_STRIKES, sanitized.enderniumSwordMaxStrikes);
+        assertEquals(EnderniumGameplayConfig.MAX_SPEAR_STRAIN_DURATION_SECONDS,
+                sanitized.enderniumSpearStrainDurationSeconds);
+        assertEquals(100.0D, sanitized.enderniumSpearMaximumHealthCostPercent);
         assertEquals(EnderniumVfxRenderMode.AUTO, sanitized.vfxRenderMode);
     }
 }

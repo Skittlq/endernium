@@ -11,6 +11,7 @@ import com.skittlq.endernium.entity.ModEntities;
 import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.item.tools.EnderniumSwordCooldownHandler;
+import com.skittlq.endernium.item.tools.EnderniumSpearStateHandler;
 import com.skittlq.endernium.loot.ModLootConditions;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.network.ModNetworking;
@@ -59,6 +60,7 @@ public class Endernium implements ModInitializer {
         EnderniumUtilsEvents.register();
         EnderniumArmorAbilityHandler.register();
         EnderniumSwordCooldownHandler.register();
+        EnderniumSpearStateHandler.register();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 EnderniumBlessingCommand.register(dispatcher));
         if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
@@ -74,13 +76,13 @@ public class Endernium implements ModInitializer {
             }
 
             @Override
-            public int swordAbilityBaseCooldownSeconds() {
-                return EnderniumConfigManager.getConfig().enderniumSwordAbilityBaseCooldown;
+            public double swordDamagePerStrikeMultiplier() {
+                return EnderniumConfigManager.getConfig().enderniumSwordDamagePerStrikeMultiplier;
             }
 
             @Override
-            public int swordAbilityPerMobCooldownSeconds() {
-                return EnderniumConfigManager.getConfig().enderniumSwordAbilityPerMobCooldown;
+            public int swordMaxStrikes() {
+                return EnderniumConfigManager.getConfig().enderniumSwordMaxStrikes;
             }
 
             @Override
@@ -99,8 +101,18 @@ public class Endernium implements ModInitializer {
             }
 
             @Override
-            public long armorAbilityCooldownSeconds() {
-                return EnderniumConfigManager.getConfig().enderniumArmorAbilityCooldown;
+            public double armorMaxStoredDamage() {
+                return EnderniumConfigManager.getConfig().enderniumArmorMaxStoredDamage;
+            }
+
+            @Override
+            public int spearStrainDurationSeconds() {
+                return EnderniumConfigManager.getConfig().enderniumSpearStrainDurationSeconds;
+            }
+
+            @Override
+            public double spearMaximumHealthCostPercent() {
+                return EnderniumConfigManager.getConfig().enderniumSpearMaximumHealthCostPercent;
             }
         });
     }

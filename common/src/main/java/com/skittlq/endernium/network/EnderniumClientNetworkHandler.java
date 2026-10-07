@@ -3,10 +3,12 @@ package com.skittlq.endernium.network;
 import com.skittlq.endernium.client.CameraLerpHandler;
 import com.skittlq.endernium.client.EnderniumClientBehavior;
 import com.skittlq.endernium.client.EnderniumClientCooldowns;
+import com.skittlq.endernium.client.EnderniumClientCharges;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.client.EnderniumClientVeinMiningState;
 import com.skittlq.endernium.client.vfx.EnderniumVfxManager;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.ArmorChargeSyncPayload;
 import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
@@ -14,6 +16,7 @@ import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
+import com.skittlq.endernium.network.payloads.SwordChargeSyncPayload;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTargeting;
 
@@ -39,17 +42,21 @@ public final class EnderniumClientNetworkHandler {
 
     public static void handleAbilityCooldownSync(AbilityCooldownSyncPayload payload) {
         switch (payload.ability()) {
-            case ARMOR -> EnderniumClientCooldowns.setArmorCooldown(
-                    payload.endGameTime(), payload.durationTicks());
-            case SWORD -> EnderniumClientCooldowns.setSwordCooldown(
-                    payload.endGameTime(), payload.durationTicks());
             case HORSE -> EnderniumClientCooldowns.setHorseCooldown(
                     payload.endGameTime(), payload.durationTicks());
-            case SPEAR -> EnderniumClientCooldowns.setSpearCooldown(
+            case SPEAR -> EnderniumClientCooldowns.setSpearStrain(
                     payload.endGameTime(), payload.durationTicks());
             case NAUTILUS -> EnderniumClientCooldowns.setNautilusCooldown(
                     payload.endGameTime(), payload.durationTicks());
         }
+    }
+
+    public static void handleSwordChargeSync(SwordChargeSyncPayload payload) {
+        EnderniumClientCharges.setSwordStoredDamage(payload.storedDamage());
+    }
+
+    public static void handleArmorChargeSync(ArmorChargeSyncPayload payload) {
+        EnderniumClientCharges.setArmorStoredDamage(payload.storedDamage());
     }
 
     public static void handleBlessingState(BlessingStatePayload payload) {

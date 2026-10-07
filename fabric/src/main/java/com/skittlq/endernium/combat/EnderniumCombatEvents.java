@@ -10,6 +10,10 @@ public final class EnderniumCombatEvents {
     }
 
     public static void register() {
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            EnderniumCombatHooks.beforeDamage(entity);
+            return true;
+        });
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {
             EnderniumCombatHooks.onDamage(entity, source, damageTaken, blocked);
         });

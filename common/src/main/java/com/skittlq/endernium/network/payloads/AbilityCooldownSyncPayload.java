@@ -33,8 +33,6 @@ public record AbilityCooldownSyncPayload(Ability ability, long endGameTime, int 
     }
 
     public enum Ability {
-        ARMOR,
-        SWORD,
         HORSE,
         SPEAR,
         NAUTILUS;

@@ -2,6 +2,7 @@ package com.skittlq.endernium.item.armor;
 
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
+import com.skittlq.endernium.item.EnderniumTooltipNumbers;
 import com.skittlq.endernium.client.EnderniumClientEquipmentState;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import net.minecraft.ChatFormatting;
@@ -36,8 +37,8 @@ final class EnderniumArmorTooltipHelper {
                 settings.armorThreshold()
         ).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable(
-                "endernium.tooltip.armor_ability.cooldown",
-                settings.armorCooldownSeconds()
+                "endernium.tooltip.armor_ability.charge",
+                EnderniumTooltipNumbers.compact(settings.armorMaxStoredDamage())
         ).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipAdder.accept(Component.translatable("endernium.tooltip.armor_ability.description").withStyle(ChatFormatting.GRAY));
     }

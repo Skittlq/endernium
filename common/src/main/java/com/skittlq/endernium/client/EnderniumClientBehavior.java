@@ -82,14 +82,15 @@ public final class EnderniumClientBehavior {
     public static final int COOLDOWN_SPRITE_OFFSET_X = 1;
     public static final int COOLDOWN_SPRITE_OFFSET_Y = 2;
     public static final int COOLDOWN_BACKGROUND_COLOR = 0x33FFFFFF;
+    public static final int SPEAR_STRAIN_BACKGROUND_COLOR = 0x99A02060;
     public static final int COOLDOWN_FOREGROUND_COLOR = -1;
     private static final long READY_FLASH_DURATION_NANOS = 200_000_000L;
     private static final long READY_HOLD_DURATION_NANOS = 1_000_000_000L;
     private static final long READY_FADE_DURATION_NANOS = 1_000_000_000L;
     private static final CooldownHudFrame HIDDEN_COOLDOWN_FRAME =
             new CooldownHudFrame(false, 0.0F, 0.0F, 0.0F, false);
-    private static final CooldownHudTracker ARMOR_HUD_TRACKER = new CooldownHudTracker();
-    private static final CooldownHudTracker SWORD_HUD_TRACKER = new CooldownHudTracker();
+    private static final ChargeHudTracker ARMOR_CHARGE_HUD_TRACKER = new ChargeHudTracker();
+    private static final ChargeHudTracker SWORD_CHARGE_HUD_TRACKER = new ChargeHudTracker();
     private static final CooldownHudTracker HORSE_HUD_TRACKER = new CooldownHudTracker();
     private static final CooldownHudTracker NAUTILUS_HUD_TRACKER = new CooldownHudTracker();
     private static final CooldownHudTracker SPEAR_HUD_TRACKER = new CooldownHudTracker();
@@ -114,11 +115,12 @@ public final class EnderniumClientBehavior {
         EnderniumTargeting.clearClientCombatOpponents();
         EnderniumBlessing.clearClientState();
         EnderniumClientCooldowns.clear();
+        EnderniumClientCharges.clear();
         EnderniumClientGameplaySettings.reset();
         EnderniumClientEquipmentState.reset();
         CameraLerpHandler.reset();
-        ARMOR_HUD_TRACKER.reset();
-        SWORD_HUD_TRACKER.reset();
+        ARMOR_CHARGE_HUD_TRACKER.reset();
+        SWORD_CHARGE_HUD_TRACKER.reset();
         HORSE_HUD_TRACKER.reset();
         NAUTILUS_HUD_TRACKER.reset();
         SPEAR_HUD_TRACKER.reset();
@@ -239,14 +241,6 @@ public final class EnderniumClientBehavior {
         return Math.max(0, Math.min(COOLDOWN_SPRITE_HEIGHT, (int) (cooldownProgress * COOLDOWN_SPRITE_HEIGHT)));
     }
 
-    public static CooldownHudFrame armorCooldownHudFrame(float cooldownRemaining) {
-        return ARMOR_HUD_TRACKER.frame(cooldownRemaining);
-    }
-
-    public static CooldownHudFrame swordCooldownHudFrame(float cooldownRemaining) {
-        return SWORD_HUD_TRACKER.frame(cooldownRemaining);
-    }
-
     public static CooldownHudFrame horseCooldownHudFrame(float cooldownRemaining) {
         return HORSE_HUD_TRACKER.frame(cooldownRemaining);
     }
@@ -260,11 +254,11 @@ public final class EnderniumClientBehavior {
     }
 
     public static void resetArmorCooldownHud() {
-        ARMOR_HUD_TRACKER.reset();
+        ARMOR_CHARGE_HUD_TRACKER.reset();
     }
 
     public static void resetSwordCooldownHud() {
-        SWORD_HUD_TRACKER.reset();
+        SWORD_CHARGE_HUD_TRACKER.reset();
     }
 
     public static void resetHorseCooldownHud() {
@@ -280,8 +274,6 @@ public final class EnderniumClientBehavior {
     }
 
     public static void triggerBlessingReadyHud() {
-        ARMOR_HUD_TRACKER.triggerReady();
-        SWORD_HUD_TRACKER.triggerReady();
         HORSE_HUD_TRACKER.triggerReady();
         SPEAR_HUD_TRACKER.triggerReady();
     }
@@ -330,18 +322,41 @@ public final class EnderniumClientBehavior {
             VEIN_MINING_HUD_TRACKER.reset();
         }
 
-        if (shouldRenderArmorCooldown(player, armorAbilityEnabled)) {
-            float cooldownRemaining = EnderniumClientCooldowns.armorCooldownRemainingFraction(player.level().getGameTime());
-            CooldownHudFrame frame = armorCooldownHudFrame(cooldownRemaining);
+        if (shouldRenderSwordCooldown(player, swordAbilityEnabled)) {
+            float cost = (float) (EnderniumSword.BASE_ATTACK_DAMAGE
+                    * EnderniumClientGameplaySettings.get().swordDamagePerStrikeMultiplier());
+            int maximum = EnderniumClientGameplaySettings.get().swordMaxStrikes();
+            float storedDamage = EnderniumClientCharges.swordStoredDamage();
+            int strikes = EnderniumSword.storedStrikes(storedDamage, cost, maximum);
+            float progress = EnderniumSword.partialStrikeProgress(storedDamage, cost, maximum);
+            CooldownHudFrame frame = SWORD_CHARGE_HUD_TRACKER.frame(progress, strikes, strikes >= maximum);
+            if (frame.playReadySound()) {
+                playCooldownReadySound(client);
+            }
+            HudIconPosition position = cooldownPosition(gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+            renderCooldownIcon(gui, SWORD_COOLDOWN_ICON, SWORD_COOLDOWN_READY_ICON, position, frame);
+            if (strikes > 0) {
+                renderHudCount(client, gui, position, strikes);
+            }
+        } else {
+            resetSwordCooldownHud();
+        }
+
+        float spearCooldownRemaining = EnderniumClientCooldowns.spearCooldownRemainingFraction(
+                player.level().getGameTime());
+        if (shouldRenderSpearCooldown(player) || spearCooldownRemaining > 0.0F) {
+            CooldownHudFrame frame = spearCooldownHudFrame(spearCooldownRemaining);
             if (frame.visible()) {
                 if (frame.playReadySound()) {
                     playCooldownReadySound(client);
                 }
-                HudIconPosition position = cooldownPosition(gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
-                renderCooldownIcon(gui, ARMOR_COOLDOWN_ICON, ARMOR_COOLDOWN_READY_ICON, position, frame);
+                HudIconPosition position = cooldownPosition(
+                        gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+                renderCooldownIcon(gui, SPEAR_COOLDOWN_ICON, SPEAR_COOLDOWN_ICON, position, frame,
+                        SPEAR_STRAIN_BACKGROUND_COLOR);
             }
         } else {
-            resetArmorCooldownHud();
+            resetSpearCooldownHud();
         }
 
         if (shouldRenderHorseCooldown(player)) {
@@ -376,34 +391,19 @@ public final class EnderniumClientBehavior {
             resetNautilusCooldownHud();
         }
 
-        if (shouldRenderSpearCooldown(player)) {
-            float cooldownRemaining = EnderniumClientCooldowns.spearCooldownRemainingFraction(
-                    player.level().getGameTime());
-            CooldownHudFrame frame = spearCooldownHudFrame(cooldownRemaining);
-            if (frame.visible()) {
-                if (frame.playReadySound()) {
-                    playCooldownReadySound(client);
-                }
-                HudIconPosition position = cooldownPosition(
-                        gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
-                renderCooldownIcon(gui, SPEAR_COOLDOWN_ICON, SPEAR_COOLDOWN_ICON, position, frame);
+        if (shouldRenderArmorCooldown(player, armorAbilityEnabled)) {
+            float armorCapacity = (float) EnderniumClientGameplaySettings.get().armorMaxStoredDamage();
+            float storedDamage = EnderniumClientCharges.armorStoredDamage();
+            float armorProgress = Math.max(0.0F, Math.min(1.0F, storedDamage / armorCapacity));
+            CooldownHudFrame frame = ARMOR_CHARGE_HUD_TRACKER.frame(
+                    armorProgress, storedDamage, storedDamage >= armorCapacity);
+            if (frame.playReadySound()) {
+                playCooldownReadySound(client);
             }
+            HudIconPosition position = cooldownPosition(gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
+            renderCooldownIcon(gui, ARMOR_COOLDOWN_ICON, ARMOR_COOLDOWN_READY_ICON, position, frame);
         } else {
-            resetSpearCooldownHud();
-        }
-
-        if (shouldRenderSwordCooldown(player, swordAbilityEnabled)) {
-            float cooldownRemaining = EnderniumClientCooldowns.swordCooldownRemainingFraction(player.level().getGameTime());
-            CooldownHudFrame frame = swordCooldownHudFrame(cooldownRemaining);
-            if (frame.visible()) {
-                if (frame.playReadySound()) {
-                    playCooldownReadySound(client);
-                }
-                HudIconPosition position = cooldownPosition(gui.guiWidth(), gui.guiHeight(), player.getMainArm(), slot++);
-                renderCooldownIcon(gui, SWORD_COOLDOWN_ICON, SWORD_COOLDOWN_READY_ICON, position, frame);
-            }
-        } else {
-            resetSwordCooldownHud();
+            resetArmorCooldownHud();
         }
     }
 
@@ -414,9 +414,20 @@ public final class EnderniumClientBehavior {
             HudIconPosition position,
             CooldownHudFrame frame
     ) {
+        renderCooldownIcon(gui, icon, readyIcon, position, frame, COOLDOWN_BACKGROUND_COLOR);
+    }
+
+    private static void renderCooldownIcon(
+            GuiGraphicsExtractor gui,
+            Identifier icon,
+            Identifier readyIcon,
+            HudIconPosition position,
+            CooldownHudFrame frame,
+            int baseBackgroundColor
+    ) {
         int iconX = position.x() + COOLDOWN_SPRITE_OFFSET_X;
         int iconY = position.y() + COOLDOWN_SPRITE_OFFSET_Y;
-        int backgroundColor = hudColorWithOpacity(COOLDOWN_BACKGROUND_COLOR, frame.opacity());
+        int backgroundColor = hudColorWithOpacity(baseBackgroundColor, frame.opacity());
         int foregroundColor = hudColorWithOpacity(COOLDOWN_FOREGROUND_COLOR, frame.opacity());
 
         gui.blit(RenderPipelines.GUI_TEXTURED,
@@ -463,6 +474,14 @@ public final class EnderniumClientBehavior {
         }
     }
 
+    private static void renderHudCount(Minecraft client, GuiGraphicsExtractor gui,
+                                       HudIconPosition position, int count) {
+        String text = Integer.toString(Math.max(0, count));
+        int x = position.x() + COOLDOWN_ICON_SIZE - client.font.width(text);
+        int y = position.y() + COOLDOWN_ICON_SIZE - client.font.lineHeight;
+        gui.text(client.font, text, x, y, 0xFFFFFFFF, true);
+    }
+
     private static void renderSwordPreviewParticles(Player player) {
         if (player == null || !EnderniumBlessing.isClientBlessed()
                 || !EnderniumClientGameplaySettings.get().swordAbilityEnabled()) {
@@ -474,11 +493,18 @@ public final class EnderniumClientBehavior {
             return;
         }
 
-        if (EnderniumClientCooldowns.isSwordOnCooldown(player.level().getGameTime())) {
+        float storedDamage = EnderniumClientCharges.swordStoredDamage();
+        float cost = (float) (EnderniumSword.BASE_ATTACK_DAMAGE
+                * EnderniumClientGameplaySettings.get().swordDamagePerStrikeMultiplier());
+        int strikeCount = EnderniumSword.storedStrikes(storedDamage, cost,
+                EnderniumClientGameplaySettings.get().swordMaxStrikes());
+        if (strikeCount <= 0) {
             return;
         }
 
-        for (LivingEntity target : EnderniumTargeting.findSwordPreviewTargets(player)) {
+        for (LivingEntity target : EnderniumTargeting.sortSwordTargets(
+                        player, EnderniumTargeting.findSwordPreviewTargets(player)).stream()
+                .limit(strikeCount).toList()) {
             AABB box = target.getBoundingBox();
             for (int i = 0; i < 2; i++) {
                 double px = box.minX + target.level().getRandom().nextDouble() * (box.maxX - box.minX);
@@ -552,6 +578,45 @@ public final class EnderniumClientBehavior {
         void triggerReady() {
             wasActive = false;
             readyAtNanos = System.nanoTime();
+        }
+    }
+
+    private static final class ChargeHudTracker {
+        private boolean initialized;
+        private float previousCueValue;
+        private boolean previouslyFull;
+        private long flashAtNanos = -1L;
+
+        CooldownHudFrame frame(float progress, float cueValue, boolean full) {
+            long nowNanos = System.nanoTime();
+            boolean playFullSound = false;
+            if (!initialized) {
+                initialized = true;
+            } else if (cueValue > previousCueValue + 1.0E-4F) {
+                flashAtNanos = nowNanos;
+                playFullSound = full && !previouslyFull;
+            }
+            previousCueValue = cueValue;
+            previouslyFull = full;
+
+            float flashOpacity = 0.0F;
+            if (flashAtNanos >= 0L) {
+                long elapsed = nowNanos - flashAtNanos;
+                long duration = full ? READY_FLASH_DURATION_NANOS * 2L : READY_FLASH_DURATION_NANOS;
+                if (elapsed < duration) {
+                    flashOpacity = 1.0F - (float) elapsed / duration;
+                } else {
+                    flashAtNanos = -1L;
+                }
+            }
+            return new CooldownHudFrame(true, progress, 1.0F, flashOpacity, playFullSound);
+        }
+
+        void reset() {
+            initialized = false;
+            previousCueValue = 0.0F;
+            previouslyFull = false;
+            flashAtNanos = -1L;
         }
     }
 

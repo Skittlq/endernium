@@ -2,12 +2,18 @@ package com.skittlq.endernium.item.tools;
 
 import com.skittlq.endernium.entity.EnderniumThrownSpear;
 import com.skittlq.endernium.client.EnderniumKeyBindings;
+import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
+import com.skittlq.endernium.combat.EnderniumDamageTypes;
+import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.EnderniumTooltipProvider;
+import com.skittlq.endernium.item.EnderniumTooltipNumbers;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.network.EnderniumNetworking;
+import com.skittlq.endernium.util.EnderniumAbilityMath;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -25,16 +31,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Consumer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.WeakHashMap;
+import java.util.Objects;
 
 public final class EnderniumSpear extends Item implements EnderniumTooltipProvider {
     private static final float THROW_VELOCITY = 2.75F;
-    public static final int RETURN_COOLDOWN_TICKS = 8 * 20;
-    private static final Map<net.minecraft.server.MinecraftServer, Map<UUID, Long>> COOLDOWN_END_TICKS =
-            new WeakHashMap<>();
+    private static StrainStore strainStore = new StrainStore() {
+        @Override public long getEndGameTime(Player player) { return 0L; }
+        @Override public void setEndGameTime(Player player, long gameTime) { }
+    };
+
+    public static void bindStrainStore(StrainStore store) {
+        strainStore = Objects.requireNonNull(store);
+    }
 
     public EnderniumSpear(Properties properties) {
         super(properties.spear(
@@ -63,13 +71,6 @@ public final class EnderniumSpear extends Item implements EnderniumTooltipProvid
             return InteractionResult.PASS;
         }
 
-        Map<UUID, Long> cooldowns = COOLDOWN_END_TICKS.computeIfAbsent(
-                serverLevel.getServer(), ignored -> new HashMap<>());
-        long gameTime = serverLevel.getGameTime();
-        if (cooldowns.getOrDefault(serverPlayer.getUUID(), 0L) > gameTime) {
-            return InteractionResult.SUCCESS;
-        }
-
         float meleeDamage = calculateMeleeDamage(serverPlayer, heldStack, hand);
         ItemStack thrownStack = heldStack.copyAndClear();
         EnderniumThrownSpear spear = new EnderniumThrownSpear(
@@ -83,13 +84,26 @@ public final class EnderniumSpear extends Item implements EnderniumTooltipProvid
         return InteractionResult.SUCCESS;
     }
 
-    public static void beginReturnCooldown(ServerPlayer player) {
-        long cooldownEndTick = player.level().getGameTime() + RETURN_COOLDOWN_TICKS;
-        COOLDOWN_END_TICKS.computeIfAbsent(
-                player.level().getServer(), ignored -> new HashMap<>())
-                .put(player.getUUID(), cooldownEndTick);
-        EnderniumNetworking.sendSpearCooldownSync(
-                player, cooldownEndTick, RETURN_COOLDOWN_TICKS);
+    public static void completeTeleport(ServerPlayer player) {
+        long now = player.level().getGameTime();
+        int durationTicks = EnderniumGameplayConfig.spearStrainDurationSeconds() * 20;
+        long previousEnd = strainStore.getEndGameTime(player);
+        long remainingTicks = Math.max(0L, Math.min(durationTicks, previousEnd - now));
+        float damage = strainDamage(player.getMaxHealth(), remainingTicks, durationTicks,
+                (float) (EnderniumGameplayConfig.spearMaximumHealthCostPercent() / 100.0D));
+
+        long newEnd = now + durationTicks;
+        strainStore.setEndGameTime(player, newEnd);
+        EnderniumNetworking.sendSpearCooldownSync(player, newEnd, durationTicks);
+        if (damage > 0.0F && player.isAlive()) {
+            player.hurtServer(player.level(), EnderniumDamageTypes.spearStrain(player.level(), player), damage);
+        }
+    }
+
+    public static float strainDamage(float maxHealth, long remainingTicks, int durationTicks,
+                                     float maximumHealthCostFraction) {
+        return EnderniumAbilityMath.spearStrainDamage(maxHealth, remainingTicks, durationTicks,
+                maximumHealthCostFraction);
     }
 
     private static float calculateMeleeDamage(
@@ -128,16 +142,35 @@ public final class EnderniumSpear extends Item implements EnderniumTooltipProvid
                 || player.getOffhandItem().getItem() instanceof EnderniumSpear;
     }
 
-    public static void syncCooldownOnLogin(ServerPlayer player) {
-        Map<UUID, Long> cooldowns = COOLDOWN_END_TICKS.get(player.level().getServer());
-        long endTick = cooldowns == null ? 0L : cooldowns.getOrDefault(player.getUUID(), 0L);
+    public static void syncStrainOnLogin(ServerPlayer player) {
+        long endTick = strainStore.getEndGameTime(player);
         long remaining = endTick - player.level().getGameTime();
-        int duration = remaining > 0L ? RETURN_COOLDOWN_TICKS : 0;
-        EnderniumNetworking.sendSpearCooldownSync(player, duration == 0 ? 0L : endTick, duration);
+        int durationTicks = EnderniumGameplayConfig.spearStrainDurationSeconds() * 20;
+        if (remaining <= 0L) {
+            strainStore.setEndGameTime(player, 0L);
+            EnderniumNetworking.sendSpearCooldownSync(player, 0L, 0);
+            return;
+        }
+        EnderniumNetworking.sendSpearCooldownSync(player, endTick, durationTicks);
     }
 
-    public static void clearServerState(net.minecraft.server.MinecraftServer server) {
-        COOLDOWN_END_TICKS.remove(server);
+    public static void tickStrainExpiry(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            long endTick = strainStore.getEndGameTime(player);
+            if (endTick > 0L && endTick <= player.level().getGameTime()) {
+                strainStore.setEndGameTime(player, 0L);
+                EnderniumNetworking.sendSpearCooldownSync(player, 0L, 0);
+            }
+        }
+    }
+
+    public static void clearStrain(ServerPlayer player) {
+        strainStore.setEndGameTime(player, 0L);
+        EnderniumNetworking.sendSpearCooldownSync(player, 0L, 0);
+    }
+
+    public static void clearServerState(MinecraftServer server) {
+        // Strain is persisted on each player rather than held in server-global memory.
     }
 
     @Override
@@ -156,10 +189,20 @@ public final class EnderniumSpear extends Item implements EnderniumTooltipProvid
                     "endernium.tooltip.spear.activate",
                     EnderniumKeyBindings.abilityKeyName()
             ).withStyle(ChatFormatting.LIGHT_PURPLE));
-            tooltipAdder.accept(Component.translatable("endernium.tooltip.spear.cooldown", 8)
+            EnderniumGameplayConfig.Snapshot settings = EnderniumClientGameplaySettings.get();
+            tooltipAdder.accept(Component.translatable("endernium.tooltip.spear.strain",
+                            settings.spearStrainDurationSeconds(),
+                            EnderniumTooltipNumbers.compact(
+                                    settings.spearMaximumHealthCostPercent()))
                     .withStyle(ChatFormatting.LIGHT_PURPLE));
             tooltipAdder.accept(Component.translatable("endernium.tooltip.spear.description")
                     .withStyle(ChatFormatting.GRAY));
         }
+    }
+
+    public interface StrainStore {
+        long getEndGameTime(Player player);
+
+        void setEndGameTime(Player player, long gameTime);
     }
 }

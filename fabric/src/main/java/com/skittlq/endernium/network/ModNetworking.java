@@ -2,6 +2,7 @@ package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.ArmorChargeSyncPayload;
 import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CombatOpponentsPayload;
@@ -10,6 +11,7 @@ import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
+import com.skittlq.endernium.network.payloads.SwordChargeSyncPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -27,6 +29,8 @@ public final class ModNetworking {
         PayloadTypeRegistry.clientboundPlay().register(DragonDeathVfxPayload.TYPE, DragonDeathVfxPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BlessingVfxPayload.TYPE, BlessingVfxPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AbilityCooldownSyncPayload.TYPE, AbilityCooldownSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SwordChargeSyncPayload.TYPE, SwordChargeSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ArmorChargeSyncPayload.TYPE, ArmorChargeSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BlessingStatePayload.TYPE, BlessingStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(GameplaySettingsPayload.TYPE, GameplaySettingsPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(VeinMiningStatePayload.TYPE, VeinMiningStatePayload.STREAM_CODEC);
@@ -41,6 +45,8 @@ public final class ModNetworking {
         EnderniumNetworking.bindDragonDeathVfxSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindBlessingVfxSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindAbilityCooldownSyncSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindSwordChargeSyncSender(ServerPlayNetworking::send);
+        EnderniumNetworking.bindArmorChargeSyncSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindBlessingStateSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindGameplaySettingsSender(ServerPlayNetworking::send);
         EnderniumNetworking.bindVeinMiningStateSender(ServerPlayNetworking::send);
@@ -62,6 +68,12 @@ public final class ModNetworking {
         ClientPlayNetworking.registerGlobalReceiver(AbilityCooldownSyncPayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         EnderniumClientNetworkHandler.handleAbilityCooldownSync(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(SwordChargeSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientNetworkHandler.handleSwordChargeSync(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(ArmorChargeSyncPayload.TYPE,
+                (payload, context) -> context.client().execute(() ->
+                        EnderniumClientNetworkHandler.handleArmorChargeSync(payload)));
         ClientPlayNetworking.registerGlobalReceiver(BlessingStatePayload.TYPE,
                 (payload, context) -> context.client().execute(() ->
                         EnderniumClientNetworkHandler.handleBlessingState(payload)));

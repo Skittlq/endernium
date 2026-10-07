@@ -3,7 +3,6 @@ package com.skittlq.endernium.client;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.item.armor.EnderniumHorseArmorAbility;
 import com.skittlq.endernium.item.armor.EnderniumNautilusArmorAbility;
-import com.skittlq.endernium.item.tools.EnderniumSpear;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
@@ -27,11 +26,9 @@ public final class EnderniumAbilityKeyHandler {
                 if (EnderniumBlessing.isClientBlessed()) {
                     boolean horseBlocked = EnderniumHorseArmorAbility.hasArmoredHorseMount(client.player)
                             && EnderniumClientCooldowns.isHorseOnCooldown(client.player.level().getGameTime());
-                    boolean spearBlocked = EnderniumSpear.isHeldBy(client.player)
-                            && EnderniumClientCooldowns.isSpearOnCooldown(client.player.level().getGameTime());
                     boolean nautilusBlocked = EnderniumNautilusArmorAbility.hasArmoredNautilusMount(client.player)
                             && EnderniumClientCooldowns.isNautilusOnCooldown(client.player.level().getGameTime());
-                    if (!horseBlocked && !spearBlocked && !nautilusBlocked) {
+                    if (!horseBlocked && !nautilusBlocked) {
                         sendActivation.run();
                     }
                 } else {

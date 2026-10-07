@@ -3,6 +3,7 @@ package com.skittlq.endernium.network;
 import com.skittlq.endernium.Endernium;
 import com.skittlq.endernium.item.EnderniumAbilityHandler;
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.ArmorChargeSyncPayload;
 import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.CameraLerpPayload;
@@ -11,6 +12,7 @@ import com.skittlq.endernium.network.payloads.EnderniumAbilityPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
+import com.skittlq.endernium.network.payloads.SwordChargeSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.api.distmarker.Dist;
@@ -73,6 +75,24 @@ public class ModNetworking {
                                 })
         );
         registrar.playToClient(
+                SwordChargeSyncPayload.TYPE,
+                SwordChargeSyncPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+                        EnderniumClientNetworkHandler.handleSwordChargeSync(payload);
+                    }
+                })
+        );
+        registrar.playToClient(
+                ArmorChargeSyncPayload.TYPE,
+                ArmorChargeSyncPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+                        EnderniumClientNetworkHandler.handleArmorChargeSync(payload);
+                    }
+                })
+        );
+        registrar.playToClient(
                 BlessingStatePayload.TYPE,
                 BlessingStatePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
@@ -113,6 +133,8 @@ public class ModNetworking {
         EnderniumNetworking.bindDragonDeathVfxSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindBlessingVfxSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindAbilityCooldownSyncSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindSwordChargeSyncSender(PacketDistributor::sendToPlayer);
+        EnderniumNetworking.bindArmorChargeSyncSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindBlessingStateSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindGameplaySettingsSender(PacketDistributor::sendToPlayer);
         EnderniumNetworking.bindVeinMiningStateSender(PacketDistributor::sendToPlayer);

@@ -6,8 +6,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 public final class EnderniumSwordCooldownHandler {
-    private static final String COOLDOWN_KEY = "EnderniumSwordCooldownEndTick";
-    private static final String DURATION_KEY = "EnderniumSwordCooldownDurationTicks";
+    private static final String CHARGE_KEY = "EnderniumSwordStoredDamage";
 
     private static boolean registered;
 
@@ -19,25 +18,15 @@ public final class EnderniumSwordCooldownHandler {
             return;
         }
         registered = true;
-        EnderniumSword.bindCooldownStore(new EnderniumSword.CooldownStore() {
+        EnderniumSword.bindChargeStore(new EnderniumSword.ChargeStore() {
             @Override
-            public long getCooldownEndGameTime(Player player) {
-                return player.getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
+            public float getStoredDamage(Player player) {
+                return player.getPersistentData().getFloat(CHARGE_KEY).orElse(0.0F);
             }
 
             @Override
-            public void setCooldownEndGameTime(Player player, long gameTime) {
-                player.getPersistentData().putLong(COOLDOWN_KEY, gameTime);
-            }
-
-            @Override
-            public int getCooldownDurationTicks(Player player) {
-                return player.getPersistentData().getInt(DURATION_KEY).orElse(0);
-            }
-
-            @Override
-            public void setCooldownDurationTicks(Player player, int durationTicks) {
-                player.getPersistentData().putInt(DURATION_KEY, durationTicks);
+            public void setStoredDamage(Player player, float storedDamage) {
+                player.getPersistentData().putFloat(CHARGE_KEY, storedDamage);
             }
         });
         NeoForge.EVENT_BUS.addListener(EnderniumSwordCooldownHandler::onPlayerJoin);
@@ -47,20 +36,17 @@ public final class EnderniumSwordCooldownHandler {
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumSword.syncCooldownOnLogin(player);
+            EnderniumSword.syncCharge(player);
         }
     }
 
     private static void onPlayerClone(PlayerEvent.Clone event) {
-        long endTick = event.getOriginal().getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
-        int duration = event.getOriginal().getPersistentData().getInt(DURATION_KEY).orElse(0);
-        event.getEntity().getPersistentData().putLong(COOLDOWN_KEY, endTick);
-        event.getEntity().getPersistentData().putInt(DURATION_KEY, duration);
+        event.getEntity().getPersistentData().putFloat(CHARGE_KEY, 0.0F);
     }
 
     private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumSword.syncCooldownOnLogin(player);
+            EnderniumSword.syncCharge(player);
         }
     }
 }

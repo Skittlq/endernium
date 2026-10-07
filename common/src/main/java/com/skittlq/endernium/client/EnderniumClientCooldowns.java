@@ -2,10 +2,6 @@ package com.skittlq.endernium.client;
 
 // Client-local mirror of server-authoritative ability cooldowns, updated via network sync instead of vanilla ItemCooldowns.
 public final class EnderniumClientCooldowns {
-    private static long armorCooldownEndTick;
-    private static int armorCooldownDurationTicks;
-    private static long swordCooldownEndTick;
-    private static int swordCooldownDurationTicks;
     private static long horseCooldownEndTick;
     private static int horseCooldownDurationTicks;
     private static long spearCooldownEndTick;
@@ -16,22 +12,12 @@ public final class EnderniumClientCooldowns {
     private EnderniumClientCooldowns() {
     }
 
-    public static void setArmorCooldown(long endGameTime, int durationTicks) {
-        armorCooldownEndTick = Math.max(0L, endGameTime);
-        armorCooldownDurationTicks = Math.max(0, durationTicks);
-    }
-
-    public static void setSwordCooldown(long endGameTime, int durationTicks) {
-        swordCooldownEndTick = Math.max(0L, endGameTime);
-        swordCooldownDurationTicks = Math.max(0, durationTicks);
-    }
-
     public static void setHorseCooldown(long endGameTime, int durationTicks) {
         horseCooldownEndTick = Math.max(0L, endGameTime);
         horseCooldownDurationTicks = Math.max(0, durationTicks);
     }
 
-    public static void setSpearCooldown(long endGameTime, int durationTicks) {
+    public static void setSpearStrain(long endGameTime, int durationTicks) {
         spearCooldownEndTick = Math.max(0L, endGameTime);
         spearCooldownDurationTicks = Math.max(0, durationTicks);
     }
@@ -39,14 +25,6 @@ public final class EnderniumClientCooldowns {
     public static void setNautilusCooldown(long endGameTime, int durationTicks) {
         nautilusCooldownEndTick = Math.max(0L, endGameTime);
         nautilusCooldownDurationTicks = Math.max(0, durationTicks);
-    }
-
-    public static float armorCooldownRemainingFraction(long currentGameTime) {
-        return remainingFraction(armorCooldownEndTick, armorCooldownDurationTicks, currentGameTime);
-    }
-
-    public static float swordCooldownRemainingFraction(long currentGameTime) {
-        return remainingFraction(swordCooldownEndTick, swordCooldownDurationTicks, currentGameTime);
     }
 
     public static float horseCooldownRemainingFraction(long currentGameTime) {
@@ -61,16 +39,8 @@ public final class EnderniumClientCooldowns {
         return remainingFraction(nautilusCooldownEndTick, nautilusCooldownDurationTicks, currentGameTime);
     }
 
-    public static boolean isSwordOnCooldown(long currentGameTime) {
-        return swordCooldownEndTick > currentGameTime;
-    }
-
     public static boolean isHorseOnCooldown(long currentGameTime) {
         return horseCooldownEndTick > currentGameTime;
-    }
-
-    public static boolean isSpearOnCooldown(long currentGameTime) {
-        return spearCooldownEndTick > currentGameTime;
     }
 
     public static boolean isNautilusOnCooldown(long currentGameTime) {
@@ -78,10 +48,6 @@ public final class EnderniumClientCooldowns {
     }
 
     public static void clear() {
-        armorCooldownEndTick = 0L;
-        armorCooldownDurationTicks = 0;
-        swordCooldownEndTick = 0L;
-        swordCooldownDurationTicks = 0;
         horseCooldownEndTick = 0L;
         horseCooldownDurationTicks = 0;
         spearCooldownEndTick = 0L;

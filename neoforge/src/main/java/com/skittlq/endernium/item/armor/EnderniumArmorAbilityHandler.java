@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class EnderniumArmorAbilityHandler {
-    private static final String COOLDOWN_KEY = "EnderniumArmorCooldown";
+    private static final String CHARGE_KEY = "EnderniumArmorStoredDamage";
 
     private static final EnderniumArmorAbility.Settings SETTINGS = new EnderniumArmorAbility.Settings() {
         @Override
@@ -22,20 +22,20 @@ public final class EnderniumArmorAbilityHandler {
         }
 
         @Override
-        public long cooldownSeconds() {
-            return Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsLong();
+        public double maxStoredDamage() {
+            return Config.ENDERNIUM_ARMOR_MAX_STORED_DAMAGE.getAsDouble();
         }
     };
 
-    private static final EnderniumArmorAbility.CooldownStore COOLDOWN_STORE = new EnderniumArmorAbility.CooldownStore() {
+    private static final EnderniumArmorAbility.ChargeStore CHARGE_STORE = new EnderniumArmorAbility.ChargeStore() {
         @Override
-        public long getLastUsedTick(LivingEntity entity) {
-            return entity.getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
+        public float getStoredDamage(LivingEntity entity) {
+            return entity.getPersistentData().getFloat(CHARGE_KEY).orElse(0.0F);
         }
 
         @Override
-        public void setLastUsedTick(LivingEntity entity, long tick) {
-            entity.getPersistentData().putLong(COOLDOWN_KEY, tick);
+        public void setStoredDamage(LivingEntity entity, float storedDamage) {
+            entity.getPersistentData().putFloat(CHARGE_KEY, storedDamage);
         }
     };
 
@@ -49,7 +49,7 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
         registered = true;
-        EnderniumArmorAbility.bind(SETTINGS, COOLDOWN_STORE);
+        EnderniumArmorAbility.bind(SETTINGS, CHARGE_STORE);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onServerTick);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerJoin);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerClone);
@@ -57,23 +57,22 @@ public final class EnderniumArmorAbilityHandler {
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
-        EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS, COOLDOWN_STORE);
+        EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS, CHARGE_STORE);
     }
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumArmorAbility.syncCooldownOnLogin(player, SETTINGS, COOLDOWN_STORE);
+            EnderniumArmorAbility.syncCharge(player, SETTINGS, CHARGE_STORE);
         }
     }
 
     private static void onPlayerClone(PlayerEvent.Clone event) {
-        long cooldown = event.getOriginal().getPersistentData().getLong(COOLDOWN_KEY).orElse(0L);
-        event.getEntity().getPersistentData().putLong(COOLDOWN_KEY, cooldown);
+        event.getEntity().getPersistentData().putFloat(CHARGE_KEY, 0.0F);
     }
 
     private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            EnderniumArmorAbility.syncCooldownOnLogin(player, SETTINGS, COOLDOWN_STORE);
+            EnderniumArmorAbility.syncCharge(player, SETTINGS, CHARGE_STORE);
         }
     }
 }

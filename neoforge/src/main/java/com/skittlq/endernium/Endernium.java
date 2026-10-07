@@ -9,6 +9,7 @@ import com.skittlq.endernium.item.ModItems;
 import com.skittlq.endernium.entity.ModEntities;
 import com.skittlq.endernium.item.armor.EnderniumArmorAbilityHandler;
 import com.skittlq.endernium.item.tools.EnderniumSwordCooldownHandler;
+import com.skittlq.endernium.item.tools.EnderniumSpearStateHandler;
 import com.skittlq.endernium.loot.ModLootConditions;
 import com.skittlq.endernium.loot.ModLootModifiers;
 import com.skittlq.endernium.particles.EnderniumParticles;
@@ -64,6 +65,7 @@ public class Endernium {
         ModPlacementModifiers.register(modEventBus);
         EnderniumArmorAbilityHandler.register();
         EnderniumSwordCooldownHandler.register();
+        EnderniumSpearStateHandler.register();
         EnderniumCombatEvents.register();
         EnderniumBlessingHandler.register();
 

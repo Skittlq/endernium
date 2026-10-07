@@ -14,11 +14,16 @@ public final class EnderniumCombatEvents {
 
     public static void register() {
         NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::onDamage);
+        NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::beforeDamage);
         NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::onDeath);
         NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::onPlayerJoin);
         NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::onPlayerLogout);
         NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::onServerTick);
         NeoForge.EVENT_BUS.addListener(EnderniumCombatEvents::onServerStopped);
+    }
+
+    private static void beforeDamage(LivingDamageEvent.Pre event) {
+        EnderniumCombatHooks.beforeDamage(event.getEntity());
     }
 
     private static void onDamage(LivingDamageEvent.Post event) {

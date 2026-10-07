@@ -1,11 +1,13 @@
 package com.skittlq.endernium.network;
 
 import com.skittlq.endernium.network.payloads.AbilityCooldownSyncPayload;
+import com.skittlq.endernium.network.payloads.ArmorChargeSyncPayload;
 import com.skittlq.endernium.network.payloads.BlessingStatePayload;
 import com.skittlq.endernium.network.payloads.BlessingVfxPayload;
 import com.skittlq.endernium.network.payloads.DragonDeathVfxPayload;
 import com.skittlq.endernium.network.payloads.GameplaySettingsPayload;
 import com.skittlq.endernium.network.payloads.VeinMiningStatePayload;
+import com.skittlq.endernium.network.payloads.SwordChargeSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -24,6 +26,12 @@ public final class EnderniumNetworking {
     };
     private static AbilityCooldownSyncSender abilityCooldownSyncSender = (player, payload) -> {
         throw new IllegalStateException("Endernium ability cooldown sync sender has not been bound to a loader network API yet");
+    };
+    private static SwordChargeSyncSender swordChargeSyncSender = (player, payload) -> {
+        throw new IllegalStateException("Endernium sword charge sync sender has not been bound yet");
+    };
+    private static ArmorChargeSyncSender armorChargeSyncSender = (player, payload) -> {
+        throw new IllegalStateException("Endernium armor charge sync sender has not been bound yet");
     };
     private static BlessingStateSender blessingStateSender = (player, payload) -> {
         throw new IllegalStateException("Endernium blessing state sender has not been bound to a loader network API yet");
@@ -69,14 +77,20 @@ public final class EnderniumNetworking {
         abilityCooldownSyncSender = Objects.requireNonNull(sender);
     }
 
-    public static void sendArmorCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
-        abilityCooldownSyncSender.send(player,
-                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.ARMOR, endGameTime, durationTicks));
+    public static void bindSwordChargeSyncSender(SwordChargeSyncSender sender) {
+        swordChargeSyncSender = Objects.requireNonNull(sender);
     }
 
-    public static void sendSwordCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
-        abilityCooldownSyncSender.send(player,
-                new AbilityCooldownSyncPayload(AbilityCooldownSyncPayload.Ability.SWORD, endGameTime, durationTicks));
+    public static void sendSwordChargeSync(ServerPlayer player, float storedDamage) {
+        swordChargeSyncSender.send(player, new SwordChargeSyncPayload(storedDamage));
+    }
+
+    public static void bindArmorChargeSyncSender(ArmorChargeSyncSender sender) {
+        armorChargeSyncSender = Objects.requireNonNull(sender);
+    }
+
+    public static void sendArmorChargeSync(ServerPlayer player, float storedDamage) {
+        armorChargeSyncSender.send(player, new ArmorChargeSyncPayload(storedDamage));
     }
 
     public static void sendHorseCooldownSync(ServerPlayer player, long endGameTime, int durationTicks) {
@@ -152,6 +166,16 @@ public final class EnderniumNetworking {
     @FunctionalInterface
     public interface AbilityCooldownSyncSender {
         void send(ServerPlayer player, AbilityCooldownSyncPayload payload);
+    }
+
+    @FunctionalInterface
+    public interface SwordChargeSyncSender {
+        void send(ServerPlayer player, SwordChargeSyncPayload payload);
+    }
+
+    @FunctionalInterface
+    public interface ArmorChargeSyncSender {
+        void send(ServerPlayer player, ArmorChargeSyncPayload payload);
     }
 
     @FunctionalInterface

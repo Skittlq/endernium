@@ -42,19 +42,18 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 - Help defeat the Ender Dragon to permanently unlock Endernium abilities. When the dragon falls, Endernium will seek you out and grant its blessing.
 
 - **Endernium Armor Set**
-  - Grants a unique _Last-Minute Defense_ ability when wearing the full set.
-  - When health drops below **4 HP (2 hearts)**, nearby monsters are launched away.
-  - Grants a short regeneration buff to help you recover.
-  - Offers one final chance to survive dangerous encounters.
-  - Cooldown: **1.5 minutes**.
+  - Stores up to **24 points** of damage received from creatures, players, projectiles, and entity-caused explosions as kinetic energy.
+  - When health drops below **4 HP (2 hearts)**, the stored energy is consumed to repel nearby attackers.
+  - Knockback and regeneration scale with the stored energy; environmental and self-inflicted damage do not charge it.
 
 - **Endernium Sword**
   - Features a _Teleportation Barrage_ attack.
   - Press **`R`** to automatically teleport to valid targets in a wide forward arc and strike them.
   - Against players, it can only target someone who has attacked you.
-  - Deals **double damage** to players and **triple damage** to mobs.
+  - Deals **double damage** to both players and mobs.
   - Consumes **2 durability per target successfully hit**.
-  - Cooldown: **10 seconds** + **5 seconds per target hit**.
+  - Every **24 actual damage** dealt with normal attacks stores one barrage strike; dealing more damage earns more strikes, up to **15**.
+  - Activating consumes the entire meter and strikes up to the stored number of unique targets.
 
 - **Endernium Spear**
   - Features the _Ender Javelin_ ability.
@@ -62,7 +61,7 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
   - The thrown spear deals the same damage as a normal melee strike.
   - When it lands, you are teleported to it and the spear returns to your inventory.
   - If it enters the void or remains airborne for too long, it returns without teleporting you.
-  - Cooldown: **8 seconds**, beginning when the spear returns.
+  - It has no fixed cooldown, but teleporting again within **8 seconds** costs up to **40% of maximum health**, decreasing linearly to zero.
 
 - **Endernium Horse Armor**
   - Grants the _Ender Gallop_ ability to its horse.
@@ -87,7 +86,7 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 
 ## Configuration
 
-Endernium's armor ability, sword ability cooldowns, and tool vein mining can be configured.
+Endernium's armor storage, sword charge, spear strain, ability toggles, and tool vein mining can be configured.
 
 ## Credits
 

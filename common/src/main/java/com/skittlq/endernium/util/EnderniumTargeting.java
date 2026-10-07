@@ -15,6 +15,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -76,6 +77,21 @@ public final class EnderniumTargeting {
                         SWORD_ARC
                 )
         );
+    }
+
+    public static List<LivingEntity> sortSwordTargets(Player player, List<LivingEntity> targets) {
+        Vec3 lookVector = player.getLookAngle().normalize();
+        Vec3 playerPosition = eyePosition(player);
+        return targets.stream()
+                .sorted(Comparator.comparingDouble(target -> {
+                    Vec3 toTarget = target.position()
+                            .add(0.0D, target.getBbHeight() / 2.0D, 0.0D)
+                            .subtract(playerPosition);
+                    double angle = Math.max(-1.0D, Math.min(1.0D,
+                            lookVector.dot(toTarget.normalize())));
+                    return Math.acos(angle) * 2.0D + toTarget.length() / SWORD_RANGE;
+                }))
+                .toList();
     }
 
     public static boolean isValidSwordTarget(ServerPlayer player, LivingEntity target, Vec3 playerPosition,

@@ -116,7 +116,6 @@ public final class EnderniumSpearPendingReturns extends SavedData {
             }
             pending.remove(i);
             changed = true;
-            EnderniumSpear.beginReturnCooldown(player);
         }
         if (changed) {
             setDirty();

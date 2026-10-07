@@ -61,7 +61,7 @@ public final class EnderniumBlessing {
             blessed = true;
         }
         EnderniumNetworking.sendBlessingState(player, blessed, false);
-        EnderniumSpear.syncCooldownOnLogin(player);
+        EnderniumSpear.syncStrainOnLogin(player);
     }
 
     public static void setClientBlessed(boolean blessed) {

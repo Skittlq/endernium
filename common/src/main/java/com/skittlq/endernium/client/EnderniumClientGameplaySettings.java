@@ -16,9 +16,10 @@ public final class EnderniumClientGameplaySettings {
 
     public static void apply(GameplaySettingsPayload payload) {
         settings = new EnderniumGameplayConfig.Snapshot(payload.swordEnabled(),
-                payload.swordBaseCooldownSeconds(), payload.swordPerMobCooldownSeconds(),
+                payload.swordDamagePerStrikeMultiplier(), payload.swordMaxStrikes(),
                 payload.veinMiningEnabled(), payload.armorEnabled(), payload.armorThreshold(),
-                payload.armorCooldownSeconds());
+                payload.armorMaxStoredDamage(), payload.spearStrainDurationSeconds(),
+                payload.spearMaximumHealthCostPercent());
     }
 
     public static void reset() {

@@ -197,7 +197,7 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
         if (endPortal && sourceLevel.dimension() == Level.END
                 && playerDestination.newLevel().dimension() == Level.OVERWORLD
                 && !player.seenCredits) {
-            returnToPlayer(sourceLevel, player, position());
+            returnToPlayer(sourceLevel, player, position(), true);
             player.showEndCredits();
             return;
         }
@@ -210,7 +210,7 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
         teleportedPlayer.setPortalCooldown();
         teleportedPlayer.resetFallDistance();
         teleportedPlayer.resetCurrentImpulseContext();
-        returnToPlayer(teleportedPlayer.level(), teleportedPlayer, teleportedPlayer.position());
+        returnToPlayer(teleportedPlayer.level(), teleportedPlayer, teleportedPlayer.position(), true);
     }
 
     private void resolve(ServerLevel level, Vec3 impactPosition) {
@@ -226,7 +226,7 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
             if (!player.canUsePortal(true)
                     || !player.level().isAllowedToEnterPortal(level)
                     || !player.canTeleport(player.level(), level)) {
-                returnToPlayer(player.level(), player, player.position());
+                returnToPlayer(player.level(), player, player.position(), false);
                 return;
             }
             TeleportTransition destination = new TeleportTransition(
@@ -234,22 +234,23 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
                     Relative.ROTATION, TeleportTransition.DO_NOTHING);
             ServerPlayer teleportedPlayer = player.teleport(destination);
             if (teleportedPlayer == null) {
-                returnToPlayer(player.level(), player, player.position());
+                returnToPlayer(player.level(), player, player.position(), false);
                 return;
             }
             teleportedPlayer.setPortalCooldown();
             teleportedPlayer.resetFallDistance();
             teleportedPlayer.resetCurrentImpulseContext();
-            returnToPlayer(level, teleportedPlayer, impactPosition);
+            returnToPlayer(level, teleportedPlayer, impactPosition, true);
             return;
         }
 
         player.teleportTo(impactPosition.x, impactPosition.y, impactPosition.z);
         player.resetFallDistance();
-        returnToPlayer(level, player, impactPosition);
+        returnToPlayer(level, player, impactPosition, true);
     }
 
-    private void returnToPlayer(ServerLevel level, ServerPlayer player, Vec3 position) {
+    private void returnToPlayer(ServerLevel level, ServerPlayer player, Vec3 position,
+                                boolean successfulTeleport) {
         resolved = true;
         ItemStack returnedStack = getItem().copy();
         returnedStack.hurtAndBreak(1, player, returnHand);
@@ -258,7 +259,9 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
         } else if (!player.getInventory().add(returnedStack)) {
             player.drop(returnedStack, false, Prediction.SERVER_ONLY);
         }
-        EnderniumSpear.beginReturnCooldown(player);
+        if (successfulTeleport) {
+            EnderniumSpear.completeTeleport(player);
+        }
         level.playSound(null, position.x, position.y, position.z,
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.9F, 1.15F);
         level.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
@@ -283,8 +286,6 @@ public final class EnderniumThrownSpear extends ThrowableItemProjectile {
         } else if (!player.getInventory().add(returnedStack)) {
             player.drop(returnedStack, false, Prediction.SERVER_ONLY);
         }
-        EnderniumSpear.beginReturnCooldown(player);
-
         level.playSound(null, recallPosition.x, recallPosition.y, recallPosition.z,
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.65F, 1.25F);
         level.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),

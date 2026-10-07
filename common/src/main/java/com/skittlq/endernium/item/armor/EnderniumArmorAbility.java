@@ -4,7 +4,7 @@ import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTargeting;
-import com.skittlq.endernium.util.EnderniumCooldowns;
+import com.skittlq.endernium.util.EnderniumAbilityMath;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -20,75 +20,104 @@ import java.util.Objects;
 
 public final class EnderniumArmorAbility {
     private static Settings boundSettings;
-    private static CooldownStore boundCooldownStore;
+    private static ChargeStore boundChargeStore;
 
     private EnderniumArmorAbility() {
     }
 
-    public static void tickPlayers(List<ServerPlayer> players, Settings settings, CooldownStore cooldownStore) {
+    public static void tickPlayers(List<ServerPlayer> players, Settings settings, ChargeStore chargeStore) {
         for (ServerPlayer player : players) {
-            tickPlayer(player, settings, cooldownStore);
+            tickPlayer(player, settings, chargeStore);
         }
     }
 
-    public static void tickPlayer(ServerPlayer player, Settings settings, CooldownStore cooldownStore) {
+    public static void tickPlayer(ServerPlayer player, Settings settings, ChargeStore chargeStore) {
         if (!settings.enabled()
                 || player.isSpectator()
                 || !EnderniumBlessing.isBlessed(player)
                 || !EnderniumArmorUtil.hasFullEnderniumSet(player)) {
+            clearCharge(player, chargeStore);
             return;
         }
 
-        tickWearer(player, settings, cooldownStore);
+        tickWearer(player, settings, chargeStore);
     }
 
-    public static void tickMob(Mob mob, Settings settings, CooldownStore cooldownStore) {
+    public static void tickMob(Mob mob, Settings settings, ChargeStore chargeStore) {
         if (!settings.enabled() || !mob.isAlive() || !EnderniumArmorUtil.hasFullEnderniumSet(mob)) {
+            clearCharge(mob, chargeStore);
             return;
         }
 
-        tickWearer(mob, settings, cooldownStore);
+        tickWearer(mob, settings, chargeStore);
     }
 
-    public static void bind(Settings settings, CooldownStore cooldownStore) {
+    public static void bind(Settings settings, ChargeStore chargeStore) {
         boundSettings = Objects.requireNonNull(settings);
-        boundCooldownStore = Objects.requireNonNull(cooldownStore);
+        boundChargeStore = Objects.requireNonNull(chargeStore);
     }
 
     public static void tickEquippedMob(Entity entity) {
-        if (entity instanceof Mob mob && boundSettings != null && boundCooldownStore != null) {
-            tickMob(mob, boundSettings, boundCooldownStore);
+        if (entity instanceof Mob mob && boundSettings != null && boundChargeStore != null) {
+            tickMob(mob, boundSettings, boundChargeStore);
         }
     }
 
-    private static void tickWearer(LivingEntity wearer, Settings settings, CooldownStore cooldownStore) {
+    public static void recordQualifyingDamage(LivingEntity wearer, float inflictedDamage) {
+        if (boundSettings == null || boundChargeStore == null) {
+            return;
+        }
+        if (!boundSettings.enabled() || !EnderniumArmorUtil.hasFullEnderniumSet(wearer)
+                || wearer instanceof ServerPlayer player && !EnderniumBlessing.isBlessed(player)) {
+            clearCharge(wearer, boundChargeStore);
+            return;
+        }
+        if (inflictedDamage <= 0.0F) {
+            return;
+        }
+        float capacity = (float) boundSettings.maxStoredDamage();
+        float next = EnderniumAbilityMath.accumulateArmorCharge(
+                normalizedCharge(wearer, boundChargeStore, capacity), inflictedDamage, capacity);
+        setCharge(wearer, boundChargeStore, next);
+        if (wearer.level() instanceof ServerLevel level) {
+            int particles = Math.max(1, Math.round(4.0F + 20.0F * (next / capacity)));
+            level.sendParticles(EnderniumParticles.ENDERNIUM_BIT.get(),
+                    wearer.getX(), wearer.getY() + 1.0D, wearer.getZ(),
+                    particles, 0.35D, 0.6D, 0.35D, 0.06D);
+        }
+    }
+
+    public static void clearCharge(LivingEntity wearer) {
+        if (boundChargeStore != null) {
+            clearCharge(wearer, boundChargeStore);
+        }
+    }
+
+    public static void syncCharge(ServerPlayer player, Settings settings, ChargeStore chargeStore) {
+        float capacity = (float) settings.maxStoredDamage();
+        EnderniumNetworking.sendArmorChargeSync(player, normalizedCharge(player, chargeStore, capacity));
+    }
+
+    private static void tickWearer(LivingEntity wearer, Settings settings, ChargeStore chargeStore) {
         ServerLevel level = (ServerLevel) wearer.level();
-        long currentTime = level.getGameTime();
-        long cooldownTicks = cooldownTicks(settings.cooldownSeconds());
-        long lastUsed = cooldownStore.getLastUsedTick(wearer);
-        boolean ready = !EnderniumCooldowns.isElapsedCooldownActive(currentTime, lastUsed, cooldownTicks);
-
+        float capacity = (float) settings.maxStoredDamage();
+        float storedDamage = normalizedCharge(wearer, chargeStore, capacity);
         float health = wearer.getHealth();
-        float maxHealth = wearer.getMaxHealth();
-        int maxParticles = 20;
-
-        if (health < maxHealth && !ready) {
-            float healthFraction = health / maxHealth;
-            int particleCount = Math.round((1.0F - healthFraction) * maxParticles);
-            if (particleCount > 0) {
-                level.sendParticles(EnderniumParticles.ENDERNIUM_BIT.get(),
-                        wearer.getX(), wearer.getY() + 1.5D, wearer.getZ(),
-                        particleCount, 0.0D, 0.0D, 0.0D, 20.0D);
-            }
+        if (storedDamage > 0.0F && level.getGameTime() % 10L == 0L) {
+            float strength = storedDamage / capacity;
+            level.sendParticles(EnderniumParticles.ENDERNIUM_BIT.get(),
+                    wearer.getX(), wearer.getY() + 1.25D, wearer.getZ(),
+                    Math.max(1, Math.round(4.0F * strength)),
+                    0.25D, 0.5D, 0.25D, 0.02D);
         }
 
-        if (health < settings.threshold() && ready) {
-            triggerAbility(wearer, level, cooldownStore, cooldownTicks, currentTime);
+        if (health < settings.threshold() && storedDamage > 0.0F) {
+            setCharge(wearer, chargeStore, 0.0F);
+            triggerAbility(wearer, level, storedDamage / capacity);
         }
     }
 
-    private static void triggerAbility(LivingEntity wearer, ServerLevel level, CooldownStore cooldownStore,
-                                       long cooldownTicks, long currentTime) {
+    private static void triggerAbility(LivingEntity wearer, ServerLevel level, float strength) {
         double radius = 8.0D;
         List<? extends LivingEntity> targets = findTargets(wearer, level, radius);
 
@@ -100,24 +129,21 @@ public final class EnderniumArmorAbility {
             } else {
                 direction = direction.normalize();
             }
-            Vec3 pushVec = direction.scale(2.0D);
-            target.push(pushVec.x, 1.0D, pushVec.z);
+            Vec3 pushVec = direction.scale(2.0D * strength);
+            target.push(pushVec.x, strength, pushVec.z);
             target.push(0.0D, 0.0D, 0.0D);
         }
 
-        wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1));
-        cooldownStore.setLastUsedTick(wearer, currentTime);
-        if (wearer instanceof ServerPlayer player) {
-            long endGameTime = EnderniumCooldowns.deadline(currentTime, cooldownTicks);
-            int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
-            EnderniumNetworking.sendArmorCooldownSync(player, endGameTime, cooldownTicksInt);
+        int regenerationTicks = Math.round(200.0F * strength);
+        if (regenerationTicks > 0) {
+            wearer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, regenerationTicks, 1));
         }
 
         level.playSound(null, wearer.getX(), wearer.getY(), wearer.getZ(),
-                SoundEvents.DRAGON_FIREBALL_EXPLODE, wearer.getSoundSource(), 1.0F, 1.0F);
+                SoundEvents.DRAGON_FIREBALL_EXPLODE, wearer.getSoundSource(), strength, 1.0F);
         level.sendParticles(EnderniumParticles.REVERSE_ENDERNIUM_BIT.get(),
                 wearer.getX(), wearer.getY() + 1.5D, wearer.getZ(),
-                256, 0.0D, 0.0D, 0.0D, 1.0D);
+                Math.max(1, Math.round(256.0F * strength)), 0.0D, 0.0D, 0.0D, strength);
     }
 
     private static List<? extends LivingEntity> findTargets(LivingEntity wearer, ServerLevel level, double radius) {
@@ -131,31 +157,29 @@ public final class EnderniumArmorAbility {
         );
     }
 
-    // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
-    public static void syncCooldownOnLogin(ServerPlayer player, Settings settings, CooldownStore cooldownStore) {
-        if (!settings.enabled() || !EnderniumBlessing.isBlessed(player)) {
-            EnderniumNetworking.sendArmorCooldownSync(player, 0L, 0);
-            return;
-        }
+    public static float strength(float storedDamage, float capacity) {
+        return EnderniumAbilityMath.armorStrength(storedDamage, capacity);
+    }
 
-        long cooldownTicks = cooldownTicks(settings.cooldownSeconds());
-        long currentTime = player.level().getGameTime();
-        long lastUsed = cooldownStore.getLastUsedTick(player);
-        long endGameTime = EnderniumCooldowns.deadline(lastUsed, cooldownTicks);
-        if (EnderniumCooldowns.isElapsedCooldownActive(currentTime, lastUsed, cooldownTicks)) {
-            int cooldownTicksInt = (int) Math.min(Integer.MAX_VALUE, cooldownTicks);
-            EnderniumNetworking.sendArmorCooldownSync(player, endGameTime, cooldownTicksInt);
-        } else {
-            EnderniumNetworking.sendArmorCooldownSync(player, 0L, 0);
+    private static float normalizedCharge(LivingEntity wearer, ChargeStore chargeStore, float capacity) {
+        float stored = chargeStore.getStoredDamage(wearer);
+        if (!Float.isFinite(stored)) {
+            return 0.0F;
+        }
+        return Math.max(0.0F, Math.min(capacity, stored));
+    }
+
+    private static void clearCharge(LivingEntity wearer, ChargeStore chargeStore) {
+        if (chargeStore.getStoredDamage(wearer) != 0.0F) {
+            setCharge(wearer, chargeStore, 0.0F);
         }
     }
 
-    public static long cooldownTicks(long seconds) {
-        if (seconds <= 0L) {
-            return 0L;
+    private static void setCharge(LivingEntity wearer, ChargeStore chargeStore, float storedDamage) {
+        chargeStore.setStoredDamage(wearer, storedDamage);
+        if (wearer instanceof ServerPlayer player) {
+            EnderniumNetworking.sendArmorChargeSync(player, storedDamage);
         }
-        return Math.min(Integer.MAX_VALUE, seconds > Integer.MAX_VALUE / 20L
-                ? Integer.MAX_VALUE : seconds * 20L);
     }
 
     public interface Settings {
@@ -163,12 +187,12 @@ public final class EnderniumArmorAbility {
 
         int threshold();
 
-        long cooldownSeconds();
+        double maxStoredDamage();
     }
 
-    public interface CooldownStore {
-        long getLastUsedTick(LivingEntity entity);
+    public interface ChargeStore {
+        float getStoredDamage(LivingEntity entity);
 
-        void setLastUsedTick(LivingEntity entity, long tick);
+        void setStoredDamage(LivingEntity entity, float storedDamage);
     }
 }

@@ -7,28 +7,25 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.resources.Identifier;
 
 public final class ModAttachments {
-    public static final AttachmentType<Long> ENDERNIUM_ARMOR_LAST_USED_TICK = AttachmentRegistry.create(
-        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_armor_last_used_tick"),
+    public static final AttachmentType<Float> ENDERNIUM_ARMOR_STORED_DAMAGE = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_armor_stored_damage"),
+        builder -> builder
+            .persistent(Codec.FLOAT)
+            .initializer(() -> 0.0F)
+    );
+
+    public static final AttachmentType<Float> ENDERNIUM_SWORD_STORED_DAMAGE = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_sword_stored_damage"),
+        builder -> builder
+            .persistent(Codec.FLOAT)
+            .initializer(() -> 0.0F)
+    );
+
+    public static final AttachmentType<Long> ENDERNIUM_SPEAR_STRAIN_END_TICK = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_spear_strain_end_tick"),
         builder -> builder
             .persistent(Codec.LONG)
             .initializer(() -> 0L)
-            .copyOnDeath()
-            .copyOnDeath()
-    );
-
-    public static final AttachmentType<Long> ENDERNIUM_SWORD_COOLDOWN_END_TICK = AttachmentRegistry.create(
-        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_sword_cooldown_end_tick"),
-        builder -> builder
-            .persistent(Codec.LONG)
-            .initializer(() -> 0L)
-    );
-
-    public static final AttachmentType<Integer> ENDERNIUM_SWORD_COOLDOWN_DURATION_TICKS = AttachmentRegistry.create(
-        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_sword_cooldown_duration_ticks"),
-        builder -> builder
-            .persistent(Codec.INT)
-            .initializer(() -> 0)
-            .copyOnDeath()
     );
 
     public static final AttachmentType<Boolean> ENDERNIUM_ABILITIES_BLESSED = AttachmentRegistry.create(

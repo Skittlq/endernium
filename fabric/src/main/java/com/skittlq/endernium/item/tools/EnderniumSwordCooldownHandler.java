@@ -16,30 +16,20 @@ public final class EnderniumSwordCooldownHandler {
             return;
         }
         registered = true;
-        EnderniumSword.bindCooldownStore(new EnderniumSword.CooldownStore() {
+        EnderniumSword.bindChargeStore(new EnderniumSword.ChargeStore() {
             @Override
-            public long getCooldownEndGameTime(Player player) {
-                return player.getAttachedOrCreate(ModAttachments.ENDERNIUM_SWORD_COOLDOWN_END_TICK);
+            public float getStoredDamage(Player player) {
+                return player.getAttachedOrCreate(ModAttachments.ENDERNIUM_SWORD_STORED_DAMAGE);
             }
 
             @Override
-            public void setCooldownEndGameTime(Player player, long gameTime) {
-                player.setAttached(ModAttachments.ENDERNIUM_SWORD_COOLDOWN_END_TICK, gameTime);
-            }
-
-            @Override
-            public int getCooldownDurationTicks(Player player) {
-                return player.getAttachedOrCreate(ModAttachments.ENDERNIUM_SWORD_COOLDOWN_DURATION_TICKS);
-            }
-
-            @Override
-            public void setCooldownDurationTicks(Player player, int durationTicks) {
-                player.setAttached(ModAttachments.ENDERNIUM_SWORD_COOLDOWN_DURATION_TICKS, durationTicks);
+            public void setStoredDamage(Player player, float storedDamage) {
+                player.setAttached(ModAttachments.ENDERNIUM_SWORD_STORED_DAMAGE, storedDamage);
             }
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                EnderniumSword.syncCooldownOnLogin(handler.getPlayer()));
+                EnderniumSword.syncCharge(handler.getPlayer()));
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
-                EnderniumSword.syncCooldownOnLogin(newPlayer));
+                EnderniumSword.syncCharge(newPlayer));
     }
 }

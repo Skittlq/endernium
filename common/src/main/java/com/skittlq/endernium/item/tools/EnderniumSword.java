@@ -5,13 +5,14 @@ import com.skittlq.endernium.client.EnderniumKeyBindings;
 import com.skittlq.endernium.client.EnderniumClientGameplaySettings;
 import com.skittlq.endernium.config.EnderniumGameplayConfig;
 import com.skittlq.endernium.item.EnderniumTooltipProvider;
+import com.skittlq.endernium.item.EnderniumTooltipNumbers;
 import com.skittlq.endernium.item.ModToolTiers;
 import com.skittlq.endernium.network.EnderniumNetworking;
 import com.skittlq.endernium.particles.EnderniumParticles;
 import com.skittlq.endernium.progression.EnderniumBlessing;
 import com.skittlq.endernium.util.EnderniumTickScheduler;
 import com.skittlq.endernium.util.EnderniumTargeting;
-import com.skittlq.endernium.util.EnderniumCooldowns;
+import com.skittlq.endernium.util.EnderniumAbilityMath;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -35,7 +36,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,42 +44,64 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class EnderniumSword extends Item implements EnderniumTooltipProvider {
+    public static final float BASE_ATTACK_DAMAGE = 9.0F;
     private static final int TARGET_BUFFER_TICKS = 10;
     private static final Map<MinecraftServer, Map<UUID, AbilitySequence>> ACTIVE_SEQUENCES = new HashMap<>();
+    private static final ThreadLocal<UUID> ABILITY_DAMAGE_ATTACKER = new ThreadLocal<>();
 
-    private static CooldownStore cooldownStore = new CooldownStore() {
+    private static ChargeStore chargeStore = new ChargeStore() {
         @Override
-        public long getCooldownEndGameTime(Player player) {
-            return 0L;
+        public float getStoredDamage(Player player) {
+            return 0.0F;
         }
 
         @Override
-        public void setCooldownEndGameTime(Player player, long gameTime) {
-            // no-op until a platform-specific store is bound
-        }
-
-        @Override
-        public int getCooldownDurationTicks(Player player) {
-            return 0;
-        }
-
-        @Override
-        public void setCooldownDurationTicks(Player player, int durationTicks) {
+        public void setStoredDamage(Player player, float storedDamage) {
             // no-op until a platform-specific store is bound
         }
     };
 
-    public static void bindCooldownStore(CooldownStore store) {
-        cooldownStore = Objects.requireNonNull(store);
+    public static void bindChargeStore(ChargeStore store) {
+        chargeStore = Objects.requireNonNull(store);
     }
 
-    // Resends the persisted cooldown to the client on login, preserving the original duration so the HUD shows true elapsed progress instead of restarting.
-    public static void syncCooldownOnLogin(ServerPlayer player) {
-        long endGameTime = cooldownStore.getCooldownEndGameTime(player);
-        int storedDuration = Math.max(0, cooldownStore.getCooldownDurationTicks(player));
-        int durationTicks = EnderniumCooldowns.isDeadlineActive(
-                player.level().getGameTime(), endGameTime, storedDuration) ? storedDuration : 0;
-        EnderniumNetworking.sendSwordCooldownSync(player, durationTicks == 0 ? 0L : endGameTime, durationTicks);
+    public static void syncCharge(ServerPlayer player) {
+        EnderniumNetworking.sendSwordChargeSync(player, normalizedStoredDamage(player));
+    }
+
+    public static float strikeCost() {
+        return (float) (BASE_ATTACK_DAMAGE * EnderniumGameplayConfig.swordDamagePerStrikeMultiplier());
+    }
+
+    public static int storedStrikes(Player player) {
+        return storedStrikes(normalizedStoredDamage(player), strikeCost(), EnderniumGameplayConfig.swordMaxStrikes());
+    }
+
+    public static int storedStrikes(float storedDamage, float cost, int maximum) {
+        return EnderniumAbilityMath.storedStrikes(storedDamage, cost, maximum);
+    }
+
+    public static float partialStrikeProgress(float storedDamage, float cost, int maximum) {
+        return EnderniumAbilityMath.partialStrikeProgress(storedDamage, cost, maximum);
+    }
+
+    public static void recordNormalAttackDamage(ServerPlayer player, float inflictedDamage) {
+        if (inflictedDamage <= 0.0F || !EnderniumGameplayConfig.swordAbilityEnabled()
+                || !EnderniumBlessing.isBlessed(player) || isAbilityDamage(player)) {
+            return;
+        }
+        float cost = strikeCost();
+        float next = EnderniumAbilityMath.accumulateSwordCharge(normalizedStoredDamage(player),
+                inflictedDamage, cost, EnderniumGameplayConfig.swordMaxStrikes());
+        setStoredDamage(player, next);
+    }
+
+    public static boolean isAbilityDamage(Player player) {
+        return player.getUUID().equals(ABILITY_DAMAGE_ATTACKER.get());
+    }
+
+    public static void clearCharge(ServerPlayer player) {
+        setStoredDamage(player, 0.0F);
     }
 
     public EnderniumSword(Properties properties) {
@@ -109,36 +131,22 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
             for (int taskId : activeSequence.taskIds) {
                 EnderniumTickScheduler.cancel(server, taskId);
             }
-            if (activeSequence.barrageStarted) {
-                addConfiguredCooldown(player, activeSequence.mobsHit);
-            }
             if (serverSequences.isEmpty()) {
                 ACTIVE_SEQUENCES.remove(server);
             }
             return InteractionResult.SUCCESS;
         }
 
-        int storedDuration = Math.max(0, cooldownStore.getCooldownDurationTicks(player));
-        if (EnderniumCooldowns.isDeadlineActive(player.level().getGameTime(),
-                cooldownStore.getCooldownEndGameTime(player), storedDuration)) {
+        int availableStrikes = storedStrikes(player);
+        if (availableStrikes <= 0) {
             return InteractionResult.SUCCESS;
         }
 
         double range = EnderniumTargeting.SWORD_RANGE;
-        Vec3 lookVec = player.getLookAngle();
-        Vec3 playerPos = EnderniumTargeting.eyePosition(player);
-
         List<LivingEntity> targets = EnderniumTargeting.findSwordTargets(serverPlayer);
 
-        List<LivingEntity> sortedTargets = targets.stream()
-                .sorted(Comparator.comparingDouble(target -> {
-                    Vec3 toTarget = target.position().add(0.0D, target.getBbHeight() / 2.0D, 0.0D).subtract(playerPos);
-                    double angle = Math.max(-1.0D, Math.min(1.0D,
-                            lookVec.normalize().dot(toTarget.normalize())));
-                    double theta = Math.acos(angle);
-                    double dist = toTarget.length();
-                    return theta * 2.0D + dist / range;
-                }))
+        List<LivingEntity> sortedTargets = EnderniumTargeting.sortSwordTargets(player, targets).stream()
+                .limit(availableStrikes)
                 .toList();
 
         int ticksBetweenHits = 4;
@@ -151,7 +159,8 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
             return InteractionResult.SUCCESS;
         }
 
-        sequence.barrageStarted = true;
+        setStoredDamage(serverPlayer, EnderniumAbilityMath.chargeAfterBarrageAttempt(
+                normalizedStoredDamage(serverPlayer), true));
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENCHANTMENT_TABLE_USE, player.getSoundSource(), 0.6F, 1.0F);
 
@@ -230,12 +239,18 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
                 );
                 normalAttackDamage += activatedWeapon.getItem().getAttackDamageBonus(
                         target, baseAttackDamage, attackSource);
-                float abilityDamageMultiplier = target instanceof Player ? 2.0F : 3.0F;
-                if (target.hurtServer(
-                        serverPlayer.level(),
-                        attackSource,
-                        normalAttackDamage * abilityDamageMultiplier
-                )) {
+                boolean hurt;
+                ABILITY_DAMAGE_ATTACKER.set(serverPlayer.getUUID());
+                try {
+                    hurt = target.hurtServer(
+                            serverPlayer.level(),
+                            attackSource,
+                            EnderniumAbilityMath.swordBarrageDamage(normalAttackDamage)
+                    );
+                } finally {
+                    ABILITY_DAMAGE_ATTACKER.remove();
+                }
+                if (hurt) {
                     EnchantmentHelper.doPostAttackEffectsWithItemSource(
                             serverPlayer.level(),
                             target,
@@ -263,8 +278,6 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
             if (serverSequences.remove(uuid) != sequence) {
                 return;
             }
-            addConfiguredCooldown(player, sequence.mobsHit);
-
             int hitCount = sequence.mobsHit;
             if (hitCount >= 15) {
                 EnderniumSwordSweepTrigger.INSTANCE.trigger(serverPlayer, hitCount);
@@ -316,16 +329,6 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
         }
     }
 
-    private static void addConfiguredCooldown(Player player, int mobsHit) {
-        int cooldownTicks = EnderniumGameplayConfig.swordAbilityCooldownTicks(mobsHit);
-        if (cooldownTicks > 0 && player instanceof ServerPlayer serverPlayer) {
-            long endGameTime = EnderniumCooldowns.deadline(player.level().getGameTime(), cooldownTicks);
-            cooldownStore.setCooldownEndGameTime(player, endGameTime);
-            cooldownStore.setCooldownDurationTicks(player, cooldownTicks);
-            EnderniumNetworking.sendSwordCooldownSync(serverPlayer, endGameTime, cooldownTicks);
-        }
-    }
-
     private static boolean canContinueSequence(ServerPlayer player, ServerLevel originLevel,
                                                InteractionHand hand, ItemStack activatedWeapon) {
         return player.isAlive()
@@ -351,9 +354,6 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
         for (int taskId : sequence.taskIds) {
             EnderniumTickScheduler.cancel(server, taskId);
         }
-        if (applyCooldown && sequence.barrageStarted) {
-            addConfiguredCooldown(player, sequence.mobsHit);
-        }
         if (serverSequences.isEmpty()) {
             ACTIVE_SEQUENCES.remove(server);
         }
@@ -363,20 +363,31 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
         ACTIVE_SEQUENCES.remove(server);
     }
 
+    private static float normalizedStoredDamage(Player player) {
+        float stored = chargeStore.getStoredDamage(player);
+        if (!Float.isFinite(stored)) {
+            return 0.0F;
+        }
+        return Math.max(0.0F, Math.min(strikeCost() * EnderniumGameplayConfig.swordMaxStrikes(), stored));
+    }
+
+    private static void setStoredDamage(Player player, float storedDamage) {
+        float normalized = Float.isFinite(storedDamage) ? Math.max(0.0F, storedDamage) : 0.0F;
+        chargeStore.setStoredDamage(player, normalized);
+        if (player instanceof ServerPlayer serverPlayer) {
+            EnderniumNetworking.sendSwordChargeSync(serverPlayer, normalized);
+        }
+    }
+
     private static final class AbilitySequence {
         private final List<Integer> taskIds = new ArrayList<>();
-        private boolean barrageStarted;
         private int mobsHit;
     }
 
-    public interface CooldownStore {
-        long getCooldownEndGameTime(Player player);
+    public interface ChargeStore {
+        float getStoredDamage(Player player);
 
-        void setCooldownEndGameTime(Player player, long gameTime);
-
-        int getCooldownDurationTicks(Player player);
-
-        void setCooldownDurationTicks(Player player, int durationTicks);
+        void setStoredDamage(Player player, float storedDamage);
     }
 
     @Override
@@ -395,9 +406,10 @@ public class EnderniumSword extends Item implements EnderniumTooltipProvider {
                         EnderniumKeyBindings.abilityKeyName()
                 ).withStyle(ChatFormatting.LIGHT_PURPLE));
                 tooltipAdder.accept(Component.translatable(
-                        "endernium.tooltip.sword.cooldown",
-                        clientSettings.swordBaseCooldownSeconds(),
-                        clientSettings.swordPerMobCooldownSeconds()
+                        "endernium.tooltip.sword.charge",
+                        EnderniumTooltipNumbers.compact(BASE_ATTACK_DAMAGE
+                                * clientSettings.swordDamagePerStrikeMultiplier()),
+                        clientSettings.swordMaxStrikes()
                 ).withStyle(ChatFormatting.LIGHT_PURPLE));
                 tooltipAdder.accept(Component.translatable("endernium.tooltip.sword.description").withStyle(ChatFormatting.GRAY));
             }
