@@ -44,12 +44,12 @@ void main() {
     color.g = texture(Sampler0, warpedUv).g;
     color.b = texture(Sampler0, clamp(warpedUv - split, vec2(0.001), vec2(0.999))).b;
     float edge = smoothstep(0.18, 0.78, distanceFromCenter);
-    color += vec3(0.22, 0.025, 0.27) * intensity * (0.55 + edge * 0.45);
+    color += vec3(0.278, 0.0, 0.337) * intensity * (0.55 + edge * 0.45);
     color = mix(color, vec3(dot(color, vec3(0.299, 0.587, 0.114))), intensity * 0.10);
     float luminance = dot(color, vec3(0.299, 0.587, 0.114));
     color = mix(color, vec3(luminance), atmosphere * 0.16);
-    color += vec3(0.115, 0.012, 0.145) * atmosphere * (0.72 + edge * 0.28);
-    color = mix(color, color * vec3(1.05, 0.86, 1.13), atmosphere * 0.34);
+    color += vec3(0.184, 0.0, 0.263) * atmosphere * (0.72 + edge * 0.28);
+    color = mix(color, color * vec3(1.08, 0.88, 1.04), atmosphere * 0.34);
 
     if (impact > 0.001) {
         vec2 pixel = VfxData.zw;
@@ -80,7 +80,7 @@ void main() {
 
         vec3 paper = vec3(1.0);
         vec3 ink = vec3(0.002, 0.0, 0.006);
-        vec3 purpleEdge = vec3(0.78, 0.025, 1.0);
+        vec3 purpleEdge = vec3(0.898, 0.639, 0.835);
         float highInk = clamp(darkSurface + hardEdge, 0.0, 1.0);
         vec3 highSurface = mix(paper, ink, highInk);
         highSurface = mix(highSurface, purpleEdge, hardEdge * 0.82);

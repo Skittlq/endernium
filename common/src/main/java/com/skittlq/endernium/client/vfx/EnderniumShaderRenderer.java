@@ -59,6 +59,12 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
     private static final Identifier WAVE_SHADER = Identifier.fromNamespaceAndPath("endernium", "core/dragon_wave");
     private static final Identifier POST_SHADER = Identifier.fromNamespaceAndPath("endernium", "core/dragon_post");
 
+    // Shared material ramp from the resprited Endernium equipment and items.
+    private static final int ENDERNIUM_DEEP = 0x5F0869;
+    private static final int ENDERNIUM_CORE = 0x963498;
+    private static final int ENDERNIUM_BRIGHT = 0xD889C9;
+    private static final int ENDERNIUM_HOT = 0xF9DCF5;
+
     /*
      * POSITION_TEX_COLOR gives these procedural meshes one spare vec2. The U coordinate doubles
      * as a tiny material channel; matching branches live at the top of the fragment shaders.
@@ -388,9 +394,9 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             int alpha = clampColor((int)((48 + progress * 142 + terminalCompression * 42)
                     * (0.82F + pulse * 0.18F) * fadeIn));
             int color = switch (shell) {
-                case 0 -> argb(alpha, 242, 232, 255);
-                case 1 -> argb(alpha, 224, 82, 255);
-                default -> argb(alpha, 116, 39, 255);
+                case 0 -> argb(alpha, ENDERNIUM_HOT);
+                case 1 -> argb(alpha, ENDERNIUM_BRIGHT);
+                default -> argb(alpha, ENDERNIUM_CORE);
             };
             addBrokenDiamondShell(
                     builder,
@@ -432,8 +438,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             Vec3 head = position.subtract(outward.scale(0.08 + progress * 0.14));
             int alpha = clampColor((int)(220.0F * intensity * (0.38F + cycle * 0.62F) * fadeIn));
             int color = i % 7 == 0
-                    ? argb(alpha, 242, 232, 255)
-                    : argb(alpha, 224, 82, 255);
+                    ? argb(alpha, ENDERNIUM_HOT)
+                    : argb(alpha, ENDERNIUM_BRIGHT);
             addRibbon(builder, tail, head, 0.035 + progress * 0.055, color, camera,
                     ENERGY_CLEAN_RIBBON_MATERIAL_U);
             if (i % 6 == 0) {
@@ -468,8 +474,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 Vec3 inner = state.origin().add(direction.scale(innerReach));
                 int alpha = clampColor((int)((85 + filamentProgress * 145) * snap * fadeIn));
                 int color = i % 4 == 0
-                        ? argb(alpha, 242, 232, 255)
-                        : argb(alpha, 116, 39, 255);
+                        ? argb(alpha, ENDERNIUM_HOT)
+                        : argb(alpha, ENDERNIUM_CORE);
                 addRibbon(builder, from, bend, 0.035 + filamentProgress * 0.075, color, camera,
                         ENERGY_CLEAN_RIBBON_MATERIAL_U);
                 addRibbon(builder, bend, inner, 0.028 + filamentProgress * 0.06, color, camera,
@@ -490,7 +496,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     builder,
                     state.origin(),
                     0.16 + terminalCompression * 0.30,
-                    argb(hotAlpha, 242, 232, 255),
+                    argb(hotAlpha, ENDERNIUM_HOT),
                     camera
             );
         }
@@ -536,7 +542,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 int alpha = clampColor((int)(235 * fade * taper));
                 int color = sample <= 2
                         ? cometHeadColor(comet.headVariant(), alpha)
-                        : argb(alpha, 224, 82, 255);
+                        : argb(alpha, ENDERNIUM_BRIGHT);
                 addRibbon(builder, next, previous, comet.width() * taper * displayScale, color, camera, i * 0.071F + sample * 0.13F);
                 previous = next;
             }
@@ -574,7 +580,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 int alpha = clampColor((int)(245 * fade * taper));
                 int color = sample <= 2
                         ? cometHeadColor(comet.headVariant(), alpha)
-                        : argb(alpha, 224, 82, 255);
+                        : argb(alpha, ENDERNIUM_BRIGHT);
                 addRibbon(builder, next, previous, comet.width() * taper, color, camera,
                         i * 0.083F + sample * 0.17F);
                 previous = next;
@@ -617,7 +623,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     int alpha = clampColor((int)(230 * fade * taper));
                     int color = sample <= 2
                             ? cometHeadColor(Math.floorMod(blessing.recipientIndex(), 3), alpha)
-                            : argb(alpha, 224, 82, 255);
+                            : argb(alpha, ENDERNIUM_BRIGHT);
                     addRibbon(
                             builder,
                             next,
@@ -636,7 +642,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                         builder,
                         head,
                         width * 4.8,
-                        argb(clampColor((int)(58 * fade)), 224, 82, 255),
+                        argb(clampColor((int)(58 * fade)), ENDERNIUM_BRIGHT),
                         camera
                 );
                 addFacetedCore(builder, head, width * 1.45, age * 0.22, headAlpha, camera);
@@ -681,14 +687,14 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     age * 0.24,
                     0.28,
                     blessing.seed() ^ 0xB1E551A6L,
-                    argb(auraAlpha, 224, 82, 255),
+                    argb(auraAlpha, ENDERNIUM_BRIGHT),
                     camera
             );
             addBillboardCore(
                     builder,
                     blessing.chest(),
                     0.48 + pulse * 0.12,
-                    argb(clampColor((int)(34 * pulse)), 116, 39, 255),
+                    argb(clampColor((int)(34 * pulse)), ENDERNIUM_CORE),
                     camera
             );
         }
@@ -710,7 +716,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     builder,
                     impact.position().add(0.0, 0.12, 0.0),
                     radius,
-                    argb(alpha, 242, 232, 255),
+                    argb(alpha, ENDERNIUM_HOT),
                     camera
             );
             addBrokenCoreRing(
@@ -721,7 +727,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     impact.age() * 0.31,
                     0.08,
                     impact.seed(),
-                    argb(clampColor((int)(220 * fade)), 224, 82, 255),
+                    argb(clampColor((int)(220 * fade)), ENDERNIUM_BRIGHT),
                     camera
             );
         }
@@ -729,9 +735,9 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
     private int cometHeadColor(int variant, int alpha) {
         return switch (variant) {
-            case 1 -> argb(alpha, 224, 82, 255);
-            case 2 -> argb(alpha, 116, 39, 255);
-            default -> argb(alpha, 242, 232, 255);
+            case 1 -> argb(alpha, ENDERNIUM_BRIGHT);
+            case 2 -> argb(alpha, ENDERNIUM_CORE);
+            default -> argb(alpha, ENDERNIUM_HOT);
         };
     }
 
@@ -756,8 +762,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                 double length = crack.scale() * (0.28 + random.nextDouble() * 0.22);
                 Vec3 next = cursor.add(direction.scale(length))
                         .add(side.scale((random.nextDouble() - 0.5) * crack.scale() * 0.26));
-                int violet = argb(clampColor((int)(132 * alpha)), 64, 10, 118);
-                int magenta = argb(clampColor((int)(225 * alpha)), 224, 82, 255);
+                int violet = argb(clampColor((int)(132 * alpha)), ENDERNIUM_DEEP);
+                int magenta = argb(clampColor((int)(225 * alpha)), ENDERNIUM_BRIGHT);
                 addGroundSegment(builder, cursor, next, 0.105 * crack.scale(), violet, camera, segment * 0.31F);
                 addGroundSegment(builder, cursor, next, 0.035 * crack.scale(), magenta, camera, segment * 0.31F + 0.11F);
 
@@ -777,7 +783,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                         .subtract(direction.scale(crack.scale() * 0.58))
                         .add(direction.scale(crack.scale() * 1.45 * lead));
                 addBillboardCore(builder, spark.add(0.0, 0.035, 0.0), 0.075 + crack.scale() * 0.035,
-                        argb(clampColor((int)(245 * alpha)), 242, 232, 255), camera);
+                        argb(clampColor((int)(245 * alpha)), ENDERNIUM_HOT), camera);
             }
         }
     }
@@ -816,14 +822,14 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                             .add(rotateY(offset, twist + 0.12));
                     int alpha = clampColor((int)(205 * fade * (0.72 + 0.28 * Math.sin(segment * 2.1 + localAge))));
                     int color = (streak & 1) == 0
-                            ? argb(alpha, 224, 82, 255)
-                            : argb(alpha, 116, 39, 255);
+                            ? argb(alpha, ENDERNIUM_BRIGHT)
+                            : argb(alpha, ENDERNIUM_CORE);
                     addRibbon(builder, start, end, 0.055 + streak * 0.008, color, camera, streak * 0.37F + segment * 0.21F);
                     segment++;
                 }
                 Vec3 head = new Vec3(pillar.bottom().x, leadingY, pillar.bottom().z).add(offset);
                 addBillboardCore(builder, head, 0.10,
-                        argb(clampColor((int)(235 * fade)), 242, 232, 255), camera);
+                        argb(clampColor((int)(235 * fade)), ENDERNIUM_HOT), camera);
             }
         }
     }
@@ -863,8 +869,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             Vec3 p01 = center.add(Math.cos(a1) * inner1, y1 - center.y, Math.sin(a1) * inner1);
             Vec3 p11 = center.add(Math.cos(a1) * outer1, y1 - center.y, Math.sin(a1) * outer1);
             Vec3 p10 = center.add(Math.cos(a0) * outer0, y0 - center.y, Math.sin(a0) * outer0);
-            int innerColor = argb(clampColor((int)(35 * fade)), 116, 39, 255);
-            int outerColor = argb(clampColor((int)(235 * fade)), 242, 232, 255);
+            int innerColor = argb(clampColor((int)(35 * fade)), ENDERNIUM_CORE);
+            int outerColor = argb(clampColor((int)(235 * fade)), ENDERNIUM_HOT);
             float u0 = i / (float)segments * 12.0F + age * 0.03F;
             float u1 = (i + 1) / (float)segments * 12.0F + age * 0.03F;
             addQuad(builder, p00, p01, p11, p10, innerColor, innerColor, outerColor, outerColor, u0, u1, camera);
@@ -904,10 +910,10 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
             Vec3 trail1 = lead1.subtract(direction.scale(DISTANT_WAVE_WAKE_LENGTH));
             float lateral0 = lateralSheetFade(s0, DISTANT_WAVE_HALF_WIDTH);
             float lateral1 = lateralSheetFade(s1, DISTANT_WAVE_HALF_WIDTH);
-            int inner0 = argb(clampColor((int)(48 * temporalFade * lateral0)), 116, 39, 255);
-            int inner1 = argb(clampColor((int)(48 * temporalFade * lateral1)), 116, 39, 255);
-            int outer0 = argb(clampColor((int)(245 * temporalFade * lateral0)), 242, 232, 255);
-            int outer1 = argb(clampColor((int)(245 * temporalFade * lateral1)), 242, 232, 255);
+            int inner0 = argb(clampColor((int)(48 * temporalFade * lateral0)), ENDERNIUM_CORE);
+            int inner1 = argb(clampColor((int)(48 * temporalFade * lateral1)), ENDERNIUM_CORE);
+            int outer0 = argb(clampColor((int)(245 * temporalFade * lateral0)), ENDERNIUM_HOT);
+            int outer1 = argb(clampColor((int)(245 * temporalFade * lateral1)), ENDERNIUM_HOT);
             float u0 = WAVE_DISTANT_MATERIAL_U
                     + i / (float)segments * WAVE_DISTANT_MATERIAL_U_SPAN;
             float u1 = WAVE_DISTANT_MATERIAL_U
@@ -978,10 +984,10 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
                     ? 235 + random.nextInt(21)
                     : 190 + random.nextInt(61)) * fade));
             int color = heroStroke
-                    ? argb(alpha, 116, 39, 255)
+                    ? argb(alpha, ENDERNIUM_CORE)
                     : line % 7 == 0
-                            ? argb(alpha, 242, 232, 255)
-                            : argb(alpha, 224, 82, 255);
+                            ? argb(alpha, ENDERNIUM_HOT)
+                            : argb(alpha, ENDERNIUM_BRIGHT);
 
             for (int segment = 0; segment < segments; segment++) {
                 double t0 = segment / (double)segments + gap * 0.5;
@@ -1107,8 +1113,8 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         Vec3 north = center.subtract(axisZ);
 
         int outerAlpha = clampColor((int)(alpha * 0.48F));
-        int violet = argb(outerAlpha, 116, 39, 255);
-        int magenta = argb(outerAlpha, 224, 82, 255);
+        int violet = argb(outerAlpha, ENDERNIUM_CORE);
+        int magenta = argb(outerAlpha, ENDERNIUM_BRIGHT);
         addFacetTriangle(builder, top, east, south, magenta, 0.92F, camera);
         addFacetTriangle(builder, top, south, west, violet, 0.72F, camera);
         addFacetTriangle(builder, top, west, north, magenta, 0.84F, camera);
@@ -1125,7 +1131,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         Vec3 innerWest = center.subtract(axisX.scale(innerScale));
         Vec3 innerSouth = center.add(axisZ.scale(innerScale));
         Vec3 innerNorth = center.subtract(axisZ.scale(innerScale));
-        int hot = argb(alpha, 242, 232, 255);
+        int hot = argb(alpha, ENDERNIUM_HOT);
         addFacetTriangle(builder, innerTop, innerEast, innerSouth, hot, 1.0F, camera);
         addFacetTriangle(builder, innerTop, innerSouth, innerWest, hot, 0.94F, camera);
         addFacetTriangle(builder, innerTop, innerWest, innerNorth, hot, 1.0F, camera);
@@ -1135,7 +1141,7 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
         addFacetTriangle(builder, innerBottom, innerNorth, innerWest, hot, 0.8F, camera);
         addFacetTriangle(builder, innerBottom, innerEast, innerNorth, hot, 0.88F, camera);
 
-        int edgeColor = argb(clampColor((int)(alpha * 0.72F)), 224, 82, 255);
+        int edgeColor = argb(clampColor((int)(alpha * 0.72F)), ENDERNIUM_BRIGHT);
         double edgeWidth = Math.max(0.018, radius * 0.045);
         addRibbon(builder, top, east, edgeWidth, edgeColor, camera, 0.11F);
         addRibbon(builder, top, south, edgeWidth, edgeColor, camera, 0.23F);
@@ -1366,6 +1372,10 @@ public final class EnderniumShaderRenderer implements AutoCloseable {
 
     private static int argb(int alpha, int red, int green, int blue) {
         return alpha << 24 | red << 16 | green << 8 | blue;
+    }
+
+    private static int argb(int alpha, int rgb) {
+        return alpha << 24 | rgb;
     }
 
     public void resetBuffers() {

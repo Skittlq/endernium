@@ -42,9 +42,9 @@ void main() {
                 * (1.0 - smoothstep(0.72, 1.0, texCoord.y) * 0.28);
         float leading = smoothstep(0.70 + irregularity, 0.96, texCoord.y);
         float razor = 1.0 - smoothstep(0.955 + irregularity * 0.22, 1.0, texCoord.y);
-        vec3 violet = vec3(0.20, 0.012, 0.34);
-        vec3 magenta = vec3(0.878, 0.322, 1.0);
-        vec3 hot = vec3(1.0, 0.965, 1.0);
+        vec3 violet = vec3(0.373, 0.031, 0.412);
+        vec3 magenta = vec3(0.847, 0.537, 0.788);
+        vec3 hot = vec3(0.976, 0.863, 0.961);
         vec3 color = mix(violet, magenta, wake * 0.72);
         color = mix(color, hot, leading * razor);
         float flicker = 0.84 + 0.16 * hash(floor(strip * 127.0));
@@ -62,9 +62,9 @@ void main() {
     float razor = 1.0 - smoothstep(0.91 + brokenEdge, 1.0, texCoord.y);
     float wake = smoothstep(0.0, 0.38, texCoord.y) * (1.0 - leading * 0.42);
     float flicker = 0.82 + 0.18 * sin(texCoord.x * 39.0);
-    vec3 violet = vec3(0.455, 0.153, 1.0);
-    vec3 magenta = vec3(0.878, 0.322, 1.0);
-    vec3 hot = vec3(0.949, 0.910, 1.0);
+    vec3 violet = vec3(0.588, 0.204, 0.596);
+    vec3 magenta = vec3(0.847, 0.537, 0.788);
+    vec3 hot = vec3(0.976, 0.863, 0.961);
     vec3 color = mix(violet, magenta, wake);
     color = mix(color, hot, leading * razor);
     float alpha = vertexColor.a * (0.24 * wake + 0.92 * leading * razor) * flicker;

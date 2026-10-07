@@ -24,7 +24,7 @@ void main() {
         float hotCore = pow(max(0.0, 1.0 - across), 3.0);
         float endFade = smoothstep(0.0, 0.08, along)
                 * (1.0 - smoothstep(0.92, 1.0, along));
-        vec3 color = mix(vertexColor.rgb, vec3(0.965, 0.925, 1.0), hotCore * 0.62);
+        vec3 color = mix(vertexColor.rgb, vec3(0.976, 0.863, 0.961), hotCore * 0.62);
         float alpha = vertexColor.a * body * endFade;
         if (alpha <= 0.005) {
             discard;
@@ -48,8 +48,8 @@ void main() {
         float diamondDistance = abs(local.x) + abs(local.y);
         float body = 1.0 - smoothstep(0.82, 1.0, diamondDistance);
         float hotCore = 1.0 - smoothstep(0.18, 0.68, diamondDistance);
-        vec3 violetEdge = mix(vec3(0.455, 0.153, 1.0), vertexColor.rgb, 0.28);
-        vec3 color = mix(violetEdge, vec3(0.985, 0.965, 1.0), hotCore);
+        vec3 violetEdge = mix(vec3(0.588, 0.204, 0.596), vertexColor.rgb, 0.28);
+        vec3 color = mix(violetEdge, vec3(0.976, 0.863, 0.961), hotCore);
         float alpha = vertexColor.a * body;
         if (alpha <= 0.005) {
             discard;
@@ -62,7 +62,7 @@ void main() {
     float body = 1.0 - smoothstep(0.48, 1.0, across);
     float core = pow(max(0.0, 1.0 - across), 4.0);
     float broken = 0.78 + 0.22 * sin(texCoord.x * 31.0 + texCoord.y * 11.0);
-    vec3 hot = vec3(0.949, 0.910, 1.0);
+    vec3 hot = vec3(0.976, 0.863, 0.961);
     vec3 color = mix(vertexColor.rgb, hot, core * 0.82);
     float alpha = vertexColor.a * body * broken;
     if (alpha <= 0.005) {

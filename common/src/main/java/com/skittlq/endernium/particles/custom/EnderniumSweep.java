@@ -18,6 +18,7 @@ public class EnderniumSweep extends SingleQuadParticle {
         this.hasPhysics = false;
         this.lifetime = 60;
         this.quadSize = 2.0F;
+        // The sprite owns the Endernium palette; a white vertex tint preserves it exactly.
         this.rCol = 1.0F;
         this.gCol = 1.0F;
         this.bCol = 1.0F;

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 public class EnderniumBit extends SingleQuadParticle {
+    // The sprite owns the Endernium palette; a white vertex tint preserves it exactly.
     static final float COLOR_RED = 1.0F;
     static final float COLOR_GREEN = 1.0F;
     static final float COLOR_BLUE = 1.0F;
