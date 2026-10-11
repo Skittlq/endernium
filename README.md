@@ -44,6 +44,7 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 - **Endernium Armor Set**
   - Stores up to **24 points** of damage received from creatures, players, projectiles, and entity-caused explosions as kinetic energy.
   - When health drops below **4 HP (2 hearts)**, the stored energy is consumed to repel nearby attackers.
+  - After triggering, Ender Repulsion has a configurable **12-second cooldown** by default.
   - Knockback and regeneration scale with the stored energy; environmental and self-inflicted damage do not charge it.
 
 - **Endernium Sword**
@@ -86,7 +87,7 @@ The Endernium Sword, Endernium tools, and full armor set come with special abili
 
 ## Configuration
 
-Endernium's armor storage, sword charge, spear strain, ability toggles, and tool vein mining can be configured.
+Endernium's armor storage and cooldown, sword charge, spear strain, ability toggles, and tool vein mining can be configured.
 
 ## Credits
 

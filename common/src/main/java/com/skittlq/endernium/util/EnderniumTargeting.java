@@ -40,6 +40,14 @@ public final class EnderniumTargeting {
             Identifier.withDefaultNamespace("slime"),
             Identifier.withDefaultNamespace("magma_cube")
     ));
+    private static final Set<Identifier> ENEMY_CODED_NEUTRALS = Set.of(
+            Identifier.withDefaultNamespace("cave_spider"),
+            Identifier.withDefaultNamespace("drowned"),
+            Identifier.withDefaultNamespace("enderman"),
+            Identifier.withDefaultNamespace("piglin"),
+            Identifier.withDefaultNamespace("spider"),
+            Identifier.withDefaultNamespace("zombified_piglin")
+    );
     private static Set<UUID> clientCombatOpponents = Set.of();
 
     private EnderniumTargeting() {
@@ -124,7 +132,8 @@ public final class EnderniumTargeting {
         }
 
         if (target instanceof Mob mob) {
-            return isHostile(mob) || isNeutralMobAngryAt(mob, player, player.level());
+            return isHostile(mob) || isEnemyCodedNeutral(mob)
+                    || isNeutralMobAngryAt(mob, player, player.level());
         }
 
         return false;
@@ -139,7 +148,8 @@ public final class EnderniumTargeting {
             if (wearer.getType() == mob.getType()) {
                 return false;
             }
-            return isHostile(mob) || isNeutralMobAngryAt(mob, wearer, level);
+            return isHostile(mob) || isEnemyCodedNeutral(mob)
+                    || isNeutralMobAngryAt(mob, wearer, level);
         }
 
         if (target instanceof ServerPlayer player) {
@@ -189,7 +199,8 @@ public final class EnderniumTargeting {
         }
 
         if (target instanceof Mob mob) {
-            return isHostile(mob) || mob instanceof NeutralMob && mob.getTarget() == player;
+            return isHostile(mob) || isEnemyCodedNeutral(mob)
+                    || mob instanceof NeutralMob && mob.getTarget() == player;
         }
 
         return false;
@@ -216,6 +227,10 @@ public final class EnderniumTargeting {
 
     private static boolean isNeutralMobAngryAt(Mob mob, LivingEntity target, ServerLevel level) {
         return mob instanceof NeutralMob neutralMob && neutralMob.isAngryAt(target, level);
+    }
+
+    private static boolean isEnemyCodedNeutral(Mob mob) {
+        return ENEMY_CODED_NEUTRALS.contains(BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()));
     }
 
     private static boolean isTamed(LivingEntity entity) {

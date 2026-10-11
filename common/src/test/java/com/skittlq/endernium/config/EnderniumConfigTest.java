@@ -14,6 +14,8 @@ class EnderniumConfigTest {
         assertTrue(config.enderniumArmorAbility);
         assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_THRESHOLD,
                 config.enderniumArmorAbilityThreshold);
+        assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS,
+                config.enderniumArmorAbilityCooldownSeconds);
         assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_MAX_STORED_DAMAGE,
                 config.enderniumArmorMaxStoredDamage);
         assertEquals(EnderniumGameplayConfig.DEFAULT_SWORD_DAMAGE_PER_STRIKE_MULTIPLIER,
@@ -29,9 +31,12 @@ class EnderniumConfigTest {
         EnderniumConfig copy = original.copy();
         assertNotSame(original, copy);
         copy.enderniumArmorAbilityThreshold = 99;
+        copy.enderniumArmorAbilityCooldownSeconds = 99;
         copy.vfxRenderMode = EnderniumVfxRenderMode.PARTICLES;
         assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_THRESHOLD,
                 original.enderniumArmorAbilityThreshold);
+        assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS,
+                original.enderniumArmorAbilityCooldownSeconds);
         assertEquals(EnderniumVfxRenderMode.AUTO, original.vfxRenderMode);
     }
 
@@ -43,6 +48,7 @@ class EnderniumConfigTest {
 
         EnderniumConfig invalid = new EnderniumConfig();
         invalid.enderniumArmorAbilityThreshold = Integer.MAX_VALUE;
+        invalid.enderniumArmorAbilityCooldownSeconds = Integer.MAX_VALUE;
         invalid.enderniumArmorMaxStoredDamage = Double.POSITIVE_INFINITY;
         invalid.enderniumSwordDamagePerStrikeMultiplier = -1.0D;
         invalid.enderniumSwordMaxStrikes = Integer.MAX_VALUE;
@@ -52,6 +58,8 @@ class EnderniumConfigTest {
         EnderniumConfig sanitized = EnderniumConfig.sanitize(invalid);
 
         assertEquals(2048, sanitized.enderniumArmorAbilityThreshold);
+        assertEquals(EnderniumGameplayConfig.MAX_ARMOR_ABILITY_COOLDOWN_SECONDS,
+                sanitized.enderniumArmorAbilityCooldownSeconds);
         assertEquals(EnderniumGameplayConfig.DEFAULT_ARMOR_MAX_STORED_DAMAGE,
                 sanitized.enderniumArmorMaxStoredDamage);
         assertEquals(EnderniumGameplayConfig.MIN_SWORD_DAMAGE_PER_STRIKE_MULTIPLIER,

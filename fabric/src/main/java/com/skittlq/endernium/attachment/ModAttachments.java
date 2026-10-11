@@ -14,6 +14,13 @@ public final class ModAttachments {
             .initializer(() -> 0.0F)
     );
 
+    public static final AttachmentType<Long> ENDERNIUM_ARMOR_COOLDOWN_END_TICK = AttachmentRegistry.create(
+        Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_armor_cooldown_end_tick"),
+        builder -> builder
+            .persistent(Codec.LONG)
+            .initializer(() -> 0L)
+    );
+
     public static final AttachmentType<Float> ENDERNIUM_SWORD_STORED_DAMAGE = AttachmentRegistry.create(
         Identifier.fromNamespaceAndPath(Endernium.MOD_ID, "endernium_sword_stored_damage"),
         builder -> builder

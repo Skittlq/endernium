@@ -8,6 +8,7 @@ public final class EnderniumGameplayConfig {
             DEFAULT_SWORD_DAMAGE_PER_STRIKE / 9.0D;
     public static final int DEFAULT_SWORD_MAX_STRIKES = 15;
     public static final int DEFAULT_ARMOR_ABILITY_THRESHOLD = 4;
+    public static final int DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS = 12;
     public static final double DEFAULT_ARMOR_MAX_STORED_DAMAGE = 24.0D;
     public static final int DEFAULT_SPEAR_STRAIN_DURATION_SECONDS = 8;
     public static final double DEFAULT_SPEAR_MAXIMUM_HEALTH_COST_PERCENT = 40.0D;
@@ -16,6 +17,7 @@ public final class EnderniumGameplayConfig {
     public static final int MAX_SWORD_STRIKES = 64;
     public static final double MAX_ARMOR_STORED_DAMAGE = 2048.0D;
     public static final int MAX_SPEAR_STRAIN_DURATION_SECONDS = 3600;
+    public static final int MAX_ARMOR_ABILITY_COOLDOWN_SECONDS = 3600;
 
     private static Settings settings = new Settings() {
         @Override public boolean swordAbilityEnabled() { return true; }

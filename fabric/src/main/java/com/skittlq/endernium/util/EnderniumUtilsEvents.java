@@ -1,8 +1,11 @@
 package com.skittlq.endernium.util;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -27,6 +30,12 @@ public final class EnderniumUtilsEvents {
             return;
         }
         registered = true;
+        AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> {
+            if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+                EnderniumUtils.cancelAllVeinMiningOperations(serverPlayer);
+            }
+            return InteractionResult.PASS;
+        });
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
             if (level instanceof ServerLevel serverLevel && EnderniumUtils.isAutoCollectEligible(player)) {
                 long gameTime = serverLevel.getGameTime();

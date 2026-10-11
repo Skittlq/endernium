@@ -21,12 +21,29 @@ public final class EnderniumArmorAbilityHandler {
         }
 
         @Override
+        public int cooldownSeconds() {
+            return config().enderniumArmorAbilityCooldownSeconds;
+        }
+
+        @Override
         public double maxStoredDamage() {
             return config().enderniumArmorMaxStoredDamage;
         }
 
         private EnderniumConfig config() {
             return EnderniumConfigManager.getConfig();
+        }
+    };
+
+    private static final EnderniumArmorAbility.CooldownStore COOLDOWN_STORE = new EnderniumArmorAbility.CooldownStore() {
+        @Override
+        public long getCooldownEndTick(LivingEntity entity) {
+            return entity.getAttachedOrCreate(ModAttachments.ENDERNIUM_ARMOR_COOLDOWN_END_TICK);
+        }
+
+        @Override
+        public void setCooldownEndTick(LivingEntity entity, long cooldownEndTick) {
+            entity.setAttached(ModAttachments.ENDERNIUM_ARMOR_COOLDOWN_END_TICK, cooldownEndTick);
         }
     };
 
@@ -52,9 +69,10 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
         registered = true;
-        EnderniumArmorAbility.bind(SETTINGS, CHARGE_STORE);
+        EnderniumArmorAbility.bind(SETTINGS, CHARGE_STORE, COOLDOWN_STORE);
         ServerTickEvents.END_SERVER_TICK.register(server ->
-                EnderniumArmorAbility.tickPlayers(server.getPlayerList().getPlayers(), SETTINGS, CHARGE_STORE));
+                EnderniumArmorAbility.tickPlayers(server.getPlayerList().getPlayers(), SETTINGS,
+                        CHARGE_STORE, COOLDOWN_STORE));
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 EnderniumArmorAbility.syncCharge(handler.getPlayer(), SETTINGS, CHARGE_STORE));
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->

@@ -48,8 +48,12 @@ class CompatibilitySafetySourceTest {
         assertTrue(fabricEvents.contains("existingDropIds"));
         assertTrue(fabricEvents.contains("EnderniumTickScheduler.schedule"));
         assertTrue(fabricEvents.contains("PlayerBlockBreakEvents.CANCELED"));
+        assertTrue(fabricEvents.contains("AttackBlockCallback.EVENT.register"));
+        assertTrue(fabricEvents.contains("cancelAllVeinMiningOperations(serverPlayer)"));
         assertTrue(neoEvents.contains("BlockDropsEvent"));
         assertTrue(neoEvents.contains("event.getDrops()"));
+        assertTrue(neoEvents.contains("PlayerInteractEvent.LeftClickBlock"));
+        assertTrue(neoEvents.contains("cancelAllVeinMiningOperations(player)"));
         assertFalse(neoMetadata.contains("${mod_id}.neoforge.mixins.json"));
         assertTrue(fabricModels.contains("(model, bakeContext) -> new DynamicTrimModel"));
         assertTrue(fabricModels.contains("this.trimLayers == null"));
@@ -57,6 +61,20 @@ class CompatibilitySafetySourceTest {
         assertFalse(fabricLoot.contains("resourceManager.listResources("));
         assertTrue(fabricLoot.contains("chests/end_city_treasure"));
         assertFalse(fabricLoot.contains("global_loot_modifiers.json"));
+    }
+
+    @Test
+    void enemyLikeNeutralTargetingIncludesEndermenWithoutBroadeningToAllNeutralMobs() throws Exception {
+        String source = read("common/src/main/java/com/skittlq/endernium/util/EnderniumTargeting.java");
+        assertTrue(source.contains("ENEMY_CODED_NEUTRALS"));
+        assertTrue(source.contains("Identifier.withDefaultNamespace(\"cave_spider\")"));
+        assertTrue(source.contains("Identifier.withDefaultNamespace(\"drowned\")"));
+        assertTrue(source.contains("Identifier.withDefaultNamespace(\"enderman\")"));
+        assertTrue(source.contains("Identifier.withDefaultNamespace(\"piglin\")"));
+        assertTrue(source.contains("Identifier.withDefaultNamespace(\"spider\")"));
+        assertTrue(source.contains("Identifier.withDefaultNamespace(\"zombified_piglin\")"));
+        assertTrue(source.contains("isEnemyCodedNeutral(mob)"));
+        assertFalse(source.contains("return mob instanceof NeutralMob;"));
     }
 
     private static String read(String relativePath) throws Exception {

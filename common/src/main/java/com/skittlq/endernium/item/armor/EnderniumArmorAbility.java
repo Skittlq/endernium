@@ -21,17 +21,20 @@ import java.util.Objects;
 public final class EnderniumArmorAbility {
     private static Settings boundSettings;
     private static ChargeStore boundChargeStore;
+    private static CooldownStore boundCooldownStore;
 
     private EnderniumArmorAbility() {
     }
 
-    public static void tickPlayers(List<ServerPlayer> players, Settings settings, ChargeStore chargeStore) {
+    public static void tickPlayers(List<ServerPlayer> players, Settings settings, ChargeStore chargeStore,
+                                   CooldownStore cooldownStore) {
         for (ServerPlayer player : players) {
-            tickPlayer(player, settings, chargeStore);
+            tickPlayer(player, settings, chargeStore, cooldownStore);
         }
     }
 
-    public static void tickPlayer(ServerPlayer player, Settings settings, ChargeStore chargeStore) {
+    public static void tickPlayer(ServerPlayer player, Settings settings, ChargeStore chargeStore,
+                                  CooldownStore cooldownStore) {
         if (!settings.enabled()
                 || player.isSpectator()
                 || !EnderniumBlessing.isBlessed(player)
@@ -40,26 +43,29 @@ public final class EnderniumArmorAbility {
             return;
         }
 
-        tickWearer(player, settings, chargeStore);
+        tickWearer(player, settings, chargeStore, cooldownStore);
     }
 
-    public static void tickMob(Mob mob, Settings settings, ChargeStore chargeStore) {
+    public static void tickMob(Mob mob, Settings settings, ChargeStore chargeStore,
+                               CooldownStore cooldownStore) {
         if (!settings.enabled() || !mob.isAlive() || !EnderniumArmorUtil.hasFullEnderniumSet(mob)) {
             clearCharge(mob, chargeStore);
             return;
         }
 
-        tickWearer(mob, settings, chargeStore);
+        tickWearer(mob, settings, chargeStore, cooldownStore);
     }
 
-    public static void bind(Settings settings, ChargeStore chargeStore) {
+    public static void bind(Settings settings, ChargeStore chargeStore, CooldownStore cooldownStore) {
         boundSettings = Objects.requireNonNull(settings);
         boundChargeStore = Objects.requireNonNull(chargeStore);
+        boundCooldownStore = Objects.requireNonNull(cooldownStore);
     }
 
     public static void tickEquippedMob(Entity entity) {
-        if (entity instanceof Mob mob && boundSettings != null && boundChargeStore != null) {
-            tickMob(mob, boundSettings, boundChargeStore);
+        if (entity instanceof Mob mob && boundSettings != null && boundChargeStore != null
+                && boundCooldownStore != null) {
+            tickMob(mob, boundSettings, boundChargeStore, boundCooldownStore);
         }
     }
 
@@ -98,7 +104,8 @@ public final class EnderniumArmorAbility {
         EnderniumNetworking.sendArmorChargeSync(player, normalizedCharge(player, chargeStore, capacity));
     }
 
-    private static void tickWearer(LivingEntity wearer, Settings settings, ChargeStore chargeStore) {
+    private static void tickWearer(LivingEntity wearer, Settings settings, ChargeStore chargeStore,
+                                   CooldownStore cooldownStore) {
         ServerLevel level = (ServerLevel) wearer.level();
         float capacity = (float) settings.maxStoredDamage();
         float storedDamage = normalizedCharge(wearer, chargeStore, capacity);
@@ -111,8 +118,12 @@ public final class EnderniumArmorAbility {
                     0.25D, 0.5D, 0.25D, 0.02D);
         }
 
-        if (health < settings.threshold() && storedDamage > 0.0F) {
+        long gameTime = level.getServer().overworld().getGameTime();
+        if (health < settings.threshold() && storedDamage > 0.0F
+                && gameTime >= cooldownStore.getCooldownEndTick(wearer)) {
             setCharge(wearer, chargeStore, 0.0F);
+            cooldownStore.setCooldownEndTick(wearer,
+                    gameTime + Math.max(0L, (long) settings.cooldownSeconds() * 20L));
             triggerAbility(wearer, level, storedDamage / capacity);
         }
     }
@@ -187,6 +198,8 @@ public final class EnderniumArmorAbility {
 
         int threshold();
 
+        int cooldownSeconds();
+
         double maxStoredDamage();
     }
 
@@ -194,5 +207,11 @@ public final class EnderniumArmorAbility {
         float getStoredDamage(LivingEntity entity);
 
         void setStoredDamage(LivingEntity entity, float storedDamage);
+    }
+
+    public interface CooldownStore {
+        long getCooldownEndTick(LivingEntity entity);
+
+        void setCooldownEndTick(LivingEntity entity, long cooldownEndTick);
     }
 }

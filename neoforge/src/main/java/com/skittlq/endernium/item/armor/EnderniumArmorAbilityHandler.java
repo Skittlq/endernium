@@ -9,6 +9,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 public final class EnderniumArmorAbilityHandler {
     private static final String CHARGE_KEY = "EnderniumArmorStoredDamage";
+    private static final String COOLDOWN_END_TICK_KEY = "EnderniumArmorCooldownEndTick";
 
     private static final EnderniumArmorAbility.Settings SETTINGS = new EnderniumArmorAbility.Settings() {
         @Override
@@ -22,8 +23,25 @@ public final class EnderniumArmorAbilityHandler {
         }
 
         @Override
+        public int cooldownSeconds() {
+            return Config.ENDERNIUM_ARMOR_ABILITY_COOLDOWN.getAsInt();
+        }
+
+        @Override
         public double maxStoredDamage() {
             return Config.ENDERNIUM_ARMOR_MAX_STORED_DAMAGE.getAsDouble();
+        }
+    };
+
+    private static final EnderniumArmorAbility.CooldownStore COOLDOWN_STORE = new EnderniumArmorAbility.CooldownStore() {
+        @Override
+        public long getCooldownEndTick(LivingEntity entity) {
+            return entity.getPersistentData().getLong(COOLDOWN_END_TICK_KEY).orElse(0L);
+        }
+
+        @Override
+        public void setCooldownEndTick(LivingEntity entity, long cooldownEndTick) {
+            entity.getPersistentData().putLong(COOLDOWN_END_TICK_KEY, cooldownEndTick);
         }
     };
 
@@ -49,7 +67,7 @@ public final class EnderniumArmorAbilityHandler {
             return;
         }
         registered = true;
-        EnderniumArmorAbility.bind(SETTINGS, CHARGE_STORE);
+        EnderniumArmorAbility.bind(SETTINGS, CHARGE_STORE, COOLDOWN_STORE);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onServerTick);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerJoin);
         NeoForge.EVENT_BUS.addListener(EnderniumArmorAbilityHandler::onPlayerClone);
@@ -57,7 +75,8 @@ public final class EnderniumArmorAbilityHandler {
     }
 
     private static void onServerTick(ServerTickEvent.Post event) {
-        EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS, CHARGE_STORE);
+        EnderniumArmorAbility.tickPlayers(event.getServer().getPlayerList().getPlayers(), SETTINGS,
+                CHARGE_STORE, COOLDOWN_STORE);
     }
 
     private static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -68,6 +87,7 @@ public final class EnderniumArmorAbilityHandler {
 
     private static void onPlayerClone(PlayerEvent.Clone event) {
         event.getEntity().getPersistentData().putFloat(CHARGE_KEY, 0.0F);
+        event.getEntity().getPersistentData().putLong(COOLDOWN_END_TICK_KEY, 0L);
     }
 
     private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {

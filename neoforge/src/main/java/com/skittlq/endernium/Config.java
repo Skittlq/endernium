@@ -14,6 +14,12 @@ public class Config {
                 .comment("At what health the Endernium Armor ability should trigger.")
                 .defineInRange("enderniumArmorAbilityThreshold", 4, 1, 2048);
 
+        public static final ModConfigSpec.IntValue ENDERNIUM_ARMOR_ABILITY_COOLDOWN = BUILDER
+                .comment("Cooldown after Ender Repulsion triggers, in seconds.")
+                .defineInRange("enderniumArmorAbilityCooldownSeconds",
+                        EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS, 0,
+                        EnderniumGameplayConfig.MAX_ARMOR_ABILITY_COOLDOWN_SECONDS);
+
         public static final ModConfigSpec.DoubleValue ENDERNIUM_ARMOR_MAX_STORED_DAMAGE = BUILDER
                 .comment("Maximum qualifying damage stored by the Endernium Armor ability.")
                 .defineInRange("enderniumArmorMaxStoredDamage",

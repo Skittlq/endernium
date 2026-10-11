@@ -52,6 +52,16 @@ public final class EnderniumConfigScreen {
                 .setSaveConsumer(value -> config.enderniumArmorAbilityThreshold = value)
                 .build());
 
+        general.addEntry(entries.startIntField(
+                        Component.translatable("endernium.config.armor_ability_cooldown"),
+                        config.enderniumArmorAbilityCooldownSeconds)
+                .setDefaultValue(EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS)
+                .setMin(0)
+                .setMax(EnderniumGameplayConfig.MAX_ARMOR_ABILITY_COOLDOWN_SECONDS)
+                .setTooltip(Component.translatable("endernium.config.armor_ability_cooldown.tooltip"))
+                .setSaveConsumer(value -> config.enderniumArmorAbilityCooldownSeconds = value)
+                .build());
+
         general.addEntry(entries.startDoubleField(
                         Component.translatable("endernium.config.armor_max_stored_damage"),
                         config.enderniumArmorMaxStoredDamage)

@@ -5,6 +5,7 @@ import com.skittlq.endernium.client.vfx.EnderniumVfxRenderMode;
 public class EnderniumConfig {
     public boolean enderniumArmorAbility = true;
     public int enderniumArmorAbilityThreshold = EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_THRESHOLD;
+    public int enderniumArmorAbilityCooldownSeconds = EnderniumGameplayConfig.DEFAULT_ARMOR_ABILITY_COOLDOWN_SECONDS;
     public double enderniumArmorMaxStoredDamage = EnderniumGameplayConfig.DEFAULT_ARMOR_MAX_STORED_DAMAGE;
     public boolean enderniumSwordAbility = true;
     public double enderniumSwordDamagePerStrikeMultiplier = EnderniumGameplayConfig.DEFAULT_SWORD_DAMAGE_PER_STRIKE_MULTIPLIER;
@@ -18,6 +19,7 @@ public class EnderniumConfig {
         EnderniumConfig copy = new EnderniumConfig();
         copy.enderniumArmorAbility = enderniumArmorAbility;
         copy.enderniumArmorAbilityThreshold = enderniumArmorAbilityThreshold;
+        copy.enderniumArmorAbilityCooldownSeconds = enderniumArmorAbilityCooldownSeconds;
         copy.enderniumArmorMaxStoredDamage = enderniumArmorMaxStoredDamage;
         copy.enderniumSwordAbility = enderniumSwordAbility;
         copy.enderniumSwordDamagePerStrikeMultiplier = enderniumSwordDamagePerStrikeMultiplier;
@@ -33,6 +35,9 @@ public class EnderniumConfig {
         EnderniumConfig sanitized = rawConfig == null ? new EnderniumConfig() : rawConfig.copy();
         sanitized.enderniumArmorAbilityThreshold = Math.max(1,
                 Math.min(2048, sanitized.enderniumArmorAbilityThreshold));
+        sanitized.enderniumArmorAbilityCooldownSeconds = Math.max(0,
+                Math.min(EnderniumGameplayConfig.MAX_ARMOR_ABILITY_COOLDOWN_SECONDS,
+                        sanitized.enderniumArmorAbilityCooldownSeconds));
         sanitized.enderniumArmorMaxStoredDamage = finiteClamp(sanitized.enderniumArmorMaxStoredDamage,
                 1.0D, EnderniumGameplayConfig.MAX_ARMOR_STORED_DAMAGE,
                 EnderniumGameplayConfig.DEFAULT_ARMOR_MAX_STORED_DAMAGE);
